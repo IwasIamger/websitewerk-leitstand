@@ -941,8 +941,7 @@ async deployCFPages(lead,pages,projectSlug){
   fd.append("/demos/"+projectSlug+"/"+fname,new Blob([html],{type:"text/html"}),fname);
  }
  /* Impressum + Datenschutz Platzhalter */
- const legal="<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Platzhalter</title></head><body style='font-family:system-ui;padding:40px;max-width:800px;margin:0 auto'><h1>Rechtlicher Hinweis</h1><p>Diese Seite wird vom Kunden mit finalen Rechtstexten befüllt (Empfehlung: eRecht24 / IT-Recht Kanzlei).</p><p><a href='index.html'>← Zurück</a></p><script src="./v10-2.js?v=20260630"></script>
-</body></html>";
+ const legal="<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Platzhalter</title></head><body style='font-family:system-ui;padding:40px;max-width:800px;margin:0 auto'><h1>Rechtlicher Hinweis</h1><p>Diese Seite wird vom Kunden mit finalen Rechtstexten befüllt (Empfehlung: eRecht24 / IT-Recht Kanzlei).</p><p><a href='index.html'>← Zurück</a></p></body></html>";
  manifest["/demos/"+projectSlug+"/impressum.html"]={hash:"aaaa0001",size:legal.length,httpStatus:200,contentType:"text/html"};
  manifest["/demos/"+projectSlug+"/datenschutz.html"]={hash:"aaaa0002",size:legal.length,httpStatus:200,contentType:"text/html"};
  fd.append("/demos/"+projectSlug+"/impressum.html",new Blob([legal],{type:"text/html"}),"impressum.html");
@@ -2023,7 +2022,6 @@ async testBackend(){
 expState(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(this.state,null,2)],{type:"application/json"}));a.download="ww-backup-"+today()+".json";a.click();},
 impState(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{this.state=JSON.parse(r.result);this.persist();this.renderAll();this.toast("Backup importiert ✓")}catch(e){this.toast("Ungültige Datei")}};r.readAsText(file);}
 };
-window.App=App;
 App.init();
 </script>
 </body>
