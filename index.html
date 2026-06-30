@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -242,16 +242,16 @@ a{color:inherit;text-decoration:none}
 </style>
 </head>
 <body>
-<div id="sync-warn" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#fff3cd;color:#856404;padding:8px 16px;font-size:13px;text-align:center;border-bottom:1px solid #ffc107">âš  Nicht mit Cloud verbunden â€” Daten werden nur lokal gespeichert. <button onclick="App.reloadFromCloud()" style="background:#856404;color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;margin-left:8px">Cloud-Daten laden</button></div>
+<div id="sync-warn" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#fff3cd;color:#856404;padding:8px 16px;font-size:13px;text-align:center;border-bottom:1px solid #ffc107">⚠ Nicht mit Cloud verbunden — Daten werden nur lokal gespeichert. <button onclick="App.reloadFromCloud()" style="background:#856404;color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;margin-left:8px">Cloud-Daten laden</button></div>
 <div id="app">
   <aside>
     <div class="brand"><div class="eye">WebsiteWerk</div><div class="tit">Leitstand</div></div>
     <nav id="nav"></nav>
     <div class="sf">
       <div class="law">Eiserne Gesetze</div>
-      Keine Akte ohne nÃ¤chste Aktion. Kein Outreach ohne Rechtsgrundlage.
+      Keine Akte ohne nächste Aktion. Kein Outreach ohne Rechtsgrundlage.
       <div class="srow"><span class="sd" id="sd"></span><span id="sl">Lokal</span></div>
-      <button onclick="App.resetAll()">â†º Demo zurÃ¼cksetzen</button>
+      <button onclick="App.resetAll()">↺ Demo zurücksetzen</button>
     </div>
   </aside>
   <main>
@@ -273,11 +273,11 @@ a{color:inherit;text-decoration:none}
 <div id="MR"></div><div id="DR"></div><div id="FR"></div>
 <script>
 /* === Leitstand-API-Auth (opt-in) ===
-   HÃ¤ngt den Header x-ww-key NUR an Requests ans WebsiteWerk-Backend an,
+   Hängt den Header x-ww-key NUR an Requests ans WebsiteWerk-Backend an,
    und nur wenn localStorage['ww_api_key'] gesetzt ist. Aktivieren:
    1) In Render LEITSTAND_SECRET=<dein-secret> setzen
    2) Hier einmalig: localStorage.setItem('ww_api_key','<dasselbe-secret>')
-   Drittanbieter-Calls (Cloudflare, Nominatim, Overpass) bleiben unberÃ¼hrt. */
+   Drittanbieter-Calls (Cloudflare, Nominatim, Overpass) bleiben unberührt. */
 (function(){
   var _f=window.fetch.bind(window);
   function base(){try{var c=JSON.parse(localStorage.getItem("ww:cfg")||"{}");return (c.apiUrl||"https://websitewerk-api.onrender.com").replace(/\/$/,"");}catch(e){return "https://websitewerk-api.onrender.com";}}
@@ -299,8 +299,8 @@ const AS=[{id:"discovered",l:"Discovered"},{id:"researching",l:"Researching"},{i
 const AT={discovered:["researching","disqualified"],researching:["twin_ready","disqualified"],twin_ready:["build_queue","nurture","disqualified"],build_queue:["build_running"],build_running:["qa"],qa:["sales_ready","review_needed","blocked"],review_needed:["sales_ready","blocked","build_queue"],blocked:["qa","build_queue","disqualified"],sales_ready:["letter_sent"],letter_sent:["engaged","nurture"],engaged:["in_conversation","nurture","lost"],in_conversation:["offer_sent","nurture","lost"],offer_sent:["negotiation","won","lost","nurture"],negotiation:["won","lost","nurture"],nurture:["engaged","disqualified"],lost:["nurture","engaged"],won:[],disqualified:[]};
 const CS=[{id:"onboarding",l:"Onboarding"},{id:"production",l:"Production"},{id:"client_review",l:"Client Review"},{id:"pre_launch",l:"Pre-Launch"},{id:"live",l:"Live"},{id:"stabilization",l:"Stabilization"},{id:"care_active",l:"Care Active"},{id:"growth",l:"Growth"},{id:"renewal",l:"Renewal Window"},{id:"at_risk",l:"At Risk"},{id:"paused",l:"Paused"},{id:"offboarding",l:"Offboarding"},{id:"former",l:"Former Client",t:1}];
 const CT={onboarding:["production","paused","offboarding"],production:["client_review","paused","offboarding"],client_review:["production","pre_launch","paused","offboarding"],pre_launch:["live"],live:["stabilization"],stabilization:["care_active","at_risk","offboarding"],care_active:["growth","renewal","at_risk","paused","offboarding"],growth:["care_active","at_risk","offboarding"],renewal:["care_active","at_risk","offboarding"],at_risk:["care_active","paused","offboarding"],paused:["care_active","production","offboarding"],offboarding:["former"],former:["onboarding"]};
-const AUT={acq:{researching:["Website + Social + Maps analysiert","Deep Research gestartet","Alle Ã¶ffentlichen Quellen gesammelt"],twin_ready:["Company Twin erzeugt (Claude)","Branchenprofil abgeleitet","Scores berechnet"],build_queue:["Build-Strategie gewÃ¤hlt","Seitenstruktur geplant","Design-DNA definiert"],build_running:["Multi-Seiten-Build gestartet (Claude)","Pexels-Bilder geladen","Individuelle Komponenten gebaut"],qa:["QA-Gates alle 8 gestartet","Asset-PrÃ¼fung lÃ¤uft","Compliance-Check"],review_needed:["Review-Task erzeugt","Checkliste angehÃ¤ngt"],blocked:["Blocker-Liste erzeugt","Eskalation 48h"],sales_ready:["Sales-Ready Build bereit (WordPress-Staging)","Klick-Tracking aktiviert","Brief vorbereitet (Pingen-ready)"],letter_sent:["Brief versendet (Pingen API)","Klick-Tracking lÃ¤uft","Wiedervorlage +10 Tage"],engaged:["Interesse dokumentiert (Consent-Log)","RÃ¼ckruf-Task hohe Prio","n8n: Benachrichtigung"],in_conversation:["GesprÃ¤chsnotiz angelegt","Follow-up-Task erzeugt"],offer_sent:["Angebot dokumentiert","GÃ¼ltigkeit 14 Tage"],negotiation:["Task Sales"],won:["Client-Akte erzeugt","Onboarding-Mail vorbereitet","n8n: Kunden-Workflow gestartet"],lost:["Learning-Event gespeichert"],nurture:["Wiedervorlage +90 Tage"],disqualified:["DSGVO-LÃ¶schtimer","Learning-Event"]},cli:{onboarding:["Onboarding-Mail + Inputs angefragt","Vertrag + AVV vorbereitet","Kunden-Dashboard deployt"],production:["Final-Build gestartet","Kundeninput eingearbeitet"],client_review:["Review-Link an Kunde","Frist 7 Tage gesetzt"],pre_launch:["Livegang-Checkliste erzeugt","Formulare getestet"],live:["Schlussrechnung","Abnahmeprotokoll","Uptime-Monitoring aktiv","Performance-Baseline","Referenz-Anfrage +30T"],stabilization:["30T-Monitoring","Tag-7-Call geplant"],care_active:["Care-Plan aktiv","Monatszyklus gestartet","n8n: Reports aktiviert"],growth:["Mini-Projekt angelegt"],renewal:["Jahresreport erzeugt"],at_risk:["Rettungs-Playbook","Upsell pausiert","Call-Task Inhaber"],paused:["Abrechnung angepasst"],offboarding:["KÃ¼ndigungsbestÃ¤tigung","Exit-Call","DatenÃ¼bergabe-Plan"],former:["ZugÃ¤nge entzogen","Win-Back +6M","Exit-Interview â†’ Learning"]}};
-const FDS={"acq:won":[{k:"auftragswert",l:"Auftragswert (â‚¬)",t:"number"},{k:"paket",l:"Paket",t:"sel",o:["Starter","Premium","Business","Enterprise","Abo (WaaS)"]},{k:"mrr",l:"Pflege/Monat (â‚¬)",t:"number"}],"acq:lost":[{k:"grund",l:"Grund",t:"sel",o:["Preis","Kein Bedarf","Wettbewerber","Keine Reaktion","Sonstiges"]}],"acq:disqualified":[{k:"grund",l:"Grund",t:"sel",o:["Score zu niedrig","Kein Fit","Sperrliste","GeschÃ¤ftsaufgabe"]}],"acq:offer_sent":[{k:"angebotswert",l:"Angebotswert (â‚¬)",t:"number"}],"cli:at_risk":[{k:"signal",l:"Churn-Signal",t:"sel",o:["Zahlungsverzug","Keine Reaktion","Negative Tickets","Konkurrenzangebot","Sonstiges"]}],"cli:offboarding":[{k:"grund",l:"KÃ¼ndigungsgrund",t:"sel",o:["Preis","GeschÃ¤ftsaufgabe","Wechsel","Unzufriedenheit","Intern","Sonstiges"]}]};
+const AUT={acq:{researching:["Website + Social + Maps analysiert","Deep Research gestartet","Alle öffentlichen Quellen gesammelt"],twin_ready:["Company Twin erzeugt (Claude)","Branchenprofil abgeleitet","Scores berechnet"],build_queue:["Build-Strategie gewählt","Seitenstruktur geplant","Design-DNA definiert"],build_running:["Multi-Seiten-Build gestartet (Claude)","Pexels-Bilder geladen","Individuelle Komponenten gebaut"],qa:["QA-Gates alle 8 gestartet","Asset-Prüfung läuft","Compliance-Check"],review_needed:["Review-Task erzeugt","Checkliste angehängt"],blocked:["Blocker-Liste erzeugt","Eskalation 48h"],sales_ready:["Demo deployed (Cloudflare Pages)","Klick-Tracking aktiviert","Brief vorbereitet (Pingen-ready)"],letter_sent:["Brief versendet (Pingen API)","Klick-Tracking läuft","Wiedervorlage +10 Tage"],engaged:["Interesse dokumentiert (Consent-Log)","Rückruf-Task hohe Prio","n8n: Benachrichtigung"],in_conversation:["Gesprächsnotiz angelegt","Follow-up-Task erzeugt"],offer_sent:["Angebot dokumentiert","Gültigkeit 14 Tage"],negotiation:["Task Sales"],won:["Client-Akte erzeugt","Onboarding-Mail vorbereitet","n8n: Kunden-Workflow gestartet"],lost:["Learning-Event gespeichert"],nurture:["Wiedervorlage +90 Tage"],disqualified:["DSGVO-Löschtimer","Learning-Event"]},cli:{onboarding:["Onboarding-Mail + Inputs angefragt","Vertrag + AVV vorbereitet","Kunden-Dashboard deployt"],production:["Final-Build gestartet","Kundeninput eingearbeitet"],client_review:["Review-Link an Kunde","Frist 7 Tage gesetzt"],pre_launch:["Livegang-Checkliste erzeugt","Formulare getestet"],live:["Schlussrechnung","Abnahmeprotokoll","Uptime-Monitoring aktiv","Performance-Baseline","Referenz-Anfrage +30T"],stabilization:["30T-Monitoring","Tag-7-Call geplant"],care_active:["Care-Plan aktiv","Monatszyklus gestartet","n8n: Reports aktiviert"],growth:["Mini-Projekt angelegt"],renewal:["Jahresreport erzeugt"],at_risk:["Rettungs-Playbook","Upsell pausiert","Call-Task Inhaber"],paused:["Abrechnung angepasst"],offboarding:["Kündigungsbestätigung","Exit-Call","Datenübergabe-Plan"],former:["Zugänge entzogen","Win-Back +6M","Exit-Interview → Learning"]}};
+const FDS={"acq:won":[{k:"auftragswert",l:"Auftragswert (€)",t:"number"},{k:"paket",l:"Paket",t:"sel",o:["Starter","Premium","Business","Enterprise","Abo (WaaS)"]},{k:"mrr",l:"Pflege/Monat (€)",t:"number"}],"acq:lost":[{k:"grund",l:"Grund",t:"sel",o:["Preis","Kein Bedarf","Wettbewerber","Keine Reaktion","Sonstiges"]}],"acq:disqualified":[{k:"grund",l:"Grund",t:"sel",o:["Score zu niedrig","Kein Fit","Sperrliste","Geschäftsaufgabe"]}],"acq:offer_sent":[{k:"angebotswert",l:"Angebotswert (€)",t:"number"}],"cli:at_risk":[{k:"signal",l:"Churn-Signal",t:"sel",o:["Zahlungsverzug","Keine Reaktion","Negative Tickets","Konkurrenzangebot","Sonstiges"]}],"cli:offboarding":[{k:"grund",l:"Kündigungsgrund",t:"sel",o:["Preis","Geschäftsaufgabe","Wechsel","Unzufriedenheit","Intern","Sonstiges"]}]};
 
 /* === Hilfsfunktionen === */
 const uid=()=>Math.random().toString(36).slice(2,9);
@@ -310,7 +310,7 @@ const dP=d=>new Date(Date.now()+d*864e5).toISOString().slice(0,10);
 const isOD=due=>due&&due<=today();
 const hC=h=>h>=80?"var(--g)":h>=50?"var(--amb)":"var(--red)";
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const slug=s=>String(s).toLowerCase().replace(/Ã¤/g,"ae").replace(/Ã¶/g,"oe").replace(/Ã¼/g,"ue").replace(/ÃŸ/g,"ss").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,48)||"kunde";
+const slug=s=>String(s).toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,48)||"kunde";
 const slabel=(id,pl)=>{const s=(pl==="acq"?AS:CS).find(x=>x.id===id);return s?s.l:id};
 const bdg=(id,pl,act)=>{const d=["blocked","at_risk","lost","disqualified"].includes(id);return`<span class="bdg ${act?(d?"dan":"act"):""}" ${!act&&d?'style="color:var(--red)"':''}>${esc(slabel(id,pl))}</span>`};
 function b64(str){const b=new TextEncoder().encode(str);let s="";const C=0x8000;for(let i=0;i<b.length;i+=C)s+=String.fromCharCode.apply(null,b.subarray(i,i+C));return btoa(s);}
@@ -319,17 +319,17 @@ function stripJs(t){return t.replace(/^```[a-z]*\n?/gm,"").replace(/^```\n?/gm,"
 /* === Seed === */
 function seed(){return{
 leads:[
- {id:"l1",name:"MÃ¼ller Haustechnik GmbH",branche:"SHK",ort:"Aalen",score:96,stage:"sales_ready",demoUrl:"",next:{label:"Human Check + Brief freigeben",due:today()}},
- {id:"l2",name:"BÃ¤ckerei Schmid",branche:"Gastro",ort:"Ellwangen",score:88,stage:"engaged",next:{label:"RÃ¼ckruf â€“ dokumentiertes Interesse",due:today()}},
+ {id:"l1",name:"Müller Haustechnik GmbH",branche:"SHK",ort:"Aalen",score:96,stage:"sales_ready",demoUrl:"",next:{label:"Human Check + Brief freigeben",due:today()}},
+ {id:"l2",name:"Bäckerei Schmid",branche:"Gastro",ort:"Ellwangen",score:88,stage:"engaged",next:{label:"Rückruf – dokumentiertes Interesse",due:today()}},
  {id:"l3",name:"Autohaus Berger",branche:"Automotive",ort:"Heidenheim",score:91,stage:"offer_sent",angebotswert:12400,next:{label:"Angebot nachfassen",due:dP(1)}}
 ],
 clients:[
- {id:"c1",name:"Restaurant Bella",branche:"Gastro",ort:"Aalen",phase:"renewal",health:86,mrr:249,paket:"Premium",next:{label:"Renewal-GesprÃ¤ch",due:today()}},
+ {id:"c1",name:"Restaurant Bella",branche:"Gastro",ort:"Aalen",phase:"renewal",health:86,mrr:249,paket:"Premium",next:{label:"Renewal-Gespräch",due:today()}},
  {id:"c2",name:"Physio Wagner",branche:"Gesundheit",ort:"Aalen",phase:"at_risk",health:41,mrr:199,paket:"Premium",next:{label:"Rettungs-Call",due:today()}}
 ],
 events:[
- {id:"e1",ts:Date.now()-648e5,entity:"BÃ¤ckerei Schmid",pipeline:"acq",from:"letter_sent",to:"engaged",actor:"System",note:"Abnahme-Link geklickt 17:42 â€“ Consent-Log"},
- {id:"e2",ts:Date.now()-3.6e6,entity:"Physio Wagner",pipeline:"cli",from:"care_active",to:"at_risk",actor:"System",note:"Health 41 Â· Zahlung 9 Tage offen"}
+ {id:"e1",ts:Date.now()-648e5,entity:"Bäckerei Schmid",pipeline:"acq",from:"letter_sent",to:"engaged",actor:"System",note:"Demo-Link geklickt 17:42 – Consent-Log"},
+ {id:"e2",ts:Date.now()-3.6e6,entity:"Physio Wagner",pipeline:"cli",from:"care_active",to:"at_risk",actor:"System",note:"Health 41 · Zahlung 9 Tage offen"}
 ]};}
 
 /* === App-Kern === */
@@ -352,8 +352,8 @@ async sbLoad(){
   if(this.cfg.sbUrl&&this.cfg.sbKey){
     try{const r=await fetch(this.cfg.sbUrl.replace(/\/$/,"")+"/rest/v1/ww_state?id=eq.main&select=data",{headers:this.sbH()});if(r.ok){const rows=await r.json();this.sync="cloud";if(rows.length)return rows[0].data;}}catch(e){}
   }
-  // Methode 2: Ãœber Backend-API (Backend hat die Supabase-Keys serverseitig!)
-  // Das funktioniert AUCH wenn Browser-Cache gelÃ¶scht wurde
+  // Methode 2: Über Backend-API (Backend hat die Supabase-Keys serverseitig!)
+  // Das funktioniert AUCH wenn Browser-Cache gelöscht wurde
   try{
     const r=await fetch(this.apiBase()+"/api/state");
     if(r.ok){const d=await r.json();this.sync="cloud";if(d&&d.leads)return d;}
@@ -369,11 +369,11 @@ updSync(){
  // Deutliche Warnung wenn nicht mit Cloud verbunden
  const warn=document.getElementById('sync-warn');
  if(warn)warn.style.display=this.sync==='cloud'?'none':'block';
- const d=document.getElementById("sd"),l=document.getElementById("sl");const m={local:["#C5CCD1","Lokal"],cloud:["var(--g)","Supabase âœ“"],error:["var(--red)","Sync-Fehler"]}[this.sync];d.style.background=m[0];l.textContent=m[1];},
-async resetAll(){if(!confirm("Demo-Daten wiederherstellen?"))return;this.state=seed();this.persist();this.renderAll();this.toast("ZurÃ¼ckgesetzt");},
+ const d=document.getElementById("sd"),l=document.getElementById("sl");const m={local:["#C5CCD1","Lokal"],cloud:["var(--g)","Supabase ✓"],error:["var(--red)","Sync-Fehler"]}[this.sync];d.style.background=m[0];l.textContent=m[1];},
+async resetAll(){if(!confirm("Demo-Daten wiederherstellen?"))return;this.state=seed();this.persist();this.renderAll();this.toast("Zurückgesetzt");},
 
 renderNav(){
- const items=[["heute","âŒ‚","Heute"],["akquise","âš™","Akquise"],["kunden","â—‰","Kunden"],["projekte","â–¦","Anfragen"],["wachstum","â†—","Wachstum"],["finder","â—Ž","Lead-Finder"],["protokoll","â‰¡","Protokoll"],["einstellungen","âœ¦","Einstellungen"]];
+ const items=[["heute","⌂","Heute"],["akquise","⚙","Akquise"],["kunden","◉","Kunden"],["projekte","▦","Anfragen"],["wachstum","↗","Wachstum"],["finder","◎","Lead-Finder"],["protokoll","≡","Protokoll"],["einstellungen","✦","Einstellungen"]];
  document.getElementById("nav").innerHTML=items.map(([id,ic,l])=>`<a id="n-${id}" onclick="App.show('${id}')"><span class="ic">${ic}</span>${l}</a>`).join("");
 },
 show(v){
@@ -388,7 +388,7 @@ show(v){
 kpis(){const s=this.state,mrr=s.clients.filter(c=>!["former","offboarding"].includes(c.phase)).reduce((a,c)=>a+(+c.mrr||0),0),off=s.leads.filter(l=>["offer_sent","negotiation"].includes(l.stage)).reduce((a,l)=>a+(+l.angebotswert||0),0);return{mrr,off,sr:s.leads.filter(l=>l.stage==="sales_ready").length,ar:s.clients.filter(c=>c.phase==="at_risk").length};},
 renderAll(){
  const k=this.kpis();
- document.getElementById("hs").innerHTML=`<div class="hst"><div class="hl">MRR</div><div class="hv">${fmt(k.mrr)} â‚¬</div></div><div class="hst"><div class="hl">Angebote</div><div class="hv">${fmt(k.off)} â‚¬</div></div><div class="hst"><div class="hl">Sales Ready</div><div class="hv" style="color:${k.sr>0?'var(--g)':'inherit'}">${k.sr}</div></div><div class="hst"><div class="hl">At Risk</div><div class="hv ${k.ar?"warn":""}">${k.ar}</div></div><div class="hst"><div class="hl">Leads</div><div class="hv">${this.state.leads.length}</div></div><div class="hst"><div class="hl">Kunden</div><div class="hv">${this.state.clients.length}</div></div>`;
+ document.getElementById("hs").innerHTML=`<div class="hst"><div class="hl">MRR</div><div class="hv">${fmt(k.mrr)} €</div></div><div class="hst"><div class="hl">Angebote</div><div class="hv">${fmt(k.off)} €</div></div><div class="hst"><div class="hl">Sales Ready</div><div class="hv" style="color:${k.sr>0?'var(--g)':'inherit'}">${k.sr}</div></div><div class="hst"><div class="hl">At Risk</div><div class="hv ${k.ar?"warn":""}">${k.ar}</div></div><div class="hst"><div class="hl">Leads</div><div class="hv">${this.state.leads.length}</div></div><div class="hst"><div class="hl">Kunden</div><div class="hv">${this.state.clients.length}</div></div>`;
  if(this.view==="heute")this.rHeute();
  else if(this.view==="akquise")this.rBoard("akquise");
  else if(this.view==="kunden")this.rBoard("kunden");
@@ -399,7 +399,7 @@ renderAll(){
  else if(this.view==="einstellungen")this.rSettings();
 },
 genReferralCodes(){
- const slug=n=>String(n||"").toLowerCase().replace(/Ã¤/g,"ae").replace(/Ã¶/g,"oe").replace(/Ã¼/g,"ue").replace(/ÃŸ/g,"ss").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,12)||"kunde";
+ const slug=n=>String(n||"").toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,12)||"kunde";
  let n=0;(this.state.clients||[]).forEach(c=>{if(!c.referralCode){c.referralCode=slug(c.name)+"-"+Math.random().toString(36).slice(2,6);c.referrals=c.referrals||[];n++;}});
  this.persist();this.rWachstum();this.toast(n?`${n} Referral-Code(s) erzeugt`:"Alle Kunden haben bereits einen Code");
 },
@@ -438,8 +438,8 @@ projectTodayPanel(){
  const ps=this.allProjects().filter(p=>!["done","billed","archive"].includes(p.status));
  const fresh=ps.filter(p=>p.status==="inbox"||p.status==="waiting_ww").slice(0,6);
  if(!ps.length)return "";
- return `<div class="panel"><div class="ph">ðŸ§© Kundenanfragen & Projekte Â· offen Â· ${ps.length}<button class="btn bg bsm" style="margin-left:auto" onclick="App.show('projekte')">Alle Ã¶ffnen</button></div>
- ${fresh.length?fresh.map(p=>`<button class="fi" onclick="App.openProject('${p.id}')"><span class="fn">â–¦</span><span style="color:${p.status==="waiting_ww"?"var(--red)":"var(--a)"}">â—</span><span class="ft">${esc(p.title)}</span><span class="fc">${esc(p.clientName)} Â· ${esc(this.projectStatusLabel(p.status))}</span><span style="color:#C5CCD1">â€º</span></button>`).join(""):`<div class="empty">Keine dringenden Kundenanfragen.</div>`}</div>`;
+ return `<div class="panel"><div class="ph">🧩 Kundenanfragen & Projekte · offen · ${ps.length}<button class="btn bg bsm" style="margin-left:auto" onclick="App.show('projekte')">Alle öffnen</button></div>
+ ${fresh.length?fresh.map(p=>`<button class="fi" onclick="App.openProject('${p.id}')"><span class="fn">▦</span><span style="color:${p.status==="waiting_ww"?"var(--red)":"var(--a)"}">●</span><span class="ft">${esc(p.title)}</span><span class="fc">${esc(p.clientName)} · ${esc(this.projectStatusLabel(p.status))}</span><span style="color:#C5CCD1">›</span></button>`).join(""):`<div class="empty">Keine dringenden Kundenanfragen.</div>`}</div>`;
 },
 async dedupeProjects(){
  if(!confirm("Projekt-/Anfragen-Duplikate jetzt bereinigen?"))return;
@@ -461,15 +461,15 @@ rProjekte(){
  const newest=ps[0]?.updatedAt||ps[0]?.createdAt;
  const k=(v,l,c)=>`<div class="wx-kpi"><div class="wx-kv"${c?` style="color:${c}"`:""}>${v}</div><div class="wx-kl">${l}</div></div>`;
  document.getElementById("v-projekte").innerHTML=`
-  <div class="panel"><div class="ph">ðŸ§© Bearbeitungsanfragen / Sprint Desk <button class="btn bg bsm" style="margin-left:auto" onclick="App.dedupeProjects()">Duplikate bereinigen</button></div>
+  <div class="panel"><div class="ph">🧩 Bearbeitungsanfragen / Sprint Desk <button class="btn bg bsm" style="margin-left:auto" onclick="App.dedupeProjects()">Duplikate bereinigen</button></div>
    <div style="padding:16px">
     <div class="pj-grid">
       ${k(open.length,"Offen",open.length?"var(--a)":"")}
       ${k(waitingWW,"WebsiteWerk dran",waitingWW?"var(--red)":"")}
       ${k(waitingClient,"Wartet auf Kunde",waitingClient?"#1971C2":"")}
-      ${k(newest?new Date(newest).toLocaleDateString("de-DE"):"â€”","Letztes Update")}
+      ${k(newest?new Date(newest).toLocaleDateString("de-DE"):"—","Letztes Update")}
     </div>
-    <p class="hint" style="margin-top:12px">Salesforce/Jira-Ã¤hnlicher Arbeitsbereich: Kundenanfragen, Uploads, RÃ¼ckfragen, Status und Projektkommunikation.</p>
+    <p class="hint" style="margin-top:12px">Salesforce/Jira-ähnlicher Arbeitsbereich: Kundenanfragen, Uploads, Rückfragen, Status und Projektkommunikation.</p>
    </div>
   </div>
   <div class="pj-board">
@@ -478,11 +478,11 @@ rProjekte(){
     return `<div class="pj-col"><div class="pj-head"><span>${label}</span><b>${list.length}</b></div>
       ${list.length?list.map(p=>`<div class="pj-card" onclick="App.openProject('${p.id}')">
        <div class="pj-title">${esc(p.title)}</div>
-       <div class="pj-meta">${esc(p.clientName)} Â· ${new Date(p.updatedAt||p.createdAt||Date.now()).toLocaleDateString("de-DE")} Â· Prio ${esc(p.priority||"normal")}</div>
+       <div class="pj-meta">${esc(p.clientName)} · ${new Date(p.updatedAt||p.createdAt||Date.now()).toLocaleDateString("de-DE")} · Prio ${esc(p.priority||"normal")}</div>
        <span class="pj-badge ${this.projectBadgeClass(p.status)}">${esc(this.projectStatusLabel(p.status))}</span>
        <span class="pj-badge">${esc(p.billing==="care_included"?"Care":p.billing==="extra"?"Extra":p.billing||"Check")}</span>
-       ${(p.files||[]).length?`<span class="pj-badge">ðŸ“Ž ${(p.files||[]).length}</span>`:""}
-       ${(p.messages||[]).length?`<span class="pj-badge">ðŸ’¬ ${(p.messages||[]).length}</span>`:""}
+       ${(p.files||[]).length?`<span class="pj-badge">📎 ${(p.files||[]).length}</span>`:""}
+       ${(p.messages||[]).length?`<span class="pj-badge">💬 ${(p.messages||[]).length}</span>`:""}
       </div>`).join(""):`<div class="ce">leer</div>`}
      </div>`;
    }).join("")}
@@ -496,49 +496,49 @@ renderProjectDrawer(){
  if(!p){R.innerHTML="";return;}
  const msg=(p.messages||[]).slice().sort((a,b)=>(a.ts||0)-(b.ts||0));
  const files=(p.files||[]).length?p.files:(msg.flatMap(m=>m.attachments||[]));
- R.innerHTML=`<div class="dr"><div class="drh"><div style="min-width:0"><div style="font-weight:700">${esc(p.title)}</div><div style="font-size:11px;color:#9AA4AC">${esc(p.clientName)} Â· ${esc(this.projectStatusLabel(p.status))}</div></div><button class="xb" onclick="App.closeProject()">Ã—</button></div>
+ R.innerHTML=`<div class="dr"><div class="drh"><div style="min-width:0"><div style="font-weight:700">${esc(p.title)}</div><div style="font-size:11px;color:#9AA4AC">${esc(p.clientName)} · ${esc(this.projectStatusLabel(p.status))}</div></div><button class="xb" onclick="App.closeProject()">×</button></div>
  <div class="drb">
   <div class="infobox">
    <div class="row"><div class="key">Status</div><div class="val"><span class="pj-badge ${this.projectBadgeClass(p.status)}">${esc(this.projectStatusLabel(p.status))}</span></div></div>
-   <div class="row"><div class="key">PrioritÃ¤t</div><div class="val">${esc(p.priority||"normal")}</div></div>
+   <div class="row"><div class="key">Priorität</div><div class="val">${esc(p.priority||"normal")}</div></div>
    <div class="row"><div class="key">Abrechnung</div><div class="val">${esc(p.billing||"care_check")}</div></div>
    <div class="row"><div class="key">Erstellt</div><div class="val">${new Date(p.createdAt||Date.now()).toLocaleString("de-DE")}</div></div>
   </div>
-  <div><div class="stit">Status Ã¤ndern</div><select id="pj-status-${p.id}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:8px;margin-bottom:7px">${this.projectStatuses().map(([sid,label])=>`<option value="${sid}" ${sid===p.status?"selected":""}>${label}</option>`).join("")}</select><textarea id="pj-status-note-${p.id}" rows="2" placeholder="Optionale Notiz an Kundeâ€¦"></textarea><button class="btn bi" style="width:100%;margin-top:7px" onclick="App.setProjectStatus('${p.id}',document.getElementById('pj-status-${p.id}').value,document.getElementById('pj-status-note-${p.id}').value)">Status speichern + Kunde informieren</button></div>
-  <div><div class="stit">Kommunikation</div><div class="chat">${msg.length?msg.map(m=>`<div class="msgbubble ${m.actor==="client"?"client":"ww"}"><div class="msghead"><span>${m.actor==="client"?"Kunde":"WebsiteWerk"}</span><span>${new Date(m.ts||Date.now()).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</span></div><div class="msgtext">${esc(m.text||"")}</div>${(m.attachments||[]).length?`<div>${m.attachments.map(a=>`<a class="filechip" href="${esc(a.url)}" target="_blank">ðŸ“Ž ${esc(a.filename)}</a>`).join("")}</div>`:""}</div>`).join(""):`<div class="hint">Noch keine Nachrichten.</div>`}</div></div>
-  <div><div class="stit">Antwort an Kunden</div><textarea id="pj-reply-${p.id}" rows="4" placeholder="RÃ¼ckfrage, Zwischenstand oder Ergebnisâ€¦"></textarea><button class="btn ba" style="width:100%;margin-top:7px" onclick="App.sendProjectMessage('${p.id}')">Antwort senden</button></div>
-  <div><div class="stit">Dateien</div>${files.length?files.map(a=>`<a class="filechip" href="${esc(a.url)}" target="_blank">ðŸ“Ž ${esc(a.filename)}</a>`).join(""):`<div class="hint">Keine Dateien am Projekt.</div>`}</div>
-  <div><button class="btn bg" onclick="App.openDetail('cli','${p.clientId}')">Kundenakte Ã¶ffnen</button></div>
+  <div><div class="stit">Status ändern</div><select id="pj-status-${p.id}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:8px;margin-bottom:7px">${this.projectStatuses().map(([sid,label])=>`<option value="${sid}" ${sid===p.status?"selected":""}>${label}</option>`).join("")}</select><textarea id="pj-status-note-${p.id}" rows="2" placeholder="Optionale Notiz an Kunde…"></textarea><button class="btn bi" style="width:100%;margin-top:7px" onclick="App.setProjectStatus('${p.id}',document.getElementById('pj-status-${p.id}').value,document.getElementById('pj-status-note-${p.id}').value)">Status speichern + Kunde informieren</button></div>
+  <div><div class="stit">Kommunikation</div><div class="chat">${msg.length?msg.map(m=>`<div class="msgbubble ${m.actor==="client"?"client":"ww"}"><div class="msghead"><span>${m.actor==="client"?"Kunde":"WebsiteWerk"}</span><span>${new Date(m.ts||Date.now()).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</span></div><div class="msgtext">${esc(m.text||"")}</div>${(m.attachments||[]).length?`<div>${m.attachments.map(a=>`<a class="filechip" href="${esc(a.url)}" target="_blank">📎 ${esc(a.filename)}</a>`).join("")}</div>`:""}</div>`).join(""):`<div class="hint">Noch keine Nachrichten.</div>`}</div></div>
+  <div><div class="stit">Antwort an Kunden</div><textarea id="pj-reply-${p.id}" rows="4" placeholder="Rückfrage, Zwischenstand oder Ergebnis…"></textarea><button class="btn ba" style="width:100%;margin-top:7px" onclick="App.sendProjectMessage('${p.id}')">Antwort senden</button></div>
+  <div><div class="stit">Dateien</div>${files.length?files.map(a=>`<a class="filechip" href="${esc(a.url)}" target="_blank">📎 ${esc(a.filename)}</a>`).join(""):`<div class="hint">Keine Dateien am Projekt.</div>`}</div>
+  <div><button class="btn bg" onclick="App.openDetail('cli','${p.clientId}')">Kundenakte öffnen</button></div>
  </div></div>`;
 },
 async setProjectStatus(pid,status,note){
- this.toast("Status wird gespeichert â€¦");
+ this.toast("Status wird gespeichert …");
  try{
   const r=await fetch(this.apiBase()+"/api/client/projects/"+pid+"/status",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({status,note})});
   const d=await r.json().catch(()=>({}));
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   await this.reloadCloudState();
-  this.toast("âœ“ Status gespeichert");
+  this.toast("✓ Status gespeichert");
   this.renderAll();this.renderProjectDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async sendProjectMessage(pid){
  const el=document.getElementById("pj-reply-"+pid);const text=(el?.value||"").trim();
  if(!text){this.toast("Nachricht fehlt");return;}
- this.toast("Antwort wird gesendet â€¦");
+ this.toast("Antwort wird gesendet …");
  try{
   const r=await fetch(this.apiBase()+"/api/client/projects/"+pid+"/message",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,setStatus:"waiting_client"})});
   const d=await r.json().catch(()=>({}));
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   await this.reloadCloudState();
-  this.toast("âœ“ Antwort gespeichert"+(d.sent===false?" (Mail nicht konfiguriert)":""));
+  this.toast("✓ Antwort gespeichert"+(d.sent===false?" (Mail nicht konfiguriert)":""));
   this.renderAll();this.renderProjectDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 projectMiniList(clientId){
  const ps=this.allProjects().filter(p=>String(p.clientId)===String(clientId)).slice(0,5);
  if(!ps.length)return `<div class="hint">Noch keine Projektanfragen.</div>`;
- return ps.map(p=>`<div class="infobox" style="margin-bottom:6px;cursor:pointer" onclick="App.openProject('${p.id}')"><b>${esc(p.title)}</b> <span class="pj-badge ${this.projectBadgeClass(p.status)}">${esc(this.projectStatusLabel(p.status))}</span><div style="font-size:11px;color:#7A858D;margin-top:3px">${(p.messages||[]).length} Nachrichten Â· ${(p.files||[]).length} Dateien Â· ${new Date(p.updatedAt||p.createdAt||Date.now()).toLocaleDateString("de-DE")}</div></div>`).join("");
+ return ps.map(p=>`<div class="infobox" style="margin-bottom:6px;cursor:pointer" onclick="App.openProject('${p.id}')"><b>${esc(p.title)}</b> <span class="pj-badge ${this.projectBadgeClass(p.status)}">${esc(this.projectStatusLabel(p.status))}</span><div style="font-size:11px;color:#7A858D;margin-top:3px">${(p.messages||[]).length} Nachrichten · ${(p.files||[]).length} Dateien · ${new Date(p.updatedAt||p.createdAt||Date.now()).toLocaleDateString("de-DE")}</div></div>`).join("");
 },
 
 rWachstum(){
@@ -552,8 +552,8 @@ rWachstum(){
  const hd={gut:active.filter(c=>(c.health||0)>=70).length,mittel:active.filter(c=>(c.health||0)>=40&&(c.health||0)<70).length,krit:active.filter(c=>(c.health||0)<40).length};
  const bySrc={};ld.forEach(l=>{const k=l.source||"manuell";bySrc[k]=(bySrc[k]||0)+1;});
  const k=(v,l,c)=>`<div class="wx-kpi"><div class="wx-kv"${c?` style="color:${c}"`:""}>${v}</div><div class="wx-kl">${l}</div></div>`;
- const kpis=`<div class="wx-card"><div class="wx-title">ðŸ“Š Ãœberblick</div><div class="wx-kpis">
-   ${k(fmt(mrr)+" â‚¬","MRR")}${k(fmt(mrr*12)+" â‚¬","ARR")}${k(fmt(pipe)+" â‚¬","Pipeline")}
+ const kpis=`<div class="wx-card"><div class="wx-title">📊 Überblick</div><div class="wx-kpis">
+   ${k(fmt(mrr)+" €","MRR")}${k(fmt(mrr*12)+" €","ARR")}${k(fmt(pipe)+" €","Pipeline")}
    ${k(active.length,"Aktive Kunden")}${k(ld.filter(l=>l.stage==="sales_ready").length,"Sales Ready","var(--g)")}${k(cl.filter(c=>c.phase==="at_risk").length,"At Risk",hd.krit?"var(--red)":"")}
  </div>
  <div class="wx-bars">
@@ -563,31 +563,31 @@ rWachstum(){
    ${Object.entries(bySrc).map(([s2,n])=>`<div class="wx-bar"><span>Quelle: ${esc(s2)}</span><b>${n}</b></div>`).join("")}
  </div></div>`;
  const inb=(s.leads||[]).filter(l=>l.inbound||/website|mountainium|website-check/i.test(l.source||""));
- const inbRows=inb.length?inb.map(l=>`<tr><td><b>${esc(l.name||"â€”")}</b><br><span class="wx-sub">${esc(l.email||"")}</span></td><td>${esc(l.branche||l.topic||"â€”")}</td><td>${esc(l.source||"")}</td><td>${esc(sl(l.stage,"acq"))}</td><td>${l.createdAt?new Date(l.createdAt).toLocaleDateString("de-DE"):""}</td></tr>`).join(""):`<tr><td colspan="5" class="wx-empty">Noch keine eingehenden Anfragen. Sobald die Website angebunden ist (WW_OS_URL), erscheinen sie hier.</td></tr>`;
+ const inbRows=inb.length?inb.map(l=>`<tr><td><b>${esc(l.name||"—")}</b><br><span class="wx-sub">${esc(l.email||"")}</span></td><td>${esc(l.branche||l.topic||"—")}</td><td>${esc(l.source||"")}</td><td>${esc(sl(l.stage,"acq"))}</td><td>${l.createdAt?new Date(l.createdAt).toLocaleDateString("de-DE"):""}</td></tr>`).join(""):`<tr><td colspan="5" class="wx-empty">Noch keine eingehenden Anfragen. Sobald die Website angebunden ist (WW_OS_URL), erscheinen sie hier.</td></tr>`;
  const refClients=(s.clients||[]).filter(c=>c.referralCode||(c.referrals&&c.referrals.length));
- const refRows=refClients.length?refClients.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td><code>${esc(c.referralCode||"â€”")}</code></td><td>${(c.referrals||[]).length}</td><td>${(c.referrals||[]).map(r=>esc(r.name)).join(", ")||"â€”"}</td></tr>`).join(""):`<tr><td colspan="4" class="wx-empty">Noch keine Empfehlungen. Referral-Code je Kunde via Backend erzeugen (POST /api/client/referral-code).</td></tr>`;
+ const refRows=refClients.length?refClients.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td><code>${esc(c.referralCode||"—")}</code></td><td>${(c.referrals||[]).length}</td><td>${(c.referrals||[]).map(r=>esc(r.name)).join(", ")||"—"}</td></tr>`).join(""):`<tr><td colspan="4" class="wx-empty">Noch keine Empfehlungen. Referral-Code je Kunde via Backend erzeugen (POST /api/client/referral-code).</td></tr>`;
  const ab=s.abTests||{};
  const abBlocks=Object.keys(ab).length?Object.entries(ab).map(([test,vars])=>{
   const rows=Object.entries(vars).map(([v,d])=>{const imp=d.impressions||0,conv=d.conversions||0,cr=imp?((conv/imp)*100).toFixed(1):"0.0";return `<tr><td><b>${esc(v)}</b></td><td>${imp}</td><td>${conv}</td><td style="color:var(--g)">${cr}%</td></tr>`;}).join("");
   return `<div class="wx-card" style="margin-bottom:14px"><div class="wx-title">${esc(test)}</div><table class="wx-table"><thead><tr><th>Variante</th><th>Impressions</th><th>Conversions</th><th>Rate</th></tr></thead><tbody>${rows}</tbody></table></div>`;
- }).join(""):`<div class="wx-empty">Noch keine A/B-Daten. Events kommen Ã¼ber POST /api/ab/event (z.B. vom Website-Check-Funnel der Firmen-Website).</div>`;
+ }).join(""):`<div class="wx-empty">Noch keine A/B-Daten. Events kommen über POST /api/ab/event (z.B. vom Website-Check-Funnel der Firmen-Website).</div>`;
  el.innerHTML=`
   ${kpis}
-  <div class="wx-card" style="margin-top:16px"><div class="wx-title">ðŸ“¥ Eingehende Anfragen (Website) Â· ${inb.length}</div>
+  <div class="wx-card" style="margin-top:16px"><div class="wx-title">📥 Eingehende Anfragen (Website) · ${inb.length}</div>
    <table class="wx-table"><thead><tr><th>Kontakt</th><th>Anliegen</th><th>Quelle</th><th>Status</th><th>Datum</th></tr></thead><tbody>${inbRows}</tbody></table></div>
-  <div class="wx-card" style="margin-top:16px"><div class="wx-title" style="display:flex;justify-content:space-between;align-items:center">ðŸŽ Empfehlungen (Referrals)<button class="wx-btn" onclick="App.genReferralCodes()">Codes erzeugen</button></div>
+  <div class="wx-card" style="margin-top:16px"><div class="wx-title" style="display:flex;justify-content:space-between;align-items:center">🎁 Empfehlungen (Referrals)<button class="wx-btn" onclick="App.genReferralCodes()">Codes erzeugen</button></div>
    <table class="wx-table"><thead><tr><th>Kunde</th><th>Code</th><th>Empfehlungen</th><th>Geworbene</th></tr></thead><tbody>${refRows}</tbody></table></div>
-  <div class="wx-card" style="margin-top:16px"><div class="wx-title">ðŸ§ª A/B-Auswertung</div>${abBlocks}</div>`;
+  <div class="wx-card" style="margin-top:16px"><div class="wx-title">🧪 A/B-Auswertung</div>${abBlocks}</div>`;
 },
 
 rHeute(){
  const s=this.state;
  const foc=[
-  ...s.leads.filter(l=>l.stage==="engaged").map(l=>({p:100,t:`RÃ¼ckruf: ${l.name} â€“ Interesse dokumentiert`,c:"Akquise Â· Engaged",g:"akquise"})),
-  ...s.clients.filter(c=>c.phase==="at_risk").map(c=>({p:90,t:`At-Risk-Call: ${c.name} (Health ${c.health})`,c:"Kunden Â· At Risk",g:"kunden"})),
-  ...s.leads.filter(l=>isOD(l.next?.due)&&!["won","lost","disqualified"].includes(l.stage)&&l.stage!=="engaged").map(l=>({p:70,t:`${l.next.label} â€“ ${l.name}`,c:"Akquise Â· fÃ¤llig",g:"akquise"})),
-  ...s.clients.filter(c=>isOD(c.next?.due)&&c.phase!=="at_risk").map(c=>({p:60,t:`${c.next.label} â€“ ${c.name}`,c:"Kunden Â· fÃ¤llig",g:"kunden"})),
-  ...s.leads.filter(l=>l.stage==="review_needed").map(l=>({p:50,t:`Human Check: ${l.name}`,c:"Builds Â· Review",g:"akquise"}))
+  ...s.leads.filter(l=>l.stage==="engaged").map(l=>({p:100,t:`Rückruf: ${l.name} – Interesse dokumentiert`,c:"Akquise · Engaged",g:"akquise"})),
+  ...s.clients.filter(c=>c.phase==="at_risk").map(c=>({p:90,t:`At-Risk-Call: ${c.name} (Health ${c.health})`,c:"Kunden · At Risk",g:"kunden"})),
+  ...s.leads.filter(l=>isOD(l.next?.due)&&!["won","lost","disqualified"].includes(l.stage)&&l.stage!=="engaged").map(l=>({p:70,t:`${l.next.label} – ${l.name}`,c:"Akquise · fällig",g:"akquise"})),
+  ...s.clients.filter(c=>isOD(c.next?.due)&&c.phase!=="at_risk").map(c=>({p:60,t:`${c.next.label} – ${c.name}`,c:"Kunden · fällig",g:"kunden"})),
+  ...s.leads.filter(l=>l.stage==="review_needed").map(l=>({p:50,t:`Human Check: ${l.name}`,c:"Builds · Review",g:"akquise"}))
  ].sort((a,b)=>b.p-a.p).slice(0,5);
  const orph=[...s.leads,...s.clients].filter(x=>!x.next?.label);
  const hot=s.leads.filter(l=>["engaged","in_conversation","offer_sent","negotiation"].includes(l.stage));
@@ -597,19 +597,19 @@ rHeute(){
  [...s.leads.map(l=>({it:l,pl:"acq"})),...s.clients.map(c=>({it:c,pl:"cli"}))].forEach(({it,pl})=>{(it.tasks||[]).forEach(t=>{if(!t.done&&t.due&&t.due<=today())openTasks.push({taskId:t.id,text:t.text,due:t.due,name:it.name,pl,itemId:it.id});});});
  openTasks.sort((a,b)=>(a.due<b.due?-1:1));
  document.getElementById("v-heute").innerHTML=`
-  <div class="panel"><div class="ph">âš¡ Fokus heute Â· max. 5 Â· Wert Ã— Dringlichkeit</div>
-   ${foc.length?foc.map((f,i)=>`<button class="fi" onclick="App.show('${f.g}')"><span class="fn">${i+1}</span><span style="color:${f.p>=90?"var(--red)":"var(--a)"}">â—</span><span class="ft">${esc(f.t)}</span><span class="fc">${f.c}</span><span style="color:#C5CCD1">â€º</span></button>`).join("")
-   :`<div class="empty">Alles abgearbeitet â€“ neuen Lead-Finder-Lauf starten.</div>`}
+  <div class="panel"><div class="ph">⚡ Fokus heute · max. 5 · Wert × Dringlichkeit</div>
+   ${foc.length?foc.map((f,i)=>`<button class="fi" onclick="App.show('${f.g}')"><span class="fn">${i+1}</span><span style="color:${f.p>=90?"var(--red)":"var(--a)"}">●</span><span class="ft">${esc(f.t)}</span><span class="fc">${f.c}</span><span style="color:#C5CCD1">›</span></button>`).join("")
+   :`<div class="empty">Alles abgearbeitet – neuen Lead-Finder-Lauf starten.</div>`}
   </div>
-  ${openTasks.length?`<div class="panel"><div class="ph">âœ… Offene Aufgaben Â· heute &amp; Ã¼berfÃ¤llig Â· ${openTasks.length}</div>${openTasks.slice(0,10).map(t=>`<button class="fi" onclick="App.openDetail('${t.pl}','${t.itemId}')"><input type="checkbox" onclick="event.stopPropagation()" onchange="App.toggleTask('${t.pl}','${t.itemId}','${t.taskId}')" style="accent-color:var(--g);cursor:pointer"><span class="ft">${esc(t.text)}</span><span class="fc" style="${isOD(t.due)?'color:var(--red)':''}">${esc(t.name)} Â· ${isOD(t.due)?'Ã¼berfÃ¤llig':'heute'}</span><span style="color:#C5CCD1">â€º</span></button>`).join("")}</div>`:""}
+  ${openTasks.length?`<div class="panel"><div class="ph">✅ Offene Aufgaben · heute &amp; überfällig · ${openTasks.length}</div>${openTasks.slice(0,10).map(t=>`<button class="fi" onclick="App.openDetail('${t.pl}','${t.itemId}')"><input type="checkbox" onclick="event.stopPropagation()" onchange="App.toggleTask('${t.pl}','${t.itemId}','${t.taskId}')" style="accent-color:var(--g);cursor:pointer"><span class="ft">${esc(t.text)}</span><span class="fc" style="${isOD(t.due)?'color:var(--red)':''}">${esc(t.name)} · ${isOD(t.due)?'überfällig':'heute'}</span><span style="color:#C5CCD1">›</span></button>`).join("")}</div>`:""}
     ${this.projectTodayPanel()}
-  ${orph.length?`<div class="alert-bar">âš  <b>${orph.length} verwaiste Akte(n)</b> ohne nÃ¤chste Aktion: ${esc(orph.map(o=>o.name).join(", "))}</div>`:""}
-  <div class="panel" id="funnel-box" style="margin-bottom:14px"><div class="hl">CONVERSION-FUNNEL wird geladenâ€¦</div></div>
+  ${orph.length?`<div class="alert-bar">⚠ <b>${orph.length} verwaiste Akte(n)</b> ohne nächste Aktion: ${esc(orph.map(o=>o.name).join(", "))}</div>`:""}
+  <div class="panel" id="funnel-box" style="margin-bottom:14px"><div class="hl">CONVERSION-FUNNEL wird geladen…</div></div>
   <div class="g2">
-   <div class="panel"><div class="ph">Akquise â€“ heiÃŸe Phase <span style="margin-left:auto;font-weight:600;color:var(--a)">${pipeWert} Leads</span></div>
-    ${hot.length?hot.map(l=>`<div class="mi" onclick="App.show('akquise')">${esc(l.name)} Â· ${slabel(l.stage,"acq")}</div>`).join(""):`<div class="empty">Nichts offen.</div>`}</div>
-   <div class="panel"><div class="ph">Kunden â€“ Aufmerksamkeit nÃ¶tig</div>
-    ${attn.length?attn.map(c=>`<div class="mi" onclick="App.show('kunden')">${esc(c.name)} Â· ${slabel(c.phase,"cli")}</div>`).join(""):`<div class="empty">Alles grÃ¼n.</div>`}</div>
+   <div class="panel"><div class="ph">Akquise – heiße Phase <span style="margin-left:auto;font-weight:600;color:var(--a)">${pipeWert} Leads</span></div>
+    ${hot.length?hot.map(l=>`<div class="mi" onclick="App.show('akquise')">${esc(l.name)} · ${slabel(l.stage,"acq")}</div>`).join(""):`<div class="empty">Nichts offen.</div>`}</div>
+   <div class="panel"><div class="ph">Kunden – Aufmerksamkeit nötig</div>
+    ${attn.length?attn.map(c=>`<div class="mi" onclick="App.show('kunden')">${esc(c.name)} · ${slabel(c.phase,"cli")}</div>`).join(""):`<div class="empty">Alles grün.</div>`}</div>
   </div>`;
   this.loadFunnel();
 },
@@ -628,14 +628,14 @@ rBoard(w){
 },
 cardH(c,pl,sid){
  const od=isOD(c.next?.due);
- const chips=pl==="acq"?`<div class="chips">${c.twin?'<span class="chip">Twin</span>':''}${c.blueprint?'<span class="chip" style="background:#e8f4ff;color:#0071e3">Agent âœ“</span>':''}${c.demoUrl?`<span class="chip ok">Demo âœ“</span>`:''}${c.psiScore!=null?`<span class="chip" style="background:${c.psiScore>=85?'#ebfbee':c.psiScore>=60?'#fff9e6':'#fff5f5'};color:${c.psiScore>=85?'var(--g)':c.psiScore>=60?'var(--amb)':'var(--red)'}">PSI ${c.psiScore}</span>`:''}${c.trackUrl?`<span class="chip live">Track âœ“</span>`:''}${c.briefSent?`<span class="chip hot2">âœ‰ Brief</span>`:''}${c.buildPages?`<span class="chip">${c.buildPages}p</span>`:''}</div>`:"";
+ const chips=pl==="acq"?`<div class="chips">${c.twin?'<span class="chip">Twin</span>':''}${c.blueprint?'<span class="chip" style="background:#e8f4ff;color:#0071e3">Agent ✓</span>':''}${c.demoUrl?`<span class="chip ok">Demo ✓</span>`:''}${c.psiScore!=null?`<span class="chip" style="background:${c.psiScore>=85?'#ebfbee':c.psiScore>=60?'#fff9e6':'#fff5f5'};color:${c.psiScore>=85?'var(--g)':c.psiScore>=60?'var(--amb)':'var(--red)'}">PSI ${c.psiScore}</span>`:''}${c.trackUrl?`<span class="chip live">Track ✓</span>`:''}${c.briefSent?`<span class="chip hot2">✉ Brief</span>`:''}${c.buildPages?`<span class="chip">${c.buildPages}p</span>`:''}</div>`:"";
 
  const top=pl==="acq"
-  ?`<div class="crow"><div class="cnm">${esc(c.name)}</div>${c.score?`<span class="csc ${c.score>=85?"hot":""}">${c.score}</span>`:""}</div><div class="csub">${esc(c.branche||"")} Â· ${esc(c.ort||"")}</div>${chips}`
-  :`<div class="crow"><span class="dot9" style="background:${hC(c.health)};margin-top:3px"></span><div class="cnm" style="flex:1">${esc(c.name)}</div>${c.mrr?`<span class="cmrr">${fmt(c.mrr)}â‚¬</span>`:""}</div><div class="csub" style="margin-left:17px">${esc(c.branche||"")} Â· ${esc(c.paket||"")}</div>`;
+  ?`<div class="crow"><div class="cnm">${esc(c.name)}</div>${c.score?`<span class="csc ${c.score>=85?"hot":""}">${c.score}</span>`:""}</div><div class="csub">${esc(c.branche||"")} · ${esc(c.ort||"")}</div>${chips}`
+  :`<div class="crow"><span class="dot9" style="background:${hC(c.health)};margin-top:3px"></span><div class="cnm" style="flex:1">${esc(c.name)}</div>${c.mrr?`<span class="cmrr">${fmt(c.mrr)}€</span>`:""}</div><div class="csub" style="margin-left:17px">${esc(c.branche||"")} · ${esc(c.paket||"")}</div>`;
  const tagchips=(c.tags||[]).length?`<div class="chips">${c.tags.slice(0,4).map(t=>`<span class="chip tagchip">${esc(t)}</span>`).join("")}</div>`:"";
  return`<div class="card" draggable="true" ondragstart="App.dStart(event,'${pl}','${c.id}','${sid}')" ondragend="App.dEnd()" onclick="App.openDetail('${pl}','${c.id}')" style="cursor:pointer">
-  ${top}${tagchips}${c.next?.label?`<div class="cnxt ${od?"od":""}">â± <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.next.label)}</span></div>`:""}
+  ${top}${tagchips}${c.next?.label?`<div class="cnxt ${od?"od":""}">⏱ <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.next.label)}</span></div>`:""}
  </div>`;
 },
 dStart(e,pl,id,from){this.drag={pl,id,from};setTimeout(()=>this.renderAll(),0);},
@@ -655,13 +655,13 @@ renderModal(){
  const m=this.modal,au=AUT[m.pl][m.to]||["Status aktualisiert"];
  R.innerHTML=`<div class="ov" onclick="if(event.target===this&&!App.modal.running)App.closeModal()">
   <div class="mo">
-   <div style="display:flex;align-items:center"><h3>Statuswechsel</h3>${m.running?"":`<button class="xb" onclick="App.closeModal()">Ã—</button>`}</div>
-   <div class="tline">${bdg(m.from,m.pl)} <span style="color:#B8C0C6">â†’</span> ${bdg(m.to,m.pl,true)}</div>
-   ${m.running?`<div class="abox"><div class="ah">Automationen laufen</div>${m.steps.map((s,i)=>`<div class="astep ${m.done.includes(i)?"done":"pending"}"><span class="ai">${m.done.includes(i)?"âœ“":"â—‹"}</span>${s}</div>`).join("")}</div>`
-   :`${m.fields.map(f=>`<div class="mf"><label>${f.l} *</label>${f.t==="sel"?`<select onchange="App.modal.vals['${f.k}']=this.value;App.mValid()"><option value="">â€“ wÃ¤hlen â€“</option>${f.o.map(o=>`<option>${o}</option>`).join("")}</select>`:`<input type="number" oninput="App.modal.vals['${f.k}']=this.value;App.mValid()">`}</div>`).join("")}
-   <div class="mf"><label>Notiz / Grund * (Audit-Trail)</label><textarea rows="2" placeholder="Kontext fÃ¼r die Timelineâ€¦" oninput="App.modal.note=this.value;App.mValid()"></textarea></div>
-   <div class="abox"><div class="ah">Wird automatisch ausgelÃ¶st</div>${au.map(a=>`<div class="astep pending"><span class="ai">â—‹</span>${a}</div>`).join("")}</div>
-   <button class="btn bi" id="cb" style="width:100%" disabled onclick="App.confirmMove()">Wechsel bestÃ¤tigen</button>`}
+   <div style="display:flex;align-items:center"><h3>Statuswechsel</h3>${m.running?"":`<button class="xb" onclick="App.closeModal()">×</button>`}</div>
+   <div class="tline">${bdg(m.from,m.pl)} <span style="color:#B8C0C6">→</span> ${bdg(m.to,m.pl,true)}</div>
+   ${m.running?`<div class="abox"><div class="ah">Automationen laufen</div>${m.steps.map((s,i)=>`<div class="astep ${m.done.includes(i)?"done":"pending"}"><span class="ai">${m.done.includes(i)?"✓":"○"}</span>${s}</div>`).join("")}</div>`
+   :`${m.fields.map(f=>`<div class="mf"><label>${f.l} *</label>${f.t==="sel"?`<select onchange="App.modal.vals['${f.k}']=this.value;App.mValid()"><option value="">– wählen –</option>${f.o.map(o=>`<option>${o}</option>`).join("")}</select>`:`<input type="number" oninput="App.modal.vals['${f.k}']=this.value;App.mValid()">`}</div>`).join("")}
+   <div class="mf"><label>Notiz / Grund * (Audit-Trail)</label><textarea rows="2" placeholder="Kontext für die Timeline…" oninput="App.modal.note=this.value;App.mValid()"></textarea></div>
+   <div class="abox"><div class="ah">Wird automatisch ausgelöst</div>${au.map(a=>`<div class="astep pending"><span class="ai">○</span>${a}</div>`).join("")}</div>
+   <button class="btn bi" id="cb" style="width:100%" disabled onclick="App.confirmMove()">Wechsel bestätigen</button>`}
   </div></div>`;
 },
 mValid(){const m=this.modal;if(!m)return;const ok=m.note.trim().length>=3&&m.fields.every(f=>m.vals[f.k]);const b=document.getElementById("cb");if(b)b.disabled=!ok;},
@@ -677,57 +677,57 @@ applyMove(){
  let wonLead=null;
  if(m.pl==="acq"){
   const lead=s.leads.find(l=>l.id===m.id);ev.entity=lead.name;Object.assign(lead,m.vals,{stage:m.to});
-  const nx={letter_sent:["Klick-Tracking + Wiedervorlage",10],engaged:["RÃ¼ckruf (SLA 1h)",0],offer_sent:["Angebot nachfassen",3],nurture:["Wiedervorlage",90],in_conversation:["Follow-up senden",2]}[m.to];
+  const nx={letter_sent:["Klick-Tracking + Wiedervorlage",10],engaged:["Rückruf (SLA 1h)",0],offer_sent:["Angebot nachfassen",3],nurture:["Wiedervorlage",90],in_conversation:["Follow-up senden",2]}[m.to];
   if(nx)lead.next={label:nx[0],due:dP(nx[1])};
-  if(m.to==="won"){wonLead=lead;s.clients.unshift({id:uid(),name:lead.name,branche:lead.branche,ort:lead.ort,phase:"onboarding",health:75,mrr:+m.vals.mrr||0,paket:m.vals.paket||"Premium",auftragswert:+m.vals.auftragswert||0,demoUrl:lead.demoUrl||"",twin:lead.twin||null,buildPages:lead.buildPages||1,next:{label:"Onboarding-Mail senden",due:today()}});s.events.push({id:uid(),ts:Date.now(),pipeline:"cli",from:"â€”",to:"onboarding",actor:"System",entity:lead.name,note:"Client-Akte aus Won erzeugt"});}
+  if(m.to==="won"){wonLead=lead;s.clients.unshift({id:uid(),name:lead.name,branche:lead.branche,ort:lead.ort,phase:"onboarding",health:75,mrr:+m.vals.mrr||0,paket:m.vals.paket||"Premium",auftragswert:+m.vals.auftragswert||0,demoUrl:lead.demoUrl||"",twin:lead.twin||null,buildPages:lead.buildPages||1,next:{label:"Onboarding-Mail senden",due:today()}});s.events.push({id:uid(),ts:Date.now(),pipeline:"cli",from:"—",to:"onboarding",actor:"System",entity:lead.name,note:"Client-Akte aus Won erzeugt"});}
  }else{
   const c=s.clients.find(x=>x.id===m.id);ev.entity=c.name;Object.assign(c,m.vals,{phase:m.to});
   if(m.to==="at_risk")c.health=Math.min(c.health,45);
   if(m.to==="care_active"&&m.from==="at_risk")c.health=Math.max(c.health,65);
-  const nx={client_review:["Kundenfeedback (7T.)",7],live:["Abnahmeprotokoll",2],at_risk:["Rettungs-Call",0],former:["Win-Back-Wiedervorlage",180],care_active:["Monatszyklus prÃ¼fen",30],production:["Final-Build steuern",5],pre_launch:["Livegang-Checkliste",3],stabilization:["Tag-7-Check-in",7],renewal:["Renewal-GesprÃ¤ch",7],growth:["Mini-Projekt starten",3],paused:["Reaktivierung prÃ¼fen",60],offboarding:["Exit-Call",3],onboarding:["Onboarding-Inputs einsammeln",3]}[m.to];
+  const nx={client_review:["Kundenfeedback (7T.)",7],live:["Abnahmeprotokoll",2],at_risk:["Rettungs-Call",0],former:["Win-Back-Wiedervorlage",180],care_active:["Monatszyklus prüfen",30],production:["Final-Build steuern",5],pre_launch:["Livegang-Checkliste",3],stabilization:["Tag-7-Check-in",7],renewal:["Renewal-Gespräch",7],growth:["Mini-Projekt starten",3],paused:["Reaktivierung prüfen",60],offboarding:["Exit-Call",3],onboarding:["Onboarding-Inputs einsammeln",3]}[m.to];
   if(nx)c.next={label:nx[0],due:dP(nx[1])};if(m.to==="former")c.mrr=0;
  }
  s.events.push(ev);this.modal=null;this.persist();this.closeModal();
- if(wonLead)this.openWonMail(wonLead,ev);else this.toast("Status gewechselt âœ“");
+ if(wonLead)this.openWonMail(wonLead,ev);else this.toast("Status gewechselt ✓");
 },
 openWonMail(lead,ev){
  const v=this.cfg,at=lead.auftragswert||0;
- const txt=`Betreff: Willkommen bei ${v.absFirma||"WebsiteWerk"} â€“ nÃ¤chste Schritte fÃ¼r Ihr Projekt
+ const txt=`Betreff: Willkommen bei ${v.absFirma||"WebsiteWerk"} – nächste Schritte für Ihr Projekt
 
 Guten Tag,
 
-herzlichen Dank fÃ¼r Ihr Vertrauen â€“ wir freuen uns auf die Zusammenarbeit!
+herzlichen Dank für Ihr Vertrauen – wir freuen uns auf die Zusammenarbeit!
 
 Zusammenfassung:
-â€¢ Paket: ${lead.paket||"â€“"}${at?"\nâ€¢ Projektpreis: "+fmt(at)+" â‚¬":""}${+lead.mrr?"\nâ€¢ Pflege monatlich: "+fmt(+lead.mrr)+" â‚¬":""}${ev?.note?"\nâ€¢ Besprochen: "+ev.note:""}
+• Paket: ${lead.paket||"–"}${at?"\n• Projektpreis: "+fmt(at)+" €":""}${+lead.mrr?"\n• Pflege monatlich: "+fmt(+lead.mrr)+" €":""}${ev?.note?"\n• Besprochen: "+ev.note:""}
 
-Damit wir direkt starten kÃ¶nnen, benÃ¶tigen wir von Ihnen:
-1. Logo in hoher AuflÃ¶sung (PNG/SVG/AI)
-2. Eigene Fotos: Team, Betrieb, Referenzen (oder wir nutzen lizenzfreie â€“ sagen Sie Bescheid)
+Damit wir direkt starten können, benötigen wir von Ihnen:
+1. Logo in hoher Auflösung (PNG/SVG/AI)
+2. Eigene Fotos: Team, Betrieb, Referenzen (oder wir nutzen lizenzfreie – sagen Sie Bescheid)
 3. Impressumsdaten: Firmenname, Inhaber, Adresse, ggf. HR-Nr., USt.-ID
 4. Domain-Info: Wo registriert? Zugangsdaten oder Weiterleitungsauftrag
-5. Wunschtermine fÃ¼r kurzes Kickoff (15 Min.)
+5. Wunschtermine für kurzes Kickoff (15 Min.)
 
-Wir haben Ihren Betrieb bereits analysiert und einen fertigen Vorschlag â€“ Sie mÃ¼ssen nichts vorbereiten.
+Wir haben Ihren Betrieb bereits analysiert und einen fertigen Vorschlag – Sie müssen nichts vorbereiten.
 
-Herzliche GrÃ¼ÃŸe
+Herzliche Grüße
 ${v.absName||""}
-${v.absFirma||"WebsiteWerk"} Â· ${v.absOrt||"Aalen"}${v.absTel?"\nTel: "+v.absTel:""}${v.absMail?"\n"+v.absMail:""}`;
+${v.absFirma||"WebsiteWerk"} · ${v.absOrt||"Aalen"}${v.absTel?"\nTel: "+v.absTel:""}${v.absMail?"\n"+v.absMail:""}`;
  document.getElementById("MR").innerHTML=`<div class="ov" onclick="if(event.target===this)App.closeModal()">
   <div class="mo wide">
-   <div style="display:flex;align-items:center"><h3>ðŸŽ‰ Won â€“ Onboarding-Mail</h3><button class="xb" onclick="App.closeModal()">Ã—</button></div>
-   <p class="hint" style="margin-bottom:10px">Client-Akte angelegt. PrÃ¼fen, anpassen, senden:</p>
+   <div style="display:flex;align-items:center"><h3>🎉 Won – Onboarding-Mail</h3><button class="xb" onclick="App.closeModal()">×</button></div>
+   <p class="hint" style="margin-bottom:10px">Client-Akte angelegt. Prüfen, anpassen, senden:</p>
    <textarea id="wmtxt" rows="15" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:9px;font-size:12px;font-family:ui-monospace,monospace">${esc(txt)}</textarea>
    <div style="display:flex;gap:9px;margin-top:11px">
     <button class="btn bi" onclick="navigator.clipboard.writeText(document.getElementById('wmtxt').value);App.toast('Kopiert')">Kopieren</button>
-    <a class="btn bg" id="wmto" href="#" target="_blank">In E-Mail Ã¶ffnen</a>
+    <a class="btn bg" id="wmto" href="#" target="_blank">In E-Mail öffnen</a>
    </div>
   </div></div>`;
  const ls=txt.split("\n");document.getElementById("wmto").href="mailto:?subject="+encodeURIComponent(ls[0].replace("Betreff: ",""))+"&body="+encodeURIComponent(ls.slice(2).join("\n").slice(0,1800));
 },
 
 /* ==========================================================
-   FACTORY ENGINE v4 â€“ Backend-gesteuert
+   FACTORY ENGINE v4 – Backend-gesteuert
    Alle schweren Jobs laufen auf Render (websitewerk-api).
    Das Frontend startet den Job und pollt den Status.
    Keys (Claude, Pexels, Cloudflare) liegen nur auf dem Server.
@@ -738,25 +738,25 @@ fSet(i,state,info){if(!this.fact)return;this.fact.steps[i].state=state;if(info!=
 rFactory(){
  const R=document.getElementById("FR");if(!this.fact){R.innerHTML="";return;}
  const f=this.fact,running=f.steps.some(s=>s.state==="run")||!f.doneAll;
- const ic={pending:"â—‹",run:'<span class="sp"></span>',done:"âœ“",err:"âœ•",skip:"â€”"};
+ const ic={pending:"○",run:'<span class="sp"></span>',done:"✓",err:"✕",skip:"—"};
  R.innerHTML=`<div class="ov" onclick="if(event.target===this&&!${running})App.closeFactory()">
   <div class="mo wide">
    <div style="display:flex;align-items:center;margin-bottom:12px">
-    <div><h3 style="margin-bottom:3px">âš™ Factory-Durchlauf</h3><div style="font-weight:600">${esc(f.name)}</div></div>
-    ${running?"":`<button class="xb" onclick="App.closeFactory()">Ã—</button>`}
+    <div><h3 style="margin-bottom:3px">⚙ Factory-Durchlauf</h3><div style="font-weight:600">${esc(f.name)}</div></div>
+    ${running?"":`<button class="xb" onclick="App.closeFactory()">×</button>`}
    </div>
    ${f.steps.map((s,i)=>`<div class="fstep ${s.state!=="pending"?"f"+s.state:"fpend"}">
     <span class="fnum">${i+1}</span>
     <div class="flab">${s.label}${s.info?`<span class="fi2">${esc(String(s.info).slice(0,200))}</span>`:""}</div>
-    <span class="fic">${ic[s.state]||"â—‹"}</span>
+    <span class="fic">${ic[s.state]||"○"}</span>
    </div>`).join("")}
    ${f.doneAll?`<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px">
-    ${f.demoUrl?`<a class="btn ba" href="${esc(f.demoUrl)}" target="_blank" rel="noopener">Demo Ã¶ffnen â†—</a>`:""}
+    ${f.demoUrl?`<a class="btn ba" href="${esc(f.demoUrl)}" target="_blank" rel="noopener">Demo öffnen ↗</a>`:""}
     ${f.localHtml?`<button class="btn bg" onclick="App.localDemo('${f.leadId}')">Demo lokal</button>`:""}
-    ${f.briefOk?`<button class="btn bg" onclick="App.printBrief('${f.leadId}')">ðŸ–¶ Brief drucken</button>`:""}
-    ${f.pingenReady?`<button class="btn ba" onclick="App.sendPingenBrief('${f.leadId}')">ðŸ“® Brief jetzt versenden (Pingen)</button>`:""}
+    ${f.briefOk?`<button class="btn bg" onclick="App.printBrief('${f.leadId}')">🖶 Brief drucken</button>`:""}
+    ${f.pingenReady?`<button class="btn ba" onclick="App.sendPingenBrief('${f.leadId}')">📮 Brief jetzt versenden (Pingen)</button>`:""}
     <button class="btn bi" onclick="App.closeFactory()">Fertig</button>
-   </div>`:running?`<p class="hint" style="margin-top:12px"><span class="sp"></span> LÃ¤uft â€¦ Fenster offen lassen. ~1â€“3 Min. gesamt.</p>`:""}
+   </div>`:running?`<p class="hint" style="margin-top:12px"><span class="sp"></span> Läuft … Fenster offen lassen. ~1–3 Min. gesamt.</p>`:""}
   </div></div>`;
 },
 closeFactory(){if(this.fact?._poll)clearInterval(this.fact._poll);if(this.fact?._ticker)clearInterval(this.fact._ticker);this.fact=null;document.getElementById("FR").innerHTML="";this.renderAll();},
@@ -765,17 +765,17 @@ closeFactory(){if(this.fact?._poll)clearInterval(this.fact._poll);if(this.fact?.
 async runFactory(lid){
  const lead=this.state.leads.find(l=>l.id===lid);if(!lead)return;
  const apiBase=(this.cfg.apiUrl||"https://websitewerk-api.onrender.com").replace(/\/$/,"");
- /* PrÃ¼fen ob Backend erreichbar */
+ /* Prüfen ob Backend erreichbar */
  try{const h=await fetch(apiBase+"/health");if(!h.ok)throw new Error(h.status);}
- catch(e){this.toast("Backend nicht erreichbar ("+apiBase+") â€“ Einstellungen prÃ¼fen");this.show("einstellungen");return;}
+ catch(e){this.toast("Backend nicht erreichbar ("+apiBase+") – Einstellungen prüfen");this.show("einstellungen");return;}
  this.fact={leadId:lid,name:lead.name,_poll:null,steps:[
-  {label:"Deep Research â€“ Website, Bilder, Schema, Social",state:"pending"},
+  {label:"Deep Research – Website, Bilder, Schema, Social",state:"pending"},
   {label:"Company Twin (Research-Agent)",state:"pending"},
   {label:"Bilder sammeln (Pexels + Unsplash + Pixabay + Openverse)",state:"pending"},
-  {label:"Agentur: Stratege â†’ Texter â†’ Art Director â†’ Motion â†’ QA",state:"pending"},
+  {label:"Agentur: Stratege → Texter → Art Director → Motion → QA",state:"pending"},
   {label:"Frontend-Build: jede Seite individuell",state:"pending"},
   {label:"QA-Gates: Contract, Links, Inhalte",state:"pending"},
-  {label:"Deploy (WordPress-Staging) + PageSpeed-Check",state:"pending"},
+  {label:"Deploy (Cloudflare Pages) + PageSpeed-Check",state:"pending"},
   {label:"Akquise-Brief (Texter-Agent)",state:"pending"},
   {label:"Sales Ready",state:"pending"}
  ],doneAll:false,demoUrl:null,localHtml:false,briefOk:false,pingenReady:false};
@@ -789,7 +789,7 @@ async runFactory(lid){
   if(this.fact){this.fact.doneAll=true;this.rFactory();}
   return;
  }
- this.fSet(0,"run","Backend-Job gestartet â€“ Build lÃ¤uft auf Render (4â€“8 Min)â€¦");
+ this.fSet(0,"run","Backend-Job gestartet – Build läuft auf Render (4–8 Min)…");
  /* Polling alle 3 Sek. */
  const _this=this;
  let lastStep=-1,stuckCount=0;
@@ -812,8 +812,8 @@ async runFactory(lid){
    if(step>lastStep){
     for(let i=lastStep+1;i<step;i++)_this.fSet(i,"done");
     if(step<_this.fact.steps.length){
-     const stepInfo=st.custImgCount>0&&step===3?`${st.buildKb||'?'}KB Â· ${st.custImgCount} Kunden-Bilder`:
-       step===4?`${st.designPack||'Design wird geplantâ€¦'}`:``;
+     const stepInfo=st.custImgCount>0&&step===3?`${st.buildKb||'?'}KB · ${st.custImgCount} Kunden-Bilder`:
+       step===4?`${st.designPack||'Design wird geplant…'}`:``;
      _this.fSet(step,"run",stepInfo);
     }
     lastStep=step;stuckCount=0;
@@ -840,7 +840,7 @@ async runFactory(lid){
     _this.fact.briefOk=!!freshLead?.briefText;
     _this.fact.pingenReady=!!freshLead?.briefText&&!!((_this.cfg.pingenKey||"")||false);
     _this.rFactory();_this.renderAll();
-    if(stuckCount>120)_this.toast("Factory: Timeout nach 6 Min â€“ Status im Board prÃ¼fen");
+    if(stuckCount>120)_this.toast("Factory: Timeout nach 6 Min – Status im Board prüfen");
    }
   }catch(e){console.warn("Poll-Fehler:",e.message);}
  },3000);
@@ -861,48 +861,48 @@ async buildPage(lead,page,allPages){
  const fontD=t.schriftempfehlung?.display||"Playfair Display";
  const fontB=t.schriftempfehlung?.body||"Inter";
  const isStart=page==="Start";
- const sys=`Du bist Senior Creative Director + Lead-Frontend-Entwickler einer deutschen Premium-Webagentur. Du baust EINE vollstÃ¤ndige HTML-Seite.
+ const sys=`Du bist Senior Creative Director + Lead-Frontend-Entwickler einer deutschen Premium-Webagentur. Du baust EINE vollständige HTML-Seite.
 
 ABSOLUTE REGELN:
 - Antworte NUR mit HTML beginnend mit <!DOCTYPE html>. KEIN Markdown.
-- Alle CSS inline im <style>-Tag. Minimales JS fÃ¼r Hamburger-MenÃ¼ ok.
+- Alle CSS inline im <style>-Tag. Minimales JS für Hamburger-Menü ok.
 - Google Fonts per @import erlaubt.
-- Echte Pexels-Bilder (unten bereitgestellt) als <img> einbauen â€“ NICHT weglassen.
-- Sprache: Deutsch. Kein Englisch auÃŸer bei Fachbegriffen.
-- Mobile-first, responsive, sauber auf 360pxâ€“1440px.
-- Navigation: links Logo-Platzhalter (Text: "${lead.name}"), rechts MenÃ¼links, Hamburger mobile.
-- ALLE Seiten haben dieselbe Navigation: ${allPages.join(", ")} â†’ Links: ${allPages.map(p=>`href="${p==="Start"?"index":slug(p)}.html"`).join(", ")}
+- Echte Pexels-Bilder (unten bereitgestellt) als <img> einbauen – NICHT weglassen.
+- Sprache: Deutsch. Kein Englisch außer bei Fachbegriffen.
+- Mobile-first, responsive, sauber auf 360px–1440px.
+- Navigation: links Logo-Platzhalter (Text: "${lead.name}"), rechts Menülinks, Hamburger mobile.
+- ALLE Seiten haben dieselbe Navigation: ${allPages.join(", ")} → Links: ${allPages.map(p=>`href="${p==="Start"?"index":slug(p)}.html"`).join(", ")}
 - Diese Seite ist: "${page}"
-- Footer: Â© ${new Date().getFullYear()} ${lead.name} Â· <a href="impressum.html">Impressum</a> Â· <a href="datenschutz.html">Datenschutz</a> (Platzhalter-Links, kein echter Text)
+- Footer: © ${new Date().getFullYear()} ${lead.name} · <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> (Platzhalter-Links, kein echter Text)
 - VORSCHAU-Badge: position:fixed;bottom:12px;right:12px;background:${col};color:white;font-size:10px;padding:4px 8px;border-radius:4px;font-family:monospace;z-index:9999; Text: "VORSCHAU"
-- Keine erfundenen Bewertungen, Zertifikate, Ã–ffnungszeiten, Teamnamen, Preise.
+- Keine erfundenen Bewertungen, Zertifikate, Öffnungszeiten, Teamnamen, Preise.
 - Design: INDIVIDUELL. Farben: Akzent ${col}, BG ${colBg}, Text ${colText}.
-- Fonts: @import "${fontD}" fÃ¼r Headlines, "${fontB}" fÃ¼r FlieÃŸtext.
-- Conversion-Ziel Ã¼berall prÃ¤sent: ${t.conversion_ziel||"Anfrage"}${lead.phone?'. Tel-Link: <a href="tel:'+lead.phone+'">'+lead.phone+'</a>':""}
-- Jede Seite hat ihre eigene Sektion-Architektur â€“ nicht jede Seite gleich!
+- Fonts: @import "${fontD}" für Headlines, "${fontB}" für Fließtext.
+- Conversion-Ziel überall präsent: ${t.conversion_ziel||"Anfrage"}${lead.phone?'. Tel-Link: <a href="tel:'+lead.phone+'">'+lead.phone+'</a>':""}
+- Jede Seite hat ihre eigene Sektion-Architektur – nicht jede Seite gleich!
 - Kommerziell sauber: Alle Bilder Pexels License (OK). Attributionshinweis als HTML-Kommentar.`;
 
  const seitenInhalt={
-  "Start":`Hero (groÃŸ, atmosphÃ¤risch, Pexels-Bild als volle HÃ¶he), Nutzenversprechen, 3 USPs, CTA-Button, LeistungsÃ¼bersicht (3-6 Kacheln), Vertrauen-Sektion (keine Fake-Reviews, echte Aussagen Ã¼ber Arbeitsweise/Werte), CTA-Abschluss.`,
-  "Leistungen":`AusfÃ¼hrliche Leistungsseite: fÃ¼r jede Leistung eine eigene Sektion mit Icon/Bild, Beschreibung, Nutzen. Breadcrumb oben. Am Ende: Anfrage-Abschnitt.`,
-  "Ãœber uns":`Wer wir sind (allgemein formuliert, kein Fake-Name), Werte, Geschichte (ohne erfundene Jahreszahlen), Arbeitsweise, Team-AtmosphÃ¤re (Pexels-Bild), lokaler Bezug zu ${lead.ort}.`,
+  "Start":`Hero (groß, atmosphärisch, Pexels-Bild als volle Höhe), Nutzenversprechen, 3 USPs, CTA-Button, Leistungsübersicht (3-6 Kacheln), Vertrauen-Sektion (keine Fake-Reviews, echte Aussagen über Arbeitsweise/Werte), CTA-Abschluss.`,
+  "Leistungen":`Ausführliche Leistungsseite: für jede Leistung eine eigene Sektion mit Icon/Bild, Beschreibung, Nutzen. Breadcrumb oben. Am Ende: Anfrage-Abschnitt.`,
+  "Über uns":`Wer wir sind (allgemein formuliert, kein Fake-Name), Werte, Geschichte (ohne erfundene Jahreszahlen), Arbeitsweise, Team-Atmosphäre (Pexels-Bild), lokaler Bezug zu ${lead.ort}.`,
   "Galerie":`Bildergalerie/Portfolio mit CSS-Grid, alle Pexels-Bilder eingebaut, Hover-Effekte, Kategorisierung nach Leistungsbereich. Ohne echte Kundennamen.`,
-  "Kontakt":`Kontaktformular (action="#", method="post" â€“ Platzhalter), Kontaktdaten (Telefon falls vorhanden, Adresse Platzhalter), Anfahrtskarte (Platzhalter-Box), Ã–ffnungszeiten-Sektion (allgemein, nicht erfunden).`,
+  "Kontakt":`Kontaktformular (action="#", method="post" – Platzhalter), Kontaktdaten (Telefon falls vorhanden, Adresse Platzhalter), Anfahrtskarte (Platzhalter-Box), Öffnungszeiten-Sektion (allgemein, nicht erfunden).`,
   "Preise":`Preistabellen-Sektion mit 2-3 Paketen (allgemeine Beschreibung, KEINE konkreten Preise), Vergleichstabelle, FAQ-Abschnitt.`,
-  "FAQ":`12-15 hÃ¤ufige Fragen und Antworten als Accordion, spezifisch fÃ¼r ${lead.branche} in ${lead.ort}.`,
-  "Blog":`Blog-Ãœbersicht mit 4-6 Muster-Artikelkarten (allgemeine Themen der Branche, kein erfundener spezifischer Inhalt), Such-Feld-Platzhalter.`
- }[page]||`VollstÃ¤ndige Seite fÃ¼r "${page}": relevante Inhalte fÃ¼r ${lead.branche}, professionell strukturiert, mit Pexels-Bildern, Kontakt-CTA.`;
+  "FAQ":`12-15 häufige Fragen und Antworten als Accordion, spezifisch für ${lead.branche} in ${lead.ort}.`,
+  "Blog":`Blog-Übersicht mit 4-6 Muster-Artikelkarten (allgemeine Themen der Branche, kein erfundener spezifischer Inhalt), Such-Feld-Platzhalter.`
+ }[page]||`Vollständige Seite für "${page}": relevante Inhalte für ${lead.branche}, professionell strukturiert, mit Pexels-Bildern, Kontakt-CTA.`;
 
  const usr=`Seite: "${page}"
 Firma: ${lead.name} | Branche: ${lead.branche} | Ort: ${lead.ort}
-Tel: ${lead.phone||"â€“"} | Website alt: ${lead.website||"â€“"}
+Tel: ${lead.phone||"–"} | Website alt: ${lead.website||"–"}
 Twin: ${JSON.stringify({leistungen:t.leistungen,staerken:t.staerken,zielgruppe:t.zielgruppe,usps:t.usps,tonalitaet:t.tonalitaet},null,1).slice(0,2000)}
 
-Seitenstruktur fÃ¼r "${page}":
+Seitenstruktur für "${page}":
 ${seitenInhalt}
 
 PEXELS-BILDER (einbauen!):
-${imgTags.slice(0,4).join("\n\n")||"<!-- Keine Bilder verfÃ¼gbar â€“ CSS-Gradient als Ersatz -->"}`;
+${imgTags.slice(0,4).join("\n\n")||"<!-- Keine Bilder verfügbar – CSS-Gradient als Ersatz -->"}`;
 
  let html=await this.aiCall(sys,usr,8000);
  html=html.replace(/^```html\s*/i,"").replace(/```\s*$/,"").trim();
@@ -914,19 +914,19 @@ qaGates(lead,pages){
  const bl=[],ok=[];
  const html=Object.values(pages).join("\n");
  const lo=html.toLowerCase();
- if(!lo.includes("<!doctype"))bl.push("Kein gÃ¼ltiges HTML");else ok.push("HTML5 âœ“");
- if(html.length<10000)bl.push("Builds zu kurz (<10KB)");else ok.push("LÃ¤nge âœ“");
- if(!html.includes(lead.name.split(" ")[0]))bl.push("Firmenname fehlt");else ok.push("Firmenname âœ“");
- if(!lo.includes("viewport"))bl.push("Kein Mobile-Viewport");else ok.push("Mobile âœ“");
- if(!lo.includes("impressum"))bl.push("Impressum-Platzhalter fehlt");else ok.push("Impressum âœ“");
- if(!lo.includes("datenschutz"))bl.push("Datenschutz-Platzhalter fehlt");else ok.push("Datenschutz âœ“");
- if(!lo.includes("nav")||!lo.includes("menu"))bl.push("Navigation evtl. fehlt");else ok.push("Navigation âœ“");
+ if(!lo.includes("<!doctype"))bl.push("Kein gültiges HTML");else ok.push("HTML5 ✓");
+ if(html.length<10000)bl.push("Builds zu kurz (<10KB)");else ok.push("Länge ✓");
+ if(!html.includes(lead.name.split(" ")[0]))bl.push("Firmenname fehlt");else ok.push("Firmenname ✓");
+ if(!lo.includes("viewport"))bl.push("Kein Mobile-Viewport");else ok.push("Mobile ✓");
+ if(!lo.includes("impressum"))bl.push("Impressum-Platzhalter fehlt");else ok.push("Impressum ✓");
+ if(!lo.includes("datenschutz"))bl.push("Datenschutz-Platzhalter fehlt");else ok.push("Datenschutz ✓");
+ if(!lo.includes("nav")||!lo.includes("menu"))bl.push("Navigation evtl. fehlt");else ok.push("Navigation ✓");
  if(/[4-5][.,][0-9]\s*(sterne|stars|bewertung)/i.test(html))bl.push("Fake-Bewertungs-Verdacht");
- if(!bl.length)ok.push("Keine Blocker â€“ Sales Ready");
+ if(!bl.length)ok.push("Keine Blocker – Sales Ready");
  return{blockers:bl,passed:ok};
 },
 
-/* WordPress-Staging Direct Upload â€“ Multi-File */
+/* Cloudflare Pages Direct Upload – Multi-File */
 async deployCF(lead,pages){
  const sl=slug(lead.name),result=await this.deployCFPages(lead,pages,sl);
  return result;
@@ -941,7 +941,7 @@ async deployCFPages(lead,pages,projectSlug){
   fd.append("/demos/"+projectSlug+"/"+fname,new Blob([html],{type:"text/html"}),fname);
  }
  /* Impressum + Datenschutz Platzhalter */
- const legal="<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Platzhalter</title></head><body style='font-family:system-ui;padding:40px;max-width:800px;margin:0 auto'><h1>Rechtlicher Hinweis</h1><p>Diese Seite wird vom Kunden mit finalen Rechtstexten befÃ¼llt (Empfehlung: eRecht24 / IT-Recht Kanzlei).</p><p><a href='index.html'>â† ZurÃ¼ck</a></p></body></html>";
+ const legal="<!DOCTYPE html><html lang='de'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Platzhalter</title></head><body style='font-family:system-ui;padding:40px;max-width:800px;margin:0 auto'><h1>Rechtlicher Hinweis</h1><p>Diese Seite wird vom Kunden mit finalen Rechtstexten befüllt (Empfehlung: eRecht24 / IT-Recht Kanzlei).</p><p><a href='index.html'>← Zurück</a></p></body></html>";
  manifest["/demos/"+projectSlug+"/impressum.html"]={hash:"aaaa0001",size:legal.length,httpStatus:200,contentType:"text/html"};
  manifest["/demos/"+projectSlug+"/datenschutz.html"]={hash:"aaaa0002",size:legal.length,httpStatus:200,contentType:"text/html"};
  fd.append("/demos/"+projectSlug+"/impressum.html",new Blob([legal],{type:"text/html"}),"impressum.html");
@@ -957,7 +957,7 @@ async deployCFPages(lead,pages,projectSlug){
 /* Kunden-Dashboard (wird deployed und an Kunden weitergegeben) */
 buildClientDash(lead,demoUrl){
  const t=lead.twin||{},col=t.farbwelt?.akzent||"#E8590C";
- return`<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(lead.name)} â€“ Ihr Webportal</title>
+ return`<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(lead.name)} – Ihr Webportal</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;background:#F4F6F7;color:#1A2530;font-size:14px}
 .hd{background:${col};color:#fff;padding:20px 24px;display:flex;align-items:center;gap:16px}
 .hd h1{font-size:18px;font-weight:700}.hd .sub{font-size:12px;opacity:.8;margin-top:2px}
@@ -993,12 +993,12 @@ buildClientDash(lead,demoUrl){
 
 </style></head>
 <body>
-<div class="hd"><div><h1>${esc(lead.name)}</h1><div class="sub">Ihr persÃ¶nliches Webportal Â· WebsiteWerk</div></div></div>
-<div class="note">ðŸ‘‹ Willkommen! Ihr Webportal zeigt Ihnen den aktuellen Status Ihres Projekts. Bei Fragen jederzeit melden.</div>
+<div class="hd"><div><h1>${esc(lead.name)}</h1><div class="sub">Ihr persönliches Webportal · WebsiteWerk</div></div></div>
+<div class="note">👋 Willkommen! Ihr Webportal zeigt Ihnen den aktuellen Status Ihres Projekts. Bei Fragen jederzeit melden.</div>
 <div class="grid">
  <div class="card"><h3>Projektstatus</h3><div class="val"><span class="status ok">In Bearbeitung</span></div><div class="info">Ihre Website wird individuell nach Ihrem Betrieb aufgebaut und steht bald zur Freigabe bereit.</div></div>
- <div class="card"><h3>Website-Vorschau</h3><div class="val" style="font-size:16px">${demoUrl?"âœ“ Fertig":""}</div><div class="info">${demoUrl?`<a href="${esc(demoUrl)}" target="_blank" style="color:${col};font-weight:600">Vorschau ansehen â†—</a> â€“ unverbindlich, noch nicht final.`:"Wird vorbereitet."}</div></div>
- <div class="card"><h3>NÃ¤chste Schritte</h3><div class="val" style="font-size:14px;font-weight:400;color:#3A4750;line-height:1.6">1. Vorschau ansehen<br>2. Feedback geben<br>3. Freigabe erteilen<br>4. Livegang planen</div></div>
+ <div class="card"><h3>Website-Vorschau</h3><div class="val" style="font-size:16px">${demoUrl?"✓ Fertig":""}</div><div class="info">${demoUrl?`<a href="${esc(demoUrl)}" target="_blank" style="color:${col};font-weight:600">Vorschau ansehen ↗</a> – unverbindlich, noch nicht final.`:"Wird vorbereitet."}</div></div>
+ <div class="card"><h3>Nächste Schritte</h3><div class="val" style="font-size:14px;font-weight:400;color:#3A4750;line-height:1.6">1. Vorschau ansehen<br>2. Feedback geben<br>3. Freigabe erteilen<br>4. Livegang planen</div></div>
  <div class="card"><h3>Ihr Ansprechpartner</h3><div class="val" style="font-size:15px">${esc(this.cfg.absName||"WebsiteWerk")}</div><div class="info">${this.cfg.absTel?`<a href="tel:${esc(this.cfg.absTel)}" style="color:${col}">${esc(this.cfg.absTel)}</a><br>`:""}${this.cfg.absMail?`<a href="mailto:${esc(this.cfg.absMail)}" style="color:${col}">${esc(this.cfg.absMail)}</a>`:""}${!this.cfg.absMail&&!this.cfg.absTel?"Kontaktdaten in den Einstellungen hinterlegen":""}</div></div>
 </div>
 </body></html>`;
@@ -1008,20 +1008,20 @@ buildClientDash(lead,demoUrl){
 async writeBrief(lead,url){
  const v=this.cfg;
  return await this.aiCall(
-  "Du schreibst seriÃ¶se, warme GeschÃ¤ftsbriefe fÃ¼r eine deutsche Webagentur. Kein VerkÃ¤ufer-Jargon. Max. 180 WÃ¶rter. Nur Brieftext, beginnend mit 'Sehr geehrte Damen und Herren,' oder passend. Keine Betreffzeile.",
+  "Du schreibst seriöse, warme Geschäftsbriefe für eine deutsche Webagentur. Kein Verkäufer-Jargon. Max. 180 Wörter. Nur Brieftext, beginnend mit 'Sehr geehrte Damen und Herren,' oder passend. Keine Betreffzeile.",
   `Brief an: ${lead.name}, ${lead.branche}, ${lead.ort}.
 Wir haben den Online-Auftritt analysiert und eine individuelle Website-Vorschau mit ${lead.buildPages||1} Seiten erstellt.
-${url?"Abnahme-Link (prominent nennen, aber nicht aggressive Werbung): "+url:"Vorschau wird persÃ¶nlich gezeigt."}
-Einladung zu Termin oder RÃ¼ckruf.
+${url?"Demo-Link (prominent nennen, aber nicht aggressive Werbung): "+url:"Vorschau wird persönlich gezeigt."}
+Einladung zu Termin oder Rückruf.
 Unterzeichner: ${v.absName||"Inhaber"}, ${v.absFirma||"WebsiteWerk"}, ${v.absOrt||"Aalen"}${v.absTel?", Tel "+v.absTel:""}.
-TonalitÃ¤t: ${lead.twin?.tonalitaet||"professionell, regional vertraut"}. Ehrlich, nicht Ã¼bertrieben.`,900);
+Tonalität: ${lead.twin?.tonalitaet||"professionell, regional vertraut"}. Ehrlich, nicht übertrieben.`,900);
 },
 
 /* Brief drucken */
 printBrief(lid){
  const lead=this.state.leads.find(l=>l.id===lid);if(!lead?.briefText){this.toast("Kein Brief");return;}
  const v=this.cfg,w=window.open("","_blank");
- w.document.write(`<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>Brief â€“ ${esc(lead.name)}</title>
+ w.document.write(`<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><title>Brief – ${esc(lead.name)}</title>
 <style>body{font-family:Georgia,serif;font-size:12pt;line-height:1.55;color:#111;max-width:17cm;margin:2cm auto;padding:0 1cm}
 .abs{font-size:8pt;border-bottom:1px solid #999;padding-bottom:2px;margin-bottom:28px;color:#444}
 .adr{margin-bottom:40px;white-space:pre-line}.dt{text-align:right;margin-bottom:22px}
@@ -1047,10 +1047,10 @@ printBrief(lid){
 .filechip{display:inline-flex;gap:5px;align-items:center;border:1px solid #DDE2E5;border-radius:99px;padding:4px 8px;font-size:11px;margin:4px 4px 0 0;background:#fff}
 
 </style></head><body>
-<div class="abs">${esc(v.absFirma||"WebsiteWerk")} Â· ${esc(v.absStrasse||"")} Â· ${esc(v.absOrt||"")}</div>
+<div class="abs">${esc(v.absFirma||"WebsiteWerk")} · ${esc(v.absStrasse||"")} · ${esc(v.absOrt||"")}</div>
 <div class="adr">${esc(lead.name)}\n${esc(lead.ort||"")}</div>
 <div class="dt">${esc(v.absOrt||"Aalen")}, ${new Date().toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"})}</div>
-<div class="bet">Ihre individuelle Website-Vorschau â€“ ${lead.buildPages||1} fertige Seiten</div>
+<div class="bet">Ihre individuelle Website-Vorschau – ${lead.buildPages||1} fertige Seiten</div>
 <div class="txt">${esc(lead.briefText)}</div>
 <div>${esc(v.absName||"")}${v.absFirma?"<br>"+esc(v.absFirma):""}${v.absTel?"<br>"+esc(v.absTel):""}${v.absMail?"<br>"+esc(v.absMail):""}</div>
 <script>window.print()<\/script></body></html>`);w.document.close();
@@ -1060,14 +1060,14 @@ printBrief(lid){
 async sendPingenBrief(lid){
  const lead=this.state.leads.find(l=>l.id===lid);
  if(!lead?.briefText){this.toast("Kein Brief vorhanden");return;}
- if(!confirm(`Brief an "${lead.name}" via Pingen versenden? Kosten: ~1,50â€“2,50 â‚¬`))return;
+ if(!confirm(`Brief an "${lead.name}" via Pingen versenden? Kosten: ~1,50–2,50 €`))return;
  const apiBase=(this.cfg.apiUrl||"https://websitewerk-api.onrender.com").replace(/\/$/,"");
  try{
   const r=await fetch(apiBase+"/api/factory/pingen",{method:"POST",headers:{"Content-Type":"application/json"},
    body:JSON.stringify({leadId:lid,absName:this.cfg.absName,absFirma:this.cfg.absFirma,absOrt:this.cfg.absOrt})});
   if(!r.ok)throw new Error(await r.text().then(t=>t.slice(0,120)));
   const d=await r.json();
-  if(d.ok){this.toast("âœ‰ï¸ Brief via Pingen versendet!");const fresh=await this.sbLoad();if(fresh){this.state=fresh;this.persist();this.renderAll();}}
+  if(d.ok){this.toast("✉️ Brief via Pingen versendet!");const fresh=await this.sbLoad();if(fresh){this.state=fresh;this.persist();this.renderAll();}}
   else throw new Error(d.error||"Unbekannter Fehler");
  }catch(e){this.toast("Pingen-Fehler: "+e.message.slice(0,100));}
 },
@@ -1076,7 +1076,7 @@ async sendPingenBrief(lid){
 
 localDemo(lid){
  const lead=this.state.leads.find(l=>l.id===lid);
- if(!lead?.buildHtml){this.toast("Kein Build â€“ Factory starten");return;}
+ if(!lead?.buildHtml){this.toast("Kein Build – Factory starten");return;}
  const bh=lead.buildHtml;
  const startHtml=typeof bh==="object"?(bh["index.html"]||bh["Start"]||Object.values(bh)[0]):bh;
  window.open(URL.createObjectURL(new Blob([startHtml],{type:"text/html"})),"_blank");
@@ -1084,12 +1084,12 @@ localDemo(lid){
 
 apiBase(){return (this.cfg.apiUrl||"https://websitewerk-api.onrender.com").replace(/\/$/,"");},
 async reloadFromCloud(){
-  this.toast("Lade Cloud-Datenâ€¦");
+  this.toast("Lade Cloud-Daten…");
   const cloud=await this.sbLoadViaBackend()||(this.cfg.sbUrl&&this.cfg.sbKey?await this.sbLoad():null);
   if(cloud&&(cloud.leads?.length||cloud.clients?.length)){
     this.state=cloud;this.persist();this.renderAll();this.updSync();
-    this.toast("âœ“ "+(cloud.leads?.length||0)+" Leads geladen");
-  }else{this.toast("Keine Cloud-Daten gefunden â€” Backend prÃ¼fen");}
+    this.toast("✓ "+(cloud.leads?.length||0)+" Leads geladen");
+  }else{this.toast("Keine Cloud-Daten gefunden — Backend prüfen");}
 },
 async reloadCloudState(){
  const fresh=await this.sbLoad();
@@ -1101,8 +1101,8 @@ actionName(a){
   patch_links_redeploy:"Links & Navigation fixen + deployen",
   patch_visibility_redeploy:"Sichtbarkeit fixen + deployen",
   redeploy_existing:"Vorhandene Demo neu deployen",
-  qa_existing:"QA erneut prÃ¼fen",
-  reset_factory_flags:"Fehler/Blocker zurÃ¼cksetzen",
+  qa_existing:"QA erneut prüfen",
+  reset_factory_flags:"Fehler/Blocker zurücksetzen",
   tracking_refresh:"Tracking-URL erneuern",
   psi_check:"PageSpeed messen",
   regenerate_brief:"Brief neu schreiben",
@@ -1115,8 +1115,8 @@ async leadAction(lid,action,pageKey){
  if(!lead)return;
  const cheapFree=["patch_links_redeploy","patch_visibility_redeploy","redeploy_existing","qa_existing","reset_factory_flags","tracking_refresh"];
  const cheapClaude=["regenerate_brief","regenerate_single_page"];
- if(!cheapFree.includes(action)&&!confirm((cheapClaude.includes(action)?`Claude-Action: "${this.actionName(action)}" starten?\n\nKosten: ~0,02â€“0,15â‚¬`:`Voller Factory-Run: ~0,50â€“0,80â‚¬. Wirklich?`)))return;
- this.toast("Starte: "+this.actionName(action)+" â€¦");
+ if(!cheapFree.includes(action)&&!confirm((cheapClaude.includes(action)?`Claude-Action: "${this.actionName(action)}" starten?\n\nKosten: ~0,02–0,15€`:`Voller Factory-Run: ~0,50–0,80€. Wirklich?`)))return;
+ this.toast("Starte: "+this.actionName(action)+" …");
  try{
   const r=await fetch(this.apiBase()+"/api/lead/action",{
    method:"POST",
@@ -1135,9 +1135,9 @@ async leadAction(lid,action,pageKey){
    }
   }
   await this.reloadCloudState();
-  this.toast("âœ… "+(d.message||this.actionName(action)+" erledigt")+(d.demoUrl?"\n"+d.demoUrl.slice(0,60):""));
+  this.toast("✅ "+(d.message||this.actionName(action)+" erledigt")+(d.demoUrl?"\n"+d.demoUrl.slice(0,60):""));
  }catch(e){
-  this.toast("âŒ "+e.message.slice(0,100));
+  this.toast("❌ "+e.message.slice(0,100));
   console.error("[Action]",action,e);
  }
 },
@@ -1150,26 +1150,26 @@ _find(pl,id){return (pl==="acq"?this.state.leads:this.state.clients).find(x=>x.i
 addTag(pl,id,tag){tag=(tag||"").trim().replace(/["'<>]/g,"").slice(0,24);if(!tag)return;const it=this._find(pl,id);if(!it)return;it.tags=it.tags||[];if(!it.tags.includes(tag))it.tags.push(tag);this.persist();this.renderAll();if(this.detail)this.renderDrawer();},
 removeTag(pl,id,tag){const it=this._find(pl,id);if(!it)return;it.tags=(it.tags||[]).filter(t=>t!==tag);this.persist();this.renderAll();if(this.detail)this.renderDrawer();},
 addNote(pl,id,text){text=(text||"").trim();if(!text)return;const it=this._find(pl,id);if(!it)return;it.notes=it.notes||[];it.notes.unshift({ts:Date.now(),text:text.slice(0,1000)});this.persist();this.renderDrawer();this.toast("Notiz gespeichert");},
-addTask(pl,id,text,due){text=(text||"").trim();if(!text)return;const it=this._find(pl,id);if(!it)return;it.tasks=it.tasks||[];it.tasks.push({id:uid(),text:text.slice(0,200),due:due||today(),done:false,ts:Date.now()});this.persist();this.renderAll();if(this.detail)this.renderDrawer();this.toast("Aufgabe hinzugefÃ¼gt");},
+addTask(pl,id,text,due){text=(text||"").trim();if(!text)return;const it=this._find(pl,id);if(!it)return;it.tasks=it.tasks||[];it.tasks.push({id:uid(),text:text.slice(0,200),due:due||today(),done:false,ts:Date.now()});this.persist();this.renderAll();if(this.detail)this.renderDrawer();this.toast("Aufgabe hinzugefügt");},
 toggleTask(pl,id,tid){const it=this._find(pl,id);if(!it)return;const t=(it.tasks||[]).find(x=>x.id===tid);if(t)t.done=!t.done;this.persist();this.renderAll();if(this.detail)this.renderDrawer();},
 removeTask(pl,id,tid){const it=this._find(pl,id);if(!it)return;it.tasks=(it.tasks||[]).filter(x=>x.id!==tid);this.persist();this.renderAll();if(this.detail)this.renderDrawer();},
 async genSequence(id){
- this.toast("KI erstellt Cold-E-Mail-Sequenz â€¦ (10â€“20 s)");
+ this.toast("KI erstellt Cold-E-Mail-Sequenz … (10–20 s)");
  try{
   const r=await fetch(this.apiBase()+"/api/lead/sequence",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({leadId:id})});
   const d=await r.json();
-  if(d.ok){const lead=this.state.leads.find(l=>l.id===id);if(lead)lead.emailSequence=d.sequenz;this.renderDrawer();this.toast("âœ“ Sequenz erstellt ("+(d.sequenz||[]).length+" Stufen)");}
+  if(d.ok){const lead=this.state.leads.find(l=>l.id===id);if(lead)lead.emailSequence=d.sequenz;this.renderDrawer();this.toast("✓ Sequenz erstellt ("+(d.sequenz||[]).length+" Stufen)");}
   else this.toast("Fehler: "+(d.error||"unbekannt"));
- }catch(e){this.toast("Backend nicht erreichbar â€“ Einstellungen prÃ¼fen");}
+ }catch(e){this.toast("Backend nicht erreichbar – Einstellungen prüfen");}
 },
 async genLinkedin(id){
- this.toast("KI erstellt LinkedIn-Outreach â€¦ (10â€“20 s)");
+ this.toast("KI erstellt LinkedIn-Outreach … (10–20 s)");
  try{
   const r=await fetch(this.apiBase()+"/api/lead/linkedin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({leadId:id})});
   const d=await r.json();
-  if(d.ok){const lead=this.state.leads.find(l=>l.id===id);if(lead)lead.linkedinOutreach=d.linkedin;this.renderDrawer();this.toast("âœ“ LinkedIn-Outreach erstellt");}
+  if(d.ok){const lead=this.state.leads.find(l=>l.id===id);if(lead)lead.linkedinOutreach=d.linkedin;this.renderDrawer();this.toast("✓ LinkedIn-Outreach erstellt");}
   else this.toast("Fehler: "+(d.error||"unbekannt"));
- }catch(e){this.toast("Backend nicht erreichbar â€“ Einstellungen prÃ¼fen");}
+ }catch(e){this.toast("Backend nicht erreichbar – Einstellungen prüfen");}
 },
 copyText(btn){const st=btn.closest(".seqstep");if(!st)return;const sub=st.querySelector(".seqsub")?.textContent||"";const tx=st.querySelector(".seqtx")?.textContent||"";const full=(sub?"Betreff: "+sub+"\n\n":"")+tx;if(navigator.clipboard)navigator.clipboard.writeText(full);this.toast("In Zwischenablage kopiert");},
 renderDrawer(){
@@ -1185,242 +1185,239 @@ renderDrawer(){
  R.innerHTML=`<div class="dr">
   <div class="drh">
    ${pl==="cli"?`<span class="dot9" style="background:${hC(item.health)};margin-top:4px"></span>`:""}
-   <div style="min-width:0"><div style="font-weight:600">${esc(item.name)}</div><div style="font-size:11px;color:#9AA4AC">${esc(item.branche||"")} Â· ${esc(item.ort||"")}</div></div>
-   <button class="xb" onclick="App.closeDetail()">Ã—</button>
+   <div style="min-width:0"><div style="font-weight:600">${esc(item.name)}</div><div style="font-size:11px;color:#9AA4AC">${esc(item.branche||"")} · ${esc(item.ort||"")}</div></div>
+   <button class="xb" onclick="App.closeDetail()">×</button>
   </div>
   <div class="drb">
-   <!-- â”€â”€ Basis-Infos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Basis-Infos ───────────────────────────────────── -->
    <div class="kv2">
     <div><div class="kl">Status</div>${bdg(sid,pl,true)}</div>
-    ${pl==="acq"?`<div><div class="kl">Score</div><span style="font-family:ui-monospace,monospace;font-weight:600;color:${item.score>=80?"var(--g)":item.score>=60?"var(--amb)":"var(--red)"}">${item.score||"â€“"}</span></div>`:`<div><div class="kl">MRR</div><span style="font-family:ui-monospace,monospace">${fmt(item.mrr)} â‚¬</span></div>`}
-    ${pl==="cli"?`<div><div class="kl">Health</div><span style="font-family:ui-monospace,monospace;color:${hC(item.health)}">${item.health}/100</span></div><div><div class="kl">Paket</div>${esc(item.paket||"â€“")}</div>${item.email?`<div style="grid-column:1/-1"><div class="kl">Portal-E-Mail</div><span style="font-size:12px">${esc(item.email)}</span> ${item.portalToken?'<span class="chip ok">aktiv</span>':'<span class="chip">eingeladen</span>'}</div>`:""}`:""}
-    ${item.website?`<div style="grid-column:1/-1"><div class="kl">Website (alt)</div><a href="${esc(item.website.startsWith("http")?item.website:"https://"+item.website)}" target="_blank" rel="noopener" style="color:var(--muted);font-size:12px">${esc(item.website)} â†—</a></div>`:""}
+    ${pl==="acq"?`<div><div class="kl">Score</div><span style="font-family:ui-monospace,monospace;font-weight:600;color:${item.score>=80?"var(--g)":item.score>=60?"var(--amb)":"var(--red)"}">${item.score||"–"}</span></div>`:`<div><div class="kl">MRR</div><span style="font-family:ui-monospace,monospace">${fmt(item.mrr)} €</span></div>`}
+    ${pl==="cli"?`<div><div class="kl">Health</div><span style="font-family:ui-monospace,monospace;color:${hC(item.health)}">${item.health}/100</span></div><div><div class="kl">Paket</div>${esc(item.paket||"–")}</div>${item.email?`<div style="grid-column:1/-1"><div class="kl">Portal-E-Mail</div><span style="font-size:12px">${esc(item.email)}</span> ${item.portalToken?'<span class="chip ok">aktiv</span>':'<span class="chip">eingeladen</span>'}</div>`:""}`:""}
+    ${item.website?`<div style="grid-column:1/-1"><div class="kl">Website (alt)</div><a href="${esc(item.website.startsWith("http")?item.website:"https://"+item.website)}" target="_blank" rel="noopener" style="color:var(--muted);font-size:12px">${esc(item.website)} ↗</a></div>`:""}
     ${item.phone?`<div><div class="kl">Telefon</div><a href="tel:${esc(item.phone)}" style="font-family:ui-monospace,monospace;font-size:12px">${esc(item.phone)}</a></div>`:""}
    </div>
-   <!-- â”€â”€ NÃ¤chste Aktion â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Nächste Aktion ────────────────────────────────── -->
    <div>
-    <div class="stit">NÃ¤chste Aktion (Pflicht)</div>
-    <input style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px;margin-bottom:7px" value="${esc(item.next?.label||"")}" placeholder="Was passiert als NÃ¤chstes?" onchange="App.setNext('${pl}','${id}','label',this.value)">
+    <div class="stit">Nächste Aktion (Pflicht)</div>
+    <input style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px;margin-bottom:7px" value="${esc(item.next?.label||"")}" placeholder="Was passiert als Nächstes?" onchange="App.setNext('${pl}','${id}','label',this.value)">
     <input type="date" style="border:1px solid #CBD2D6;border-radius:6px;padding:6px 9px;font-size:13px" value="${item.next?.due||today()}" onchange="App.setNext('${pl}','${id}','due',this.value)">
    </div>
-   <!-- â”€â”€ Tags & Segmente â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Tags & Segmente ──────────────────────────────── -->
    <div>
     <div class="stit">Tags &amp; Segmente</div>
-    <div class="tags-row">${(item.tags||[]).map(tg=>`<span class="tagc">${esc(tg)}<button onclick="App.removeTag('${pl}','${id}','${esc(tg)}')">Ã—</button></span>`).join("")||'<span style="font-size:12px;color:#9AA4AC">Keine Tags â€“ z.B. â€žPremium", â€žHeiÃŸ", â€žRegion Aalen"</span>'}</div>
+    <div class="tags-row">${(item.tags||[]).map(tg=>`<span class="tagc">${esc(tg)}<button onclick="App.removeTag('${pl}','${id}','${esc(tg)}')">×</button></span>`).join("")||'<span style="font-size:12px;color:#9AA4AC">Keine Tags – z.B. „Premium", „Heiß", „Region Aalen"</span>'}</div>
     <input class="tag-in" placeholder="Tag eingeben + Enter" onkeydown="if(event.key==='Enter'){event.preventDefault();App.addTag('${pl}','${id}',this.value);this.value='';}">
    </div>
-   <!-- â”€â”€ Notizen-Timeline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Notizen-Timeline ─────────────────────────────── -->
    <div>
     <div class="stit">Notizen</div>
-    <div class="note-add"><textarea id="note-in-${id}" rows="2" placeholder="Notiz, GesprÃ¤chsnotiz, To-do â€¦"></textarea><button class="btn bp" onclick="App.addNote('${pl}','${id}',document.getElementById('note-in-${id}').value)">+ Notiz</button></div>
+    <div class="note-add"><textarea id="note-in-${id}" rows="2" placeholder="Notiz, Gesprächsnotiz, To-do …"></textarea><button class="btn bp" onclick="App.addNote('${pl}','${id}',document.getElementById('note-in-${id}').value)">+ Notiz</button></div>
     <div class="notes">${(item.notes||[]).slice().sort((a,b)=>b.ts-a.ts).map(n=>`<div class="note"><div class="note-t">${new Date(n.ts).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div><div class="note-x">${esc(n.text)}</div></div>`).join("")||'<div style="font-size:12px;color:#9AA4AC">Noch keine Notizen.</div>'}</div>
    </div>
-   <!-- â”€â”€ Aufgaben & Erinnerungen â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Aufgaben & Erinnerungen ──────────────────────── -->
    <div>
     <div class="stit">Aufgaben &amp; Erinnerungen</div>
-    <div class="task-add"><input id="task-in-${id}" placeholder="Aufgabe â€¦" onkeydown="if(event.key==='Enter'){App.addTask('${pl}','${id}',this.value,document.getElementById('task-due-${id}').value);this.value='';}"><input id="task-due-${id}" type="date" value="${today()}"><button class="btn bp" onclick="App.addTask('${pl}','${id}',document.getElementById('task-in-${id}').value,document.getElementById('task-due-${id}').value);document.getElementById('task-in-${id}').value='';">+</button></div>
-    <div class="tasks">${(item.tasks||[]).slice().sort((a,b)=>(a.done-b.done)||((a.due||'')<(b.due||'')?-1:1)).map(t=>`<div class="task ${t.done?'done':''} ${!t.done&&isOD(t.due)?'od':''}"><input type="checkbox" ${t.done?'checked':''} onchange="App.toggleTask('${pl}','${id}','${t.id}')"><span class="tx">${esc(t.text)}</span><span class="td">${t.due?new Date(t.due).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):''}</span><button class="trm" onclick="App.removeTask('${pl}','${id}','${t.id}')">Ã—</button></div>`).join("")||'<div style="font-size:12px;color:#9AA4AC">Keine Aufgaben.</div>'}</div>
+    <div class="task-add"><input id="task-in-${id}" placeholder="Aufgabe …" onkeydown="if(event.key==='Enter'){App.addTask('${pl}','${id}',this.value,document.getElementById('task-due-${id}').value);this.value='';}"><input id="task-due-${id}" type="date" value="${today()}"><button class="btn bp" onclick="App.addTask('${pl}','${id}',document.getElementById('task-in-${id}').value,document.getElementById('task-due-${id}').value);document.getElementById('task-in-${id}').value='';">+</button></div>
+    <div class="tasks">${(item.tasks||[]).slice().sort((a,b)=>(a.done-b.done)||((a.due||'')<(b.due||'')?-1:1)).map(t=>`<div class="task ${t.done?'done':''} ${!t.done&&isOD(t.due)?'od':''}"><input type="checkbox" ${t.done?'checked':''} onchange="App.toggleTask('${pl}','${id}','${t.id}')"><span class="tx">${esc(t.text)}</span><span class="td">${t.due?new Date(t.due).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):''}</span><button class="trm" onclick="App.removeTask('${pl}','${id}','${t.id}')">×</button></div>`).join("")||'<div style="font-size:12px;color:#9AA4AC">Keine Aufgaben.</div>'}</div>
    </div>
    ${pl==="acq"?`
-   <!-- â”€â”€ Cold-E-Mail-Sequenz â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Cold-E-Mail-Sequenz ──────────────────────────── -->
    <div>
-    <div class="stit" style="display:flex;justify-content:space-between;align-items:center">Cold-E-Mail-Sequenz<button class="btn bp" style="font-size:11px;padding:4px 9px" onclick="App.genSequence('${id}')">${(item.emailSequence||[]).length?'â†» Neu':'âœ¦ Generieren'}</button></div>
-    ${(item.emailSequence||[]).length?`<div class="seq">${item.emailSequence.map(st=>`<div class="seqstep"><div class="seqh"><span class="seqn">Stufe ${st.stufe||""}</span><span class="seqw">${st.wartetage===0?"sofort":"+"+(st.wartetage||0)+" Tage"}</span></div><div class="seqsub">${esc(st.betreff||"")}</div><div class="seqtx">${esc(st.text||"")}</div><button class="seqcopy" onclick="App.copyText(this)">Kopieren</button></div>`).join("")}</div>`:'<div style="font-size:12px;color:#9AA4AC">Noch keine Sequenz. â€žGenerieren" erstellt 4 personalisierte Cold-Mails (1 Claude-Call â‰ˆ 0,01 â‚¬).</div>'}
+    <div class="stit" style="display:flex;justify-content:space-between;align-items:center">Cold-E-Mail-Sequenz<button class="btn bp" style="font-size:11px;padding:4px 9px" onclick="App.genSequence('${id}')">${(item.emailSequence||[]).length?'↻ Neu':'✦ Generieren'}</button></div>
+    ${(item.emailSequence||[]).length?`<div class="seq">${item.emailSequence.map(st=>`<div class="seqstep"><div class="seqh"><span class="seqn">Stufe ${st.stufe||""}</span><span class="seqw">${st.wartetage===0?"sofort":"+"+(st.wartetage||0)+" Tage"}</span></div><div class="seqsub">${esc(st.betreff||"")}</div><div class="seqtx">${esc(st.text||"")}</div><button class="seqcopy" onclick="App.copyText(this)">Kopieren</button></div>`).join("")}</div>`:'<div style="font-size:12px;color:#9AA4AC">Noch keine Sequenz. „Generieren" erstellt 4 personalisierte Cold-Mails (1 Claude-Call ≈ 0,01 €).</div>'}
    </div>
-   <!-- â”€â”€ LinkedIn-Outreach â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── LinkedIn-Outreach ────────────────────────────── -->
    <div style="margin-top:14px">
-    <div class="stit" style="display:flex;justify-content:space-between;align-items:center">LinkedIn-Outreach<button class="btn bp" style="font-size:11px;padding:4px 9px" onclick="App.genLinkedin('${id}')">${item.linkedinOutreach?'â†» Neu':'âœ¦ Generieren'}</button></div>
-    ${item.linkedinOutreach?`<div class="seq"><div class="seqstep"><div class="seqh"><span class="seqn">Vernetzungsanfrage</span><span class="seqw">${(item.linkedinOutreach.connectionRequest||"").length}/300</span></div><div class="seqtx">${esc(item.linkedinOutreach.connectionRequest||"")}</div><button class="seqcopy" onclick="App.copyText(this)">Kopieren</button></div>${(item.linkedinOutreach.messages||[]).map(m=>`<div class="seqstep"><div class="seqh"><span class="seqn">Nachricht ${m.stufe||""}</span><span class="seqw">${m.wartetage===0?"nach Annahme":"+"+(m.wartetage||0)+" Tage"}</span></div><div class="seqtx">${esc(m.text||"")}</div><button class="seqcopy" onclick="App.copyText(this)">Kopieren</button></div>`).join("")}</div>`:'<div style="font-size:12px;color:#9AA4AC">Noch keine Nachrichten. â€žGenerieren" erstellt Vernetzungsanfrage + 3 Follow-ups (1 Claude-Call).</div>'}
+    <div class="stit" style="display:flex;justify-content:space-between;align-items:center">LinkedIn-Outreach<button class="btn bp" style="font-size:11px;padding:4px 9px" onclick="App.genLinkedin('${id}')">${item.linkedinOutreach?'↻ Neu':'✦ Generieren'}</button></div>
+    ${item.linkedinOutreach?`<div class="seq"><div class="seqstep"><div class="seqh"><span class="seqn">Vernetzungsanfrage</span><span class="seqw">${(item.linkedinOutreach.connectionRequest||"").length}/300</span></div><div class="seqtx">${esc(item.linkedinOutreach.connectionRequest||"")}</div><button class="seqcopy" onclick="App.copyText(this)">Kopieren</button></div>${(item.linkedinOutreach.messages||[]).map(m=>`<div class="seqstep"><div class="seqh"><span class="seqn">Nachricht ${m.stufe||""}</span><span class="seqw">${m.wartetage===0?"nach Annahme":"+"+(m.wartetage||0)+" Tage"}</span></div><div class="seqtx">${esc(m.text||"")}</div><button class="seqcopy" onclick="App.copyText(this)">Kopieren</button></div>`).join("")}</div>`:'<div style="font-size:12px;color:#9AA4AC">Noch keine Nachrichten. „Generieren" erstellt Vernetzungsanfrage + 3 Follow-ups (1 Claude-Call).</div>'}
    </div>`:""}
    ${pl==="acq"?`
-   <!-- â”€â”€ Build Status Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Build Status Panel ───────────────────────────── -->
    <div>
     <div class="stit">Build & Deploy</div>
     <div class="infobox" style="margin-bottom:9px">
-     <div class="row"><div class="key">Build</div><div class="val">${hasBuild?`âœ… ${item.buildPages||0} Seiten Â· ${buildKb}KB`:"âŒ nicht vorhanden"}</div></div>
-     <div class="row"><div class="key">Design Pack</div><div class="val">${esc(item.designPack||"â€“")}</div></div>
-     <div class="row"><div class="key">Branch</div><div class="val">${esc(bc?.branchCategory||"â€“")}</div></div>
-     <div class="row"><div class="key">Demo</div><div class="val">${item.demoUrl?`<a href="${esc(item.demoUrl)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600">${esc(item.demoUrl).slice(0,45)}â€¦ â†—</a>`:"â€“"}</div></div>
-     <div class="row"><div class="key">Tracking</div><div class="val">${item.trackUrl?`âœ… aktiv <span style="font-size:10px;color:#9AA4AC">(${esc(item.demoSlug||"?")})</span>`:"â€“"}</div></div>
-     <div class="row"><div class="key">PageSpeed</div><div class="val">${item.psiScore!=null?`<span style="font-weight:700;color:${item.psiScore>=85?"var(--g)":item.psiScore>=60?"var(--amb)":"var(--red)"}">${item.psiScore}/100</span> <span style="font-size:10px;color:#9AA4AC">mobile</span>`:"â€“"}</div></div>
-     ${item.blueprint?.motion?`<div class="row"><div class="key">Motion-Tier</div><div class="val">Tier ${item.blueprint.motion.tier} Â· ${esc(item.blueprint.motion.hero_treatment||"")}${item.heroVideo?" Â· ðŸŽ¬ Video":""}</div></div>`:""}
+     <div class="row"><div class="key">Build</div><div class="val">${hasBuild?`✅ ${item.buildPages||0} Seiten · ${buildKb}KB`:"❌ nicht vorhanden"}</div></div>
+     <div class="row"><div class="key">Design Pack</div><div class="val">${esc(item.designPack||"–")}</div></div>
+     <div class="row"><div class="key">Branch</div><div class="val">${esc(bc?.branchCategory||"–")}</div></div>
+     <div class="row"><div class="key">Demo</div><div class="val">${item.demoUrl?`<a href="${esc(item.demoUrl)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600">${esc(item.demoUrl).slice(0,45)}… ↗</a>`:"–"}</div></div>
+     <div class="row"><div class="key">Tracking</div><div class="val">${item.trackUrl?`✅ aktiv <span style="font-size:10px;color:#9AA4AC">(${esc(item.demoSlug||"?")})</span>`:"–"}</div></div>
+     <div class="row"><div class="key">PageSpeed</div><div class="val">${item.psiScore!=null?`<span style="font-weight:700;color:${item.psiScore>=85?"var(--g)":item.psiScore>=60?"var(--amb)":"var(--red)"}">${item.psiScore}/100</span> <span style="font-size:10px;color:#9AA4AC">mobile</span>`:"–"}</div></div>
+     ${item.blueprint?.motion?`<div class="row"><div class="key">Motion-Tier</div><div class="val">Tier ${item.blueprint.motion.tier} · ${esc(item.blueprint.motion.hero_treatment||"")}${item.heroVideo?" · 🎬 Video":""}</div></div>`:""}
      ${item.qaCritique?.qualitaet_score?`<div class="row"><div class="key">QA-Kritiker</div><div class="val"><span style="font-weight:700;color:${item.qaCritique.qualitaet_score>=8?"var(--g)":item.qaCritique.qualitaet_score>=6?"var(--amb)":"var(--red)"}">${item.qaCritique.qualitaet_score}/10</span>${item.qaCritique.kritische_fehler?.length?` <span style="font-size:10px;color:var(--amb)">${item.qaCritique.kritische_fehler.length} Hinweise</span>`:""}</div></div>`:""}
      ${item.imageSources?.length?`<div class="row"><div class="key">Bild-Quellen</div><div class="val" style="font-size:11px">${item.imageSources.map(esc).join(" + ")}</div></div>`:""}
      ${bc?`<div class="row"><div class="key">Seiten-Plan</div><div class="val">${(bc.pages||[]).map(p=>`<span style="font-family:ui-monospace,monospace;font-size:10px;background:#EDF0F2;padding:1px 4px;border-radius:3px;margin:1px">${esc(p.f)}</span>`).join(" ")}</div></div>`:""}
-     ${buildFiles.length?`<div class="row"><div class="key">Deployed Files</div><div class="val" style="font-size:10px;color:#9AA4AC">${buildFiles.map(esc).join(" Â· ")}</div></div>`:""}
+     ${buildFiles.length?`<div class="row"><div class="key">Deployed Files</div><div class="val" style="font-size:10px;color:#9AA4AC">${buildFiles.map(esc).join(" · ")}</div></div>`:""}
     </div>
    </div>
-   <!-- â”€â”€ Fehler & QA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-   ${item.factoryError?`<div class="errbox" style="margin-bottom:8px">âš  Factory Error:<br>${esc(item.factoryError.slice(0,200))}</div>`:""}
-   ${item.deployError?`<div class="errbox" style="margin-bottom:8px">âš  Deploy Error:<br>${esc(item.deployError.slice(0,200))}</div>`:""}
-   ${item.qaBlockers?.length?`<div class="errbox" style="margin-bottom:8px">âŒ QA Blocker (${item.qaBlockers.length}):<br>${item.qaBlockers.map(b=>`â€¢ ${esc(b)}`).join("<br>")}</div>`:""}
-   ${item.qaCritique?.kritische_fehler?.length?`<div style="margin-bottom:8px;padding:8px 10px;background:#fff9e6;border-radius:6px;font-size:12px;color:#856404">ðŸ” QA-Kritiker: ${item.qaCritique.kritische_fehler.map(f=>esc(f)).join("; ")}${item.qaCritique.schnell_fix?`<br><b>Fix:</b> ${esc(item.qaCritique.schnell_fix)}`:""}</div>`:""}
-   ${item.qaPassed?.length&&!item.qaBlockers?.length?`<div class="okbox" style="margin-bottom:8px">âœ… QA OK (${item.qaPassed.length} Checks)</div>`:""}
-   <!-- â”€â”€ Actions: Kostenlos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Fehler & QA ───────────────────────────────────── -->
+   ${item.factoryError?`<div class="errbox" style="margin-bottom:8px">⚠ Factory Error:<br>${esc(item.factoryError.slice(0,200))}</div>`:""}
+   ${item.deployError?`<div class="errbox" style="margin-bottom:8px">⚠ Deploy Error:<br>${esc(item.deployError.slice(0,200))}</div>`:""}
+   ${item.qaBlockers?.length?`<div class="errbox" style="margin-bottom:8px">❌ QA Blocker (${item.qaBlockers.length}):<br>${item.qaBlockers.map(b=>`• ${esc(b)}`).join("<br>")}</div>`:""}
+   ${item.qaCritique?.kritische_fehler?.length?`<div style="margin-bottom:8px;padding:8px 10px;background:#fff9e6;border-radius:6px;font-size:12px;color:#856404">🔍 QA-Kritiker: ${item.qaCritique.kritische_fehler.map(f=>esc(f)).join("; ")}${item.qaCritique.schnell_fix?`<br><b>Fix:</b> ${esc(item.qaCritique.schnell_fix)}`:""}</div>`:""}
+   ${item.qaPassed?.length&&!item.qaBlockers?.length?`<div class="okbox" style="margin-bottom:8px">✅ QA OK (${item.qaPassed.length} Checks)</div>`:""}
+   <!-- ── Actions: Kostenlos ────────────────────────────── -->
    <div>
-    <div class="stit" style="margin-bottom:6px">Actions â€” Kostenlos (kein Claude)</div>
+    <div class="stit" style="margin-bottom:6px">Actions — Kostenlos (kein Claude)</div>
     <div class="action-grid">
      <button class="btn bg action-btn" ${hasBuild?"":"disabled"} onclick="App.leadAction('${id}','patch_links_redeploy')">
-      <span class="act-top"><span>ðŸ”§ Links & Navigation fixen + deployen<small>Hash-Links â†’ .html Dateien, Base-Tag, Nav-Fallback. Kein Claude.</small></span><span class="cost free">0â‚¬</span></span>
+      <span class="act-top"><span>🔧 Links & Navigation fixen + deployen<small>Hash-Links → .html Dateien, Base-Tag, Nav-Fallback. Kein Claude.</small></span><span class="cost free">0€</span></span>
      </button>
      <button class="btn bg action-btn" ${hasBuild?"":"disabled"} onclick="App.leadAction('${id}','patch_visibility_redeploy')">
-      <span class="act-top"><span>ðŸ‘ Sichtbarkeit fixen + deployen<small>Patcht opacity:0 / GSAP-Reveal-Bugs. Kein Claude.</small></span><span class="cost free">0â‚¬</span></span>
+      <span class="act-top"><span>👁 Sichtbarkeit fixen + deployen<small>Patcht opacity:0 / GSAP-Reveal-Bugs. Kein Claude.</small></span><span class="cost free">0€</span></span>
      </button>
      <button class="btn bg action-btn" ${hasBuild?"":"disabled"} onclick="App.leadAction('${id}','redeploy_existing')">
-      <span class="act-top"><span>ðŸš€ Vorhandenes neu deployen<small>Nutzt buildHtml as-is, kein Patch, kein Claude.</small></span><span class="cost free">0â‚¬</span></span>
+      <span class="act-top"><span>🚀 Vorhandenes neu deployen<small>Nutzt buildHtml as-is, kein Patch, kein Claude.</small></span><span class="cost free">0€</span></span>
      </button>
      <button class="btn bg action-btn" ${hasBuild?"":"disabled"} onclick="App.leadAction('${id}','qa_existing')">
-      <span class="act-top"><span>ðŸ” QA erneut prÃ¼fen<small>Contract-Gates: Dateien, Links, Doctype, Mobile, Legal, LÃ¤nge.</small></span><span class="cost free">0â‚¬</span></span>
+      <span class="act-top"><span>🔍 QA erneut prüfen<small>Contract-Gates: Dateien, Links, Doctype, Mobile, Legal, Länge.</small></span><span class="cost free">0€</span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.leadAction('${id}','tracking_refresh')">
-      <span class="act-top"><span>ðŸ”— Tracking-URL erneuern<small>Generiert neue Tracking-URL aus demoUrl + Worker.</small></span><span class="cost free">0â‚¬</span></span>
+      <span class="act-top"><span>🔗 Tracking-URL erneuern<small>Generiert neue Tracking-URL aus demoUrl + Worker.</small></span><span class="cost free">0€</span></span>
      </button>
      <button class="btn bg action-btn" ${item.demoUrl?"":"disabled"} onclick="App.leadAction('${id}','psi_check')">
-      <span class="act-top"><span>âš¡ PageSpeed messen<small>Google PSI (mobile) â€” Performance-Score der Live-Demo.</small></span><span class="cost free">0â‚¬</span></span>
+      <span class="act-top"><span>⚡ PageSpeed messen<small>Google PSI (mobile) — Performance-Score der Live-Demo.</small></span><span class="cost free">0€</span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.leadAction('${id}','reset_factory_flags')">
-      <span class="act-top"><span>ðŸ—‘ Fehler/Blocker zurÃ¼cksetzen<small>LÃ¶scht Factory/Deploy/QA-Fehler aus dem Lead.</small></span><span class="cost free">0â‚¬</span></span>
+      <span class="act-top"><span>🗑 Fehler/Blocker zurücksetzen<small>Löscht Factory/Deploy/QA-Fehler aus dem Lead.</small></span><span class="cost free">0€</span></span>
      </button>
     </div>
    </div>
-   <!-- â”€â”€ Actions: Low-Cost Claude â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Actions: Low-Cost Claude ─────────────────────── -->
    <div>
-    <div class="stit" style="margin-bottom:6px">Actions â€” GÃ¼nstig (Claude)</div>
+    <div class="stit" style="margin-bottom:6px">Actions — Günstig (Claude)</div>
     <div class="action-grid">
      <button class="btn bg action-btn" ${item.twin?"":"disabled"} onclick="App.leadAction('${id}','regenerate_brief')">
-      <span class="act-top"><span>âœ‰ Brief neu schreiben<small>1Ã— Claude-Call (180W). Twin muss vorhanden sein.</small></span><span class="cost low">~0,02â‚¬</span></span>
+      <span class="act-top"><span>✉ Brief neu schreiben<small>1× Claude-Call (180W). Twin muss vorhanden sein.</small></span><span class="cost low">~0,02€</span></span>
      </button>
      ${(bc?.pages||[]).filter(p=>p.type!=='contact').map(p=>`
      <button class="btn bg action-btn" ${hasBuild?"":"disabled"} onclick="App.leadAction('${id}','regenerate_single_page','${esc(p.f)}')">
-      <span class="act-top"><span>ðŸ“„ "${esc(p.t)}" neu bauen<small>${esc(p.f)} â€” 1Ã— Claude-Call. Blueprint+Twin vorhanden.</small></span><span class="cost low">~0,10â‚¬</span></span>
+      <span class="act-top"><span>📄 "${esc(p.t)}" neu bauen<small>${esc(p.f)} — 1× Claude-Call. Blueprint+Twin vorhanden.</small></span><span class="cost low">~0,10€</span></span>
      </button>`).join("")}
     </div>
    </div>
-   <!-- â”€â”€ Actions: Teuer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Actions: Teuer ────────────────────────────────── -->
    <div>
-    <div class="stit" style="margin-bottom:6px">Actions â€” Voller Durchlauf (Teuer)</div>
+    <div class="stit" style="margin-bottom:6px">Actions — Voller Durchlauf (Teuer)</div>
     <div class="action-grid">
      <button class="btn ba action-btn" onclick="App.runFactory('${id}')">
-      <span class="act-top"><span>âš™ Kompletter Factory-Run<small>Research + Twin + Blueprint + alle Seiten + Deploy + Brief. ~0,50â€“0,80â‚¬</small></span><span class="cost high">~0,80â‚¬</span></span>
+      <span class="act-top"><span>⚙ Kompletter Factory-Run<small>Research + Twin + Blueprint + alle Seiten + Deploy + Brief. ~0,50–0,80€</small></span><span class="cost high">~0,80€</span></span>
      </button>
     </div>
    </div>
-   <!-- â”€â”€ Quick-Links â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Quick-Links ────────────────────────────────────── -->
    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:4px">
-    ${hasBuild?`<button class="btn bg bsm" onclick="App.localDemo('${id}')">â—« Lokal ansehen</button>`:""}
-    ${item.demoUrl?`<a class="btn bg bsm" href="${esc(item.demoUrl)}" target="_blank" rel="noopener">Demo Ã¶ffnen â†—</a>`:""}
-    ${item.trackUrl?`<button class="btn bg bsm" onclick="navigator.clipboard.writeText('${esc(item.trackUrl)}');App.toast('Tracking-Link kopiert âœ“')">Track kopieren</button>`:""}
-    ${item.briefText?`<button class="btn bg bsm" onclick="App.printBrief('${id}')">ðŸ–¶ Brief drucken</button>`:""}
-    ${item.briefText&&this.cfg.pingenKey?`<button class="btn ba bsm" onclick="App.sendPingenBrief('${id}')">ðŸ“® Via Pingen senden</button>`:""}
+    ${hasBuild?`<button class="btn bg bsm" onclick="App.localDemo('${id}')">◫ Lokal ansehen</button>`:""}
+    ${item.demoUrl?`<a class="btn bg bsm" href="${esc(item.demoUrl)}" target="_blank" rel="noopener">Demo öffnen ↗</a>`:""}
+    ${item.trackUrl?`<button class="btn bg bsm" onclick="navigator.clipboard.writeText('${esc(item.trackUrl)}');App.toast('Tracking-Link kopiert ✓')">Track kopieren</button>`:""}
+    ${item.briefText?`<button class="btn bg bsm" onclick="App.printBrief('${id}')">🖶 Brief drucken</button>`:""}
+    ${item.briefText&&this.cfg.pingenKey?`<button class="btn ba bsm" onclick="App.sendPingenBrief('${id}')">📮 Via Pingen senden</button>`:""}
    </div>`:""}
    ${t?`<div><div class="stit">Company Twin + Agentur-Output</div>
     <div class="tw">
-     <b>${esc(t.branche_detail||item.branche)}</b> Â· ${esc(t.zielgruppe||"")}
+     <b>${esc(t.branche_detail||item.branche)}</b> · ${esc(t.zielgruppe||"")}
      <div style="margin-top:8px;line-height:1.6">${esc(t.zusammenfassung||"")}</div>
-     ${t.leistungen?.length?`<div style="margin-top:8px"><span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Leistungen</span><br>${esc(t.leistungen.join(" Â· "))}  </div>`:""}
-     ${t.usps?.length?`<div style="margin-top:6px"><span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">USPs</span><br>${esc(t.usps.join(" Â· "))}</div>`:""}
-     ${item.blueprint?.strategy?.kern_emotion?`<div style="margin-top:8px;padding:8px;background:rgba(232,112,74,.07);border-radius:6px;font-size:12px"><b>Stratege:</b> Kern-Emotion "${esc(item.blueprint.strategy.kern_emotion)}" Â· Einwand: "${esc(item.blueprint.strategy.haupteinwand||"â€“")}"</div>`:""}
+     ${t.leistungen?.length?`<div style="margin-top:8px"><span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">Leistungen</span><br>${esc(t.leistungen.join(" · "))}  </div>`:""}
+     ${t.usps?.length?`<div style="margin-top:6px"><span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">USPs</span><br>${esc(t.usps.join(" · "))}</div>`:""}
+     ${item.blueprint?.strategy?.kern_emotion?`<div style="margin-top:8px;padding:8px;background:rgba(232,112,74,.07);border-radius:6px;font-size:12px"><b>Stratege:</b> Kern-Emotion "${esc(item.blueprint.strategy.kern_emotion)}" · Einwand: "${esc(item.blueprint.strategy.haupteinwand||"–")}"</div>`:""}
      ${item.blueprint?.design?.design_these?`<div style="margin-top:6px;padding:8px;background:rgba(47,158,68,.07);border-radius:6px;font-size:12px"><b>Art Director:</b> ${esc(item.blueprint.design.design_these)}</div>`:""}
      ${t.seo_keywords?.length?`<div style="margin-top:6px"><span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">SEO-Keywords</span><br><span style="font-size:11px;color:var(--muted)">${esc(t.seo_keywords.join(", "))}</span></div>`:""}
-     ${t.hinweise?.length?`<div style="margin-top:6px;font-size:11px;color:var(--amb)">âš  ${esc(t.hinweise.join("; "))}</div>`:""}
+     ${t.hinweise?.length?`<div style="margin-top:6px;font-size:11px;color:var(--amb)">⚠ ${esc(t.hinweise.join("; "))}</div>`:""}
     </div></div>`:""}
    ${pl==="cli"?`
-   <!-- â”€â”€ Kunden-Portal-Verwaltung â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Kunden-Portal-Verwaltung ──────────────────────────── -->
    <div>
     <div class="stit">Kunden-Portal</div>
     <div class="infobox" style="margin-bottom:9px">
-     <div class="row"><div class="key">Portal-Zugang</div><div class="val">${item.portalToken?"âœ… Kunde eingeloggt":item.email?"E-Mail hinterlegt":"âŒ keine E-Mail"}</div></div>
-     <div class="row"><div class="key">Live-URL</div><div class="val">${item.liveUrl?`<a href="${esc(item.liveUrl)}" target="_blank" style="color:var(--a)">Ã¶ffnen â†—</a>`:"â€“"}</div></div>
-     <div class="row"><div class="key">Ã„nderungswÃ¼nsche</div><div class="val">${(item.changeRequests||[]).length} offen</div></div>
-     <div class="row"><div class="key">Rechnungen</div><div class="val">${(item.invoices||[]).length?(item.invoices||[]).map(iv=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:3px;flex-wrap:wrap"><span style="font-family:ui-monospace,monospace;font-size:11px">${esc(iv.number||iv.id)}</span><span>${fmt(iv.amount)}â‚¬</span><span class="chip ${iv.status==='bezahlt'?'ok':''}" style="font-size:10px">${esc(iv.status||'offen')}</span><a href="${this.apiBase()}/api/invoice/${esc(iv.id)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600;font-size:11px">PDF â†—</a></div>`).join(''):'0'}</div></div>
-     <div class="row"><div class="key">VertrÃ¤ge</div><div class="val">${(item.contracts||[]).length?(item.contracts||[]).map(ct=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:3px;flex-wrap:wrap"><span style="font-size:11px">${esc(ct.art||'Vertrag')}</span><span class="chip ${ct.status==='angenommen'?'ok':''}" style="font-size:10px">${esc(ct.status||'offen')}</span><a href="${this.apiBase()}/api/contract/${esc(ct.token)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600;font-size:11px">Vertrag â†—</a></div>`).join(''):'0'}</div></div>
+     <div class="row"><div class="key">Portal-Zugang</div><div class="val">${item.portalToken?"✅ Kunde eingeloggt":item.email?"E-Mail hinterlegt":"❌ keine E-Mail"}</div></div>
+     <div class="row"><div class="key">Live-URL</div><div class="val">${item.liveUrl?`<a href="${esc(item.liveUrl)}" target="_blank" style="color:var(--a)">öffnen ↗</a>`:"–"}</div></div>
+     <div class="row"><div class="key">Änderungswünsche</div><div class="val">${(item.changeRequests||[]).length} offen</div></div>
+     <div class="row"><div class="key">Rechnungen</div><div class="val">${(item.invoices||[]).length?(item.invoices||[]).map(iv=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:3px;flex-wrap:wrap"><span style="font-family:ui-monospace,monospace;font-size:11px">${esc(iv.number||iv.id)}</span><span>${fmt(iv.amount)}€</span><span class="chip ${iv.status==='bezahlt'?'ok':''}" style="font-size:10px">${esc(iv.status||'offen')}</span><a href="${this.apiBase()}/api/invoice/${esc(iv.id)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600;font-size:11px">PDF ↗</a></div>`).join(''):'0'}</div></div>
+     <div class="row"><div class="key">Verträge</div><div class="val">${(item.contracts||[]).length?(item.contracts||[]).map(ct=>`<div style="display:flex;gap:8px;align-items:center;margin-bottom:3px;flex-wrap:wrap"><span style="font-size:11px">${esc(ct.art||'Vertrag')}</span><span class="chip ${ct.status==='angenommen'?'ok':''}" style="font-size:10px">${esc(ct.status||'offen')}</span><a href="${this.apiBase()}/api/contract/${esc(ct.token)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600;font-size:11px">Vertrag ↗</a></div>`).join(''):'0'}</div></div>
     </div>
     <div class="mf" style="margin-bottom:8px"><label>Portal-E-Mail des Kunden</label><input id="cli-email-${id}" placeholder="kunde@email.de" value="${esc(item.email||"")}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
     <div class="action-grid">
      <button class="btn bg action-btn" onclick="App.setClientEmail('${id}')">
-      <span class="act-top"><span>ðŸ’¾ Portal-E-Mail speichern<small>Kunde kann sich dann im Portal mit dieser E-Mail anmelden.</small></span></span>
+      <span class="act-top"><span>💾 Portal-E-Mail speichern<small>Kunde kann sich dann im Portal mit dieser E-Mail anmelden.</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.createInvoice('${id}')">
-      <span class="act-top"><span>ðŸ§¾ Rechnung erstellen<small>Erstellt Rechnung (+ Lexoffice falls konfiguriert). Erscheint im Kunden-Portal.</small></span></span>
+      <span class="act-top"><span>🧾 Rechnung erstellen<small>Erstellt Rechnung (+ Lexoffice falls konfiguriert). Erscheint im Kunden-Portal.</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.createContract('${id}')">
-      <span class="act-top"><span>ðŸ“„ Vertrag erstellen<small>Webdesign-Werkvertrag mit Â§Â§ als PDF + digitale Annahme (Link teilbar).</small></span></span>
+      <span class="act-top"><span>📄 Vertrag erstellen<small>Webdesign-Werkvertrag mit §§ als PDF + digitale Annahme (Link teilbar).</small></span></span>
      </button>
      <a class="btn bg action-btn" href="https://websitewerk-demos.pages.dev/portal" target="_blank">
-      <span class="act-top"><span>ðŸ”— Portal Ã¶ffnen<small>Kunden-Portal in neuem Tab ansehen.</small></span></span>
+      <span class="act-top"><span>🔗 Portal öffnen<small>Kunden-Portal in neuem Tab ansehen.</small></span></span>
      </a>
      <button class="btn bg action-btn" onclick="App.sendReport('${id}',false)">
-      <span class="act-top"><span>ðŸ“Š Monatsbericht erstellen<small>Generiert Bericht (PSI + AktivitÃ¤t). Erscheint im Portal.</small></span></span>
+      <span class="act-top"><span>📊 Monatsbericht erstellen<small>Generiert Bericht (PSI + Aktivität). Erscheint im Portal.</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.sendReport('${id}',true)">
-      <span class="act-top"><span>ðŸ“§ Bericht erstellen + mailen<small>Erstellt Bericht und sendet ihn per E-Mail an den Kunden.</small></span></span>
+      <span class="act-top"><span>📧 Bericht erstellen + mailen<small>Erstellt Bericht und sendet ihn per E-Mail an den Kunden.</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.seoCheck('${id}')">
-      <span class="act-top"><span>ðŸ” SEO-Check<small>Onpage-Analyse + Keyword-Rankings (wenn Serper-Key gesetzt).</small></span></span>
+      <span class="act-top"><span>🔍 SEO-Check<small>Onpage-Analyse + Keyword-Rankings (wenn Serper-Key gesetzt).</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.reviewCheck('${id}')">
-      <span class="act-top"><span>â­ Google-Bewertungen prÃ¼fen<small>Aktuelle Sterne + Anzahl (Serper-Key nÃ¶tig).</small></span></span>
+      <span class="act-top"><span>⭐ Google-Bewertungen prüfen<small>Aktuelle Sterne + Anzahl (Serper-Key nötig).</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.phoneSetup('${id}')">
-      <span class="act-top"><span>ðŸ“ž Telefon-KI einrichten<small>Generiert Vapi.ai-Config fÃ¼r Anrufannahme + Termine.</small></span></span>
+      <span class="act-top"><span>📞 Telefon-KI einrichten<small>Generiert Vapi.ai-Config für Anrufannahme + Termine.</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.createBlogArticle('${id}')">
-      <span class="act-top"><span>âœï¸ Blog-Artikel erstellen<small>KI schreibt einen SEO-Ratgeber (Bild + Schema). Lesbare Seite zum Teilen.</small></span></span>
+      <span class="act-top"><span>✍️ Blog-Artikel erstellen<small>KI schreibt einen SEO-Ratgeber (Bild + Schema). Lesbare Seite zum Teilen.</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.createSocialPosts('${id}')">
-      <span class="act-top"><span>ðŸ“£ Social-Posts erstellen<small>LinkedIn Â· Instagram Â· X aus Thema oder letztem Blog-Artikel. Kopierbar.</small></span></span>
+      <span class="act-top"><span>📣 Social-Posts erstellen<small>LinkedIn · Instagram · X aus Thema oder letztem Blog-Artikel. Kopierbar.</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.captureScreenshot('${id}')">
-      <span class="act-top"><span>ðŸ“¸ Demo-Screenshot<small>Erzeugt ein Vorschaubild der Live-/Demo-URL (fÃ¼r Angebote & Social).</small></span></span>
-     </button>
-     <button class="btn bg action-btn" onclick="App.generate3d('${id}')">
-      <span class="act-top"><span>ðŸ§Š 3D-Modell generieren<small>KI (Meshy) erzeugt ein echtes GLB-Modell. Ergebnis kommt per Webhook automatisch.</small></span></span>
+      <span class="act-top"><span>📸 Demo-Screenshot<small>Erzeugt ein Vorschaubild der Live-/Demo-URL (für Angebote & Social).</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.openBuildConfig('${id}')">
-      <span class="act-top"><span>ðŸ­ Konfigurieren & bauen<small>Build-Fenster: Level, Pack, 3D, Output & Kundengenauigkeit vor dem Lauf einstellen.</small></span></span>
+      <span class="act-top"><span>🏭 Konfigurieren & bauen<small>Build-Fenster: Level, Pack, 3D, Output & Kundengenauigkeit vor dem Lauf einstellen.</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.publishWordPress('${id}')">
-      <span class="act-top"><span>ðŸŸ¦ Auf WordPress publishen<small>Schaltet die fertige Seite (Design + BlÃ¶cke) per App-Passwort live. Host-agnostisch.</small></span></span>
+      <span class="act-top"><span>🟦 Auf WordPress publishen<small>Schaltet die fertige Seite (Design + Blöcke) per App-Passwort live. Host-agnostisch.</small></span></span>
      </button>
      <button class="btn bg action-btn" onclick="App.wpHealth('${id}')">
-      <span class="act-top"><span>ðŸ©º WP-Health prÃ¼fen<small>Erreichbarkeit, HTTPS, Ladezeit, Festungs-Plugin + Upsell-Signale.</small></span></span>
+      <span class="act-top"><span>🩺 WP-Health prüfen<small>Erreichbarkeit, HTTPS, Ladezeit, Festungs-Plugin + Upsell-Signale.</small></span></span>
      </button>
     </div>
-    ${item.wpSite?`<div class="infobox" style="margin-top:8px"><b>ðŸŸ¦ WordPress live</b><br><a href="${esc(item.wpSite.pageUrl||item.wpSite.url)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600;font-size:12px">${esc(item.wpSite.pageUrl||item.wpSite.url)} â†—</a><div style="font-size:10px;color:var(--muted);margin-top:2px">${item.wpSite.level?esc(item.wpSite.level)+" Â· ":""}${item.wpSite.pages?item.wpSite.pages+" Seiten Â· ":""}${new Date(item.wpSite.publishedAt).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</div></div>`:""}
-    ${item.wpHealth?`<div class="infobox" style="margin-top:8px"><b>${item.wpHealth.ok?"ðŸŸ¢ Seite gesund":item.wpHealth.reachable?"ðŸŸ¡ Hinweise":"ðŸ”´ Offline"}</b>${item.wpHealth.ms!=null?` Â· ${item.wpHealth.ms} ms`:""}${item.wpHealth.https?" Â· HTTPS":""}${item.wpHealth.fortress?" Â· Festung âœ“":""}${(item.wpHealth.issues||[]).length?`<br><span style="font-size:11px;color:var(--amb)">${item.wpHealth.issues.map(esc).join(" Â· ")}</span>`:""}<div style="font-size:10px;color:var(--muted);margin-top:2px">geprÃ¼ft ${new Date(item.wpHealth.checkedAt).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</div></div>`:""}
-    ${(item.upsellSignals||[]).length?`<div class="infobox" style="margin-top:6px;border-left:3px solid var(--a)"><b style="font-size:11px">ðŸ“ˆ Upsell-Signale</b>${item.upsellSignals.map(s=>`<br><span style="font-size:11px">${esc(s)}</span>`).join("")}</div>`:""}
+    ${item.wpSite?`<div class="infobox" style="margin-top:8px"><b>🟦 WordPress live</b><br><a href="${esc(item.wpSite.pageUrl||item.wpSite.url)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600;font-size:12px">${esc(item.wpSite.pageUrl||item.wpSite.url)} ↗</a><div style="font-size:10px;color:var(--muted);margin-top:2px">${item.wpSite.level?esc(item.wpSite.level)+" · ":""}${item.wpSite.pages?item.wpSite.pages+" Seiten · ":""}${new Date(item.wpSite.publishedAt).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</div></div>`:""}
+    ${item.wpHealth?`<div class="infobox" style="margin-top:8px"><b>${item.wpHealth.ok?"🟢 Seite gesund":item.wpHealth.reachable?"🟡 Hinweise":"🔴 Offline"}</b>${item.wpHealth.ms!=null?` · ${item.wpHealth.ms} ms`:""}${item.wpHealth.https?" · HTTPS":""}${item.wpHealth.fortress?" · Festung ✓":""}${(item.wpHealth.issues||[]).length?`<br><span style="font-size:11px;color:var(--amb)">${item.wpHealth.issues.map(esc).join(" · ")}</span>`:""}<div style="font-size:10px;color:var(--muted);margin-top:2px">geprüft ${new Date(item.wpHealth.checkedAt).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</div></div>`:""}
+    ${(item.upsellSignals||[]).length?`<div class="infobox" style="margin-top:6px;border-left:3px solid var(--a)"><b style="font-size:11px">📈 Upsell-Signale</b>${item.upsellSignals.map(s=>`<br><span style="font-size:11px">${esc(s)}</span>`).join("")}</div>`:""}
     <div style="margin-top:8px"><div class="stit" style="font-size:11px">Domain ${item.domain?`<span class="chip ${item.domain.status==='live'?'ok':''}" style="font-size:10px">${esc(item.domain.status)}</span>`:""}</div>
      <div class="mf" style="margin-bottom:6px"><input id="dom-${id}" placeholder="kundendomain.de" value="${esc(item.domain?.target||"")}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
      <div style="display:flex;gap:6px;margin-bottom:6px">
       <select id="domhost-${id}" style="border:1px solid #CBD2D6;border-radius:6px;padding:7px;font-size:12px">${["strato","ionos","server","cloudflare"].map(h=>`<option value="${h}" ${item.domain?.host===h?"selected":""}>${({strato:"Strato",ionos:"IONOS",server:"Eigener Server",cloudflare:"Cloudflare"})[h]}</option>`).join("")}</select>
       <input id="domip-${id}" placeholder="Server-IP (optional)" value="${esc(item.domain?.serverIp||"")}" style="flex:1;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:12px">
      </div>
-     <button class="btn bg bsm" onclick="App.domainCheck('${id}')">ðŸŒ DNS-Anleitung + prÃ¼fen</button>
+     <button class="btn bg bsm" onclick="App.domainCheck('${id}')">🌐 DNS-Anleitung + prüfen</button>
      <div id="dom-out-${id}" style="margin-top:6px"></div>
     </div>
-    ${item.screenshot?`<div style="margin-top:8px"><div class="stit" style="font-size:11px">Demo-Screenshot</div><a href="${esc(item.screenshot.url)}" target="_blank" rel="noopener"><img src="${esc(item.screenshot.url)}" alt="Screenshot ${esc(item.name)}" style="width:100%;border-radius:8px;border:1px solid var(--border)" loading="lazy"></a><div style="font-size:10px;color:var(--muted);margin-top:3px">Quelle: ${esc(item.screenshot.source||"")} Â· ${new Date(item.screenshot.ts).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</div></div>`:""}
+    ${item.screenshot?`<div style="margin-top:8px"><div class="stit" style="font-size:11px">Demo-Screenshot</div><a href="${esc(item.screenshot.url)}" target="_blank" rel="noopener"><img src="${esc(item.screenshot.url)}" alt="Screenshot ${esc(item.name)}" style="width:100%;border-radius:8px;border:1px solid var(--border)" loading="lazy"></a><div style="font-size:10px;color:var(--muted);margin-top:3px">Quelle: ${esc(item.screenshot.source||"")} · ${new Date(item.screenshot.ts).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</div></div>`:""}
     ${(item.socialPosts||[]).length?`<div style="margin-top:8px"><div class="stit" style="font-size:11px">Social-Posts (${item.socialPosts.length})</div>${item.socialPosts.slice(0,3).map(p=>{const blk=(label,txt,tags)=>txt?`<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">${label}</span><button class="btn bg" style="font-size:10px;padding:2px 8px" onclick="App.copyEl(this)">Kopieren</button></div><div class="copysrc" style="white-space:pre-wrap;font-size:12px;margin-top:3px">${esc(txt)}${tags&&tags.length?"\n\n"+esc(tags.join(" ")):""}</div></div>`:"";return `<div class="infobox" style="margin-bottom:6px"><div style="font-size:11px;color:var(--muted);margin-bottom:2px">${esc(p.thema||"")}</div>${blk("LinkedIn",p.linkedin?.text,p.linkedin?.hashtags)}${blk("Instagram",p.instagram?.text,p.instagram?.hashtags)}${blk("X",p.x?.text)}</div>`;}).join("")}</div>`:""}
-    ${(item.blog||[]).length?`<div style="margin-top:8px"><div class="stit" style="font-size:11px">Blog-Artikel (${item.blog.length})</div>${item.blog.slice(0,6).map(a=>`<div class="infobox" style="margin-bottom:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="flex:1;min-width:160px;font-size:12px"><b>${esc(a.titel)}</b></span><span class="chip" style="font-size:10px">${esc(a.status||'entwurf')}</span><a href="${this.apiBase()}/api/blog/${esc(item.id)}/${esc(a.slug)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600;font-size:11px">Lesen â†—</a></div>`).join('')}</div>`:''}
-    ${item.seoReport?`<div class="infobox" style="margin-top:8px"><b>SEO-Score: ${item.seoReport.onpage?.score||"â€“"}/100</b>${item.seoReport.onpage?.issues?.length?`<br><span style="font-size:11px;color:var(--amb)">${item.seoReport.onpage.issues.slice(0,3).map(esc).join(" Â· ")}</span>`:""}${item.seoReport.rankings?.length?`<br><span style="font-size:11px">Rankings: ${item.seoReport.rankings.map(r=>esc(r.keyword)+": "+(r.position||"&gt;100")).join(" Â· ")}</span>`:""}<br><a href="${this.apiBase()}/api/seo-report/${esc(item.id)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:11px;font-weight:700">SEO-Report PDF â†—</a></div>`:""}
-    ${item.reviewData?`<div class="infobox" style="margin-top:8px"><b>â­ ${item.reviewData.rating} (${item.reviewData.reviews} Bewertungen)</b></div>`:""}
+    ${(item.blog||[]).length?`<div style="margin-top:8px"><div class="stit" style="font-size:11px">Blog-Artikel (${item.blog.length})</div>${item.blog.slice(0,6).map(a=>`<div class="infobox" style="margin-bottom:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="flex:1;min-width:160px;font-size:12px"><b>${esc(a.titel)}</b></span><span class="chip" style="font-size:10px">${esc(a.status||'entwurf')}</span><a href="${this.apiBase()}/api/blog/${esc(item.id)}/${esc(a.slug)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600;font-size:11px">Lesen ↗</a></div>`).join('')}</div>`:''}
+    ${item.seoReport?`<div class="infobox" style="margin-top:8px"><b>SEO-Score: ${item.seoReport.onpage?.score||"–"}/100</b>${item.seoReport.onpage?.issues?.length?`<br><span style="font-size:11px;color:var(--amb)">${item.seoReport.onpage.issues.slice(0,3).map(esc).join(" · ")}</span>`:""}${item.seoReport.rankings?.length?`<br><span style="font-size:11px">Rankings: ${item.seoReport.rankings.map(r=>esc(r.keyword)+": "+(r.position||"&gt;100")).join(" · ")}</span>`:""}<br><a href="${this.apiBase()}/api/seo-report/${esc(item.id)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:11px;font-weight:700">SEO-Report PDF ↗</a></div>`:""}
+    ${item.reviewData?`<div class="infobox" style="margin-top:8px"><b>⭐ ${item.reviewData.rating} (${item.reviewData.reviews} Bewertungen)</b></div>`:""}
     <div class="stit" style="margin-top:14px">Portal-Branding</div>
     <div class="mf" style="margin-bottom:6px"><label>Firmenname (im Portal)</label><input id="br-company-${id}" placeholder="${esc(item.name)}" value="${esc(item.branding?.company||"")}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
     <div class="mf" style="margin-bottom:6px;display:flex;gap:8px;align-items:center"><label style="margin:0">Farbe</label><input type="color" id="br-color-${id}" value="${esc(item.branding?.color||"#e8704a")}" style="width:48px;height:32px;border:1px solid #CBD2D6;border-radius:6px;cursor:pointer"><label style="margin:0;margin-left:8px">Subdomain</label><input id="br-sub-${id}" placeholder="kunde" value="${esc(item.branding?.subdomain||"")}" style="flex:1;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
     <button class="btn bg bsm" onclick="App.setBranding('${id}')">Branding speichern</button>
     ${item.branding?.subdomain?`<div style="font-size:11px;color:#5A6670;margin-top:6px">Portal-Link: <code>websitewerk-portal.pages.dev/?b=${esc(item.branding.subdomain)}</code></div>`:""}
    </div>
-   ${pl==="cli"?`<div><div class="stit" style="display:flex;justify-content:space-between;align-items:center">Projektanfragen / Sprint Desk<button class="btn bg bsm" onclick="App.show('projekte')">Alle Ã¶ffnen</button></div>${this.projectMiniList(id)}</div>`:""}
+   ${pl==="cli"?`<div><div class="stit" style="display:flex;justify-content:space-between;align-items:center">Projektanfragen / Sprint Desk<button class="btn bg bsm" onclick="App.show('projekte')">Alle öffnen</button></div>${this.projectMiniList(id)}</div>`:""}
    `:""}
-   <!-- â”€â”€ Danger Zone â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+   <!-- ── Danger Zone ──────────────────────────────────────── -->
    <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
     <button onclick="App.${pl==='acq'?'deleteLead':'deleteClient'}('${id}')" style="width:100%;padding:8px;border:1px solid var(--red);border-radius:6px;background:none;color:var(--red);font-size:12px;cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(224,49,49,.08)'" onmouseout="this.style.background='none'">
-     ðŸ—‘ ${pl==='acq'?'Lead':'Kunde'} lÃ¶schen
+     🗑 ${pl==='acq'?'Lead':'Kunde'} löschen
     </button>
    </div>
    <div><div class="stit">Timeline</div>
     ${evs.length?evs.slice(0,15).map(e=>`<div class="tli ${e.actor!=="System"?"man":""}">
-     <div class="twh">${new Date(e.ts).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})} ${e.actor==="System"?"âš™":"âœŽ"}</div>
-     <div class="twt">${esc(e.from)} â†’ <b>${esc(e.to)}</b></div>
+     <div class="twh">${new Date(e.ts).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})} ${e.actor==="System"?"⚙":"✎"}</div>
+     <div class="twt">${esc(e.from)} → <b>${esc(e.to)}</b></div>
      ${e.note?`<div class="twn">${esc(e.note)}</div>`:""}
     </div>`).join(""):`<div class="hint">Noch keine Ereignisse.</div>`}
    </div>
@@ -1430,40 +1427,40 @@ setNext(pl,id,k,v){const item=(pl==="acq"?this.state.leads:this.state.clients).f
 async toggleAutoReports(on){
  try{
   const r=await fetch(this.apiBase()+"/api/settings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({autoReports:on})});
-  if(r.ok){this.toast(on?"âœ“ Automatik AN â€” n8n sendet monatlich":"Automatik AUS â€” manuell per Knopfdruck");}
+  if(r.ok){this.toast(on?"✓ Automatik AN — n8n sendet monatlich":"Automatik AUS — manuell per Knopfdruck");}
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async toggleAutoRedeploy(on){
  try{
   const r=await fetch(this.apiBase()+"/api/settings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({autoRedeploy:on})});
-  if(r.ok){this.state.settings=this.state.settings||{};this.state.settings.autoRedeploy=on;this.persist();this.toast(on?"âœ“ Auto-Redeploy AN":"Auto-Redeploy AUS");}
+  if(r.ok){this.state.settings=this.state.settings||{};this.state.settings.autoRedeploy=on;this.persist();this.toast(on?"✓ Auto-Redeploy AN":"Auto-Redeploy AUS");}
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async nlDraft(){
  const thema=(document.getElementById("nl-thema")?.value||"").trim();
- this.toast("âœ¨ KI schreibt Entwurf â€¦");
+ this.toast("✨ KI schreibt Entwurf …");
  try{
   const r=await fetch(this.apiBase()+"/api/newsletter/draft",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({thema:thema||undefined})});
   const d=await r.json();
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   document.getElementById("nl-betreff").value=d.betreff||"";
   document.getElementById("nl-html").value=d.html||"";
-  this.toast("âœ“ Entwurf eingefÃ¼gt â€” prÃ¼fen & senden");
+  this.toast("✓ Entwurf eingefügt — prüfen & senden");
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async nlSend(test){
  const betreff=(document.getElementById("nl-betreff")?.value||"").trim();
  const html=(document.getElementById("nl-html")?.value||"").trim();
  const segment=document.getElementById("nl-seg")?.value||"clients";
- if(!betreff||!html){this.toast("Betreff und Inhalt nÃ¶tig");return;}
- if(!test&&!confirm("Newsletter wirklich an Segment â€ž"+segment+"\" senden?"))return;
- this.toast(test?"âœ‰ï¸ Sende Testmail â€¦":"ðŸš€ Versende Newsletter â€¦");
+ if(!betreff||!html){this.toast("Betreff und Inhalt nötig");return;}
+ if(!test&&!confirm("Newsletter wirklich an Segment „"+segment+"\" senden?"))return;
+ this.toast(test?"✉️ Sende Testmail …":"🚀 Versende Newsletter …");
  try{
   const r=await fetch(this.apiBase()+"/api/newsletter/send",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({betreff,html,segment,test})});
   const d=await r.json();
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
-  if(test)this.toast("âœ“ Testmail gesendet ("+d.sent+")");
-  else{this.toast("âœ“ Gesendet: "+d.sent+"/"+d.recipients+(d.failed?" ("+d.failed+" Fehler)":""));await this.reloadCloudState();}
+  if(test)this.toast("✓ Testmail gesendet ("+d.sent+")");
+  else{this.toast("✓ Gesendet: "+d.sent+"/"+d.recipients+(d.failed?" ("+d.failed+" Fehler)":""));await this.reloadCloudState();}
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async loadFunnel(){
@@ -1473,7 +1470,7 @@ async loadFunnel(){
   const f=await r.json();
   const el=document.getElementById("funnel-box");
   if(el)el.innerHTML=`<div class="hl" style="margin-bottom:10px">CONVERSION-FUNNEL</div><div style="display:flex;gap:8px;flex-wrap:wrap">
-   <div class="hst"><div class="hl">Builds</div><div class="hv">${f.totalBuilds}</div></div>
+   <div class="hst"><div class="hl">Demos</div><div class="hv">${f.totalDemos}</div></div>
    <div class="hst"><div class="hl">Klicks</div><div class="hv">${f.demoClicks}</div></div>
    <div class="hst"><div class="hl">Engaged</div><div class="hv">${f.engaged}</div></div>
    <div class="hst"><div class="hl">Kunden</div><div class="hv" style="color:var(--g)">${f.won}</div></div>
@@ -1482,21 +1479,21 @@ async loadFunnel(){
  }catch(e){}
 },
 async seoCheck(id){
- this.toast("SEO-Analyse lÃ¤uftâ€¦");
+ this.toast("SEO-Analyse läuft…");
  try{
   const r=await fetch(this.apiBase()+"/api/client/seo-check",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id})});
   const d=await r.json();if(!r.ok)throw new Error(d.error);
   await this.reloadCloudState();
-  this.toast("âœ“ SEO-Score: "+(d.onpage?.score||"â€“")+"/100");this.renderDrawer();
+  this.toast("✓ SEO-Score: "+(d.onpage?.score||"–")+"/100");this.renderDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async reviewCheck(id){
- this.toast("Bewertungen werden geprÃ¼ftâ€¦");
+ this.toast("Bewertungen werden geprüft…");
  try{
   const r=await fetch(this.apiBase()+"/api/client/reviews",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id})});
   const d=await r.json();if(!r.ok)throw new Error(d.error);
   await this.reloadCloudState();
-  this.toast("âœ“ "+(d.reviewData?.rating||"?")+"â­ ("+(d.reviewData?.reviews||0)+")");this.renderDrawer();
+  this.toast("✓ "+(d.reviewData?.rating||"?")+"⭐ ("+(d.reviewData?.reviews||0)+")");this.renderDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async phoneSetup(id){
@@ -1505,18 +1502,18 @@ async phoneSetup(id){
   const d=await r.json();if(!r.ok)throw new Error(d.error);
   const cfg=JSON.stringify(d.config,null,2);
   navigator.clipboard.writeText(cfg);
-  this.toast("âœ“ Vapi-Config kopiert â€” bei vapi.ai einfÃ¼gen");
+  this.toast("✓ Vapi-Config kopiert — bei vapi.ai einfügen");
   console.log("Vapi Config:",d.config);
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async sendReport(id,send){
  try{
-  this.toast(send?"Erstelle & sende Berichtâ€¦":"Erstelle Berichtâ€¦");
+  this.toast(send?"Erstelle & sende Bericht…":"Erstelle Bericht…");
   const r=await fetch(this.apiBase()+"/api/client/report",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id,send})});
   const d=await r.json();
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   await this.reloadCloudState();
-  this.toast("âœ“ Bericht erstellt"+(d.sent?" und gemailt":"")+" Â· PSI "+(d.report.psiScore||"â€”"));
+  this.toast("✓ Bericht erstellt"+(d.sent?" und gemailt":"")+" · PSI "+(d.report.psiScore||"—"));
   this.renderDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
@@ -1529,7 +1526,7 @@ async setBranding(id){
   const d=await r.json();
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   const c=this.state.clients.find(x=>x.id===id);if(c)c.branding=d.branding;
-  this.persist();this.toast("âœ“ Branding gespeichert");this.renderDrawer();
+  this.persist();this.toast("✓ Branding gespeichert");this.renderDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async setClientEmail(id){
@@ -1542,7 +1539,7 @@ async setClientEmail(id){
   if(!r.ok||!d.ok)throw new Error(d.error||"Portal-E-Mail konnte nicht gespeichert werden");
   if(c){c.email=d.email||email;c.portalEmail=d.portalEmail||email;c.customerEmail=d.email||email;}
   this.persist();
-  this.toast("âœ“ Portal-E-Mail in Cloud gespeichert");
+  this.toast("✓ Portal-E-Mail in Cloud gespeichert");
   this.renderDrawer();
  }catch(e){
   this.toast("Fehler: "+e.message);
@@ -1551,7 +1548,7 @@ async setClientEmail(id){
 async createInvoice(id){
  const c=this.state.clients.find(x=>x.id===id);
  if(!c)return;
- const amount=prompt("Rechnungsbetrag (â‚¬):",c.mrr||199);
+ const amount=prompt("Rechnungsbetrag (€):",c.mrr||199);
  if(!amount)return;
  const description=prompt("Beschreibung:",c.paket||"Website Care-Paket")||c.paket;
  try{
@@ -1559,7 +1556,7 @@ async createInvoice(id){
   const d=await r.json();
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   await this.reloadCloudState();
-  this.toast("âœ“ Rechnung "+d.invoice.number+" erstellt"+(d.lexoffice?" (Lexoffice âœ“)":""));
+  this.toast("✓ Rechnung "+d.invoice.number+" erstellt"+(d.lexoffice?" (Lexoffice ✓)":""));
   this.renderDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
@@ -1568,19 +1565,19 @@ async createContract(id){
  if(!c)return;
  const art=prompt("Vertragsart:","Webdesign-Werkvertrag");
  if(!art)return;
- const leistRaw=prompt("Leistungen (mit ; trennen):",(c.paket||"Website-Erstellung")+" inkl. Konzeption, Design, Umsetzung; VerÃ¶ffentlichung & Einrichtung");
+ const leistRaw=prompt("Leistungen (mit ; trennen):",(c.paket||"Website-Erstellung")+" inkl. Konzeption, Design, Umsetzung; Veröffentlichung & Einrichtung");
  if(leistRaw===null)return;
  const leistungen=leistRaw.split(";").map(s=>s.trim()).filter(Boolean);
- const einmalig=prompt("Einmalige VergÃ¼tung (â‚¬):",c.setup||1490);
+ const einmalig=prompt("Einmalige Vergütung (€):",c.setup||1490);
  if(einmalig===null)return;
- const monatlich=prompt("Care monatlich (â‚¬, 0 = kein Care):",c.mrr||0);
+ const monatlich=prompt("Care monatlich (€, 0 = kein Care):",c.mrr||0);
  if(monatlich===null)return;
  try{
   const r=await fetch(this.apiBase()+"/api/client/contract",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id,art,leistungen,einmalig:+einmalig,monatlich:+monatlich})});
   const d=await r.json();
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   await this.reloadCloudState();
-  this.toast("âœ“ Vertrag erstellt");
+  this.toast("✓ Vertrag erstellt");
   this.renderDrawer();
   if(d.url)window.open(d.url,"_blank");
  }catch(e){this.toast("Fehler: "+e.message);}
@@ -1588,15 +1585,15 @@ async createContract(id){
 async createBlogArticle(id){
  const c=this.state.clients.find(x=>x.id===id);
  if(!c)return;
- const thema=prompt("Thema des Artikels (leer = KI wÃ¤hlt passend):","");
+ const thema=prompt("Thema des Artikels (leer = KI wählt passend):","");
  if(thema===null)return;
- this.toast("âœï¸ KI schreibt Artikel â€¦ (~20s)");
+ this.toast("✍️ KI schreibt Artikel … (~20s)");
  try{
   const r=await fetch(this.apiBase()+"/api/content/blog-article",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id,thema:thema||undefined})});
   const d=await r.json();
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   await this.reloadCloudState();
-  this.toast("âœ“ Artikel erstellt: "+(d.article?.titel||""));
+  this.toast("✓ Artikel erstellt: "+(d.article?.titel||""));
   this.renderDrawer();
   if(d.url)window.open(d.url,"_blank");
  }catch(e){this.toast("Fehler: "+e.message);}
@@ -1606,20 +1603,20 @@ async createSocialPosts(id){
  if(!c)return;
  const latest=(c.blog||[])[0];
  let body={clientId:id};
- if(latest&&confirm('Posts aus letztem Blog-Artikel â€ž'+latest.titel+'" erstellen?\n\nAbbrechen = eigenes Thema eingeben.')){
+ if(latest&&confirm('Posts aus letztem Blog-Artikel „'+latest.titel+'" erstellen?\n\nAbbrechen = eigenes Thema eingeben.')){
   body.blogSlug=latest.slug;
  }else{
-  const thema=prompt("Thema fÃ¼r die Social-Posts:","");
+  const thema=prompt("Thema für die Social-Posts:","");
   if(thema===null)return;
   if(thema.trim())body.thema=thema.trim();
  }
- this.toast("ðŸ“£ KI schreibt Posts â€¦ (~15s)");
+ this.toast("📣 KI schreibt Posts … (~15s)");
  try{
   const r=await fetch(this.apiBase()+"/api/content/social",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
   const d=await r.json();
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   await this.reloadCloudState();
-  this.toast("âœ“ Social-Posts erstellt");
+  this.toast("✓ Social-Posts erstellt");
   this.renderDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
@@ -1627,26 +1624,14 @@ async captureScreenshot(id){
  const c=this.state.clients.find(x=>x.id===id);
  if(!c)return;
  if(!c.liveUrl&&!c.demoUrl){this.toast("Keine Live-/Demo-URL hinterlegt");return;}
- this.toast("ðŸ“¸ Screenshot wird erzeugt â€¦");
+ this.toast("📸 Screenshot wird erzeugt …");
  try{
   const r=await fetch(this.apiBase()+"/api/client/screenshot",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id})});
   const d=await r.json();
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   await this.reloadCloudState();
-  this.toast(d.reachable===false?"âš  Screenshot gespeichert (Provider evtl. noch am Rendern)":"âœ“ Screenshot erstellt");
+  this.toast(d.reachable===false?"⚠ Screenshot gespeichert (Provider evtl. noch am Rendern)":"✓ Screenshot erstellt");
   this.renderDrawer();
- }catch(e){this.toast("Fehler: "+e.message);}
-},
-async generate3d(id){
- const c=this.state.clients.find(x=>x.id===id);
- const desc=prompt("Beschreibung des 3D-Modells (Englisch wirkt am besten):","a sleek crystalline product object, dark chrome and glass, premium, single centered");
- if(desc===null)return;
- this.toast("ðŸ§Š 3D-Generierung gestartet â€¦");
- try{
-  const r=await fetch(this.apiBase()+"/api/media/3d",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id,prompt:desc||undefined})});
-  const d=await r.json();
-  if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
-  this.toast("âœ“ LÃ¤uft (Task "+(d.taskId||"")+") â€” Ergebnis kommt per Webhook (~1 Min).");
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async publishWordPress(id){
@@ -1656,22 +1641,22 @@ async publishWordPress(id){
  if(!url)return;
  const user=prompt("WP-Benutzername:",localStorage.getItem("ww_wp_user")||"");
  if(!user)return;
- const pw=prompt("WP Application-Passwort (WP-Profil â†’ AnwendungspasswÃ¶rter):","");
+ const pw=prompt("WP Application-Passwort (WP-Profil → Anwendungspasswörter):","");
  if(!pw)return;
- const level=(c.buildConfig&&c.buildConfig.level)?"":(prompt("QualitÃ¤ts-Level?\n\nessential = solide, schnell, editierbar (WordPress)\npremium = + Animationen & 3D-Hero\nsignature = Awwwards-Niveau (max. 3D)\n\nLeer lassen = Branche/Konfigurator entscheidet","premium")||"").trim().toLowerCase();
+ const level=(c.buildConfig&&c.buildConfig.level)?"":(prompt("Qualitäts-Level?\n\nessential = solide, schnell, editierbar (WordPress)\npremium = + Animationen & 3D-Hero\nsignature = Awwwards-Niveau (max. 3D)\n\nLeer lassen = Branche/Konfigurator entscheidet","premium")||"").trim().toLowerCase();
  try{localStorage.setItem("ww_wp_url",url);localStorage.setItem("ww_wp_user",user);}catch(e){}
- this.toast("ðŸš€ Publiziere auf WordPress â€¦");
+ this.toast("🚀 Publiziere auf WordPress …");
  try{
   const r=await fetch(this.apiBase()+"/api/wp/publish",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id,wpUrl:url,wpUser:user,wpAppPassword:pw,level:level||undefined})});
   const d=await r.json();
   if(d.ok){
    await this.reloadCloudState();
-   this.toast("âœ“ WordPress live: "+(d.pageUrl||""));
+   this.toast("✓ WordPress live: "+(d.pageUrl||""));
    this.renderDrawer();
    if(d.pageUrl)window.open(d.pageUrl,"_blank");
   }else{
-   const steps=Object.entries(d.steps||{}).map(([k,v])=>k+": "+v).join(" Â· ");
-   this.toast("Fehlgeschlagen â€” "+(steps||d.error||"unbekannt"));
+   const steps=Object.entries(d.steps||{}).map(([k,v])=>k+": "+v).join(" · ");
+   this.toast("Fehlgeschlagen — "+(steps||d.error||"unbekannt"));
   }
  }catch(e){this.toast("Fehler: "+e.message);}
 },
@@ -1680,7 +1665,7 @@ async domainCheck(id){
  const host=document.getElementById("domhost-"+id)?.value;
  const ip=(document.getElementById("domip-"+id)?.value||"").trim();
  if(!dom){this.toast("Domain eingeben");return;}
- this.toast("ðŸŒ PrÃ¼fe Domain â€¦");
+ this.toast("🌐 Prüfe Domain …");
  try{
   const r=await fetch(this.apiBase()+"/api/client/domain",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id,targetDomain:dom,host,serverIp:ip,save:true})});
   const d=await r.json();
@@ -1688,40 +1673,40 @@ async domainCheck(id){
   const v=d.verification;
   const rows=d.instructions.records.map(rec=>`<tr><td style="padding:2px 6px"><code>${rec.type}</code></td><td style="padding:2px 6px"><code>${esc(rec.name)}</code></td><td style="padding:2px 6px"><code>${esc(rec.value)}</code></td></tr>`).join("");
   const out=document.getElementById("dom-out-"+id);
-  if(out)out.innerHTML=`<div class="infobox" style="font-size:12px"><b>${esc(d.instructions.hostName)} â€” DNS-EintrÃ¤ge beim Registrar:</b><table style="margin:4px 0;border-collapse:collapse">${rows}</table><div style="color:var(--muted);font-size:11px">${esc(d.instructions.note)}</div><div style="margin-top:6px">Status: <b>${esc(d.status)}</b> â€” ${v.resolves?("lÃ¶st auf: "+esc(v.ips.join(", "))):"DNS noch nicht gesetzt"}${v.reachable?(" Â· erreichbar"+(v.https?" (HTTPS)":"")):""}${v.isWordPress?" Â· WordPress erkannt âœ“":""}</div>${v.reachable?`<button class="btn bi bsm" style="margin-top:8px" onclick="App.domainTakeover('${id}','${esc(dom)}')">Domain Ã¼bernehmen (WP-URL umstellen)</button>`:""}</div>`;
+  if(out)out.innerHTML=`<div class="infobox" style="font-size:12px"><b>${esc(d.instructions.hostName)} — DNS-Einträge beim Registrar:</b><table style="margin:4px 0;border-collapse:collapse">${rows}</table><div style="color:var(--muted);font-size:11px">${esc(d.instructions.note)}</div><div style="margin-top:6px">Status: <b>${esc(d.status)}</b> — ${v.resolves?("löst auf: "+esc(v.ips.join(", "))):"DNS noch nicht gesetzt"}${v.reachable?(" · erreichbar"+(v.https?" (HTTPS)":"")):""}${v.isWordPress?" · WordPress erkannt ✓":""}</div>${v.reachable?`<button class="btn bi bsm" style="margin-top:8px" onclick="App.domainTakeover('${id}','${esc(dom)}')">Domain übernehmen (WP-URL umstellen)</button>`:""}</div>`;
   await this.reloadCloudState();
-  this.toast("âœ“ Status: "+d.status);
+  this.toast("✓ Status: "+d.status);
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async domainTakeover(id,dom){
- if(!confirm("WordPress-Adresse auf https://"+dom+" umstellen?\nNur wenn die Domain bereits auf dieses WordPress zeigt â€” sonst sperrst du dich aus."))return;
+ if(!confirm("WordPress-Adresse auf https://"+dom+" umstellen?\nNur wenn die Domain bereits auf dieses WordPress zeigt — sonst sperrst du dich aus."))return;
  const url=localStorage.getItem("ww_wp_url"),user=localStorage.getItem("ww_wp_user");
  const pw=prompt("WP Application-Passwort:","");
- if(!url||!user||!pw){this.toast("WP-Zugang fehlt â€” bitte erst per Publishen-Button verbinden");return;}
- this.toast("ðŸŒ Stelle URL um â€¦");
+ if(!url||!user||!pw){this.toast("WP-Zugang fehlt — bitte erst per Publishen-Button verbinden");return;}
+ this.toast("🌐 Stelle URL um …");
  try{
   const r=await fetch(this.apiBase()+"/api/wp/set-url",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({wpUrl:url,wpUser:user,wpAppPassword:pw,newUrl:dom})});
   const d=await r.json();
-  if(d.ok)this.toast("âœ“ WordPress lÃ¤uft jetzt auf "+d.url);
+  if(d.ok)this.toast("✓ WordPress läuft jetzt auf "+d.url);
   else this.toast("Fehlgeschlagen: "+(d.error||"unbekannt"));
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async wpHealth(id){
- this.toast("ðŸ©º PrÃ¼fe Seite â€¦");
+ this.toast("🩺 Prüfe Seite …");
  try{
   const r=await fetch(this.apiBase()+"/api/client/wp-health",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id})});
   const d=await r.json();
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   await this.reloadCloudState();
   const h=d.health;
-  this.toast(h.ok?"ðŸŸ¢ Seite gesund"+(h.ms!=null?" ("+h.ms+"ms)":""):(h.reachable?"ðŸŸ¡ "+(h.issues||[]).join(", "):"ðŸ”´ Offline"));
+  this.toast(h.ok?"🟢 Seite gesund"+(h.ms!=null?" ("+h.ms+"ms)":""):(h.reachable?"🟡 "+(h.issues||[]).join(", "):"🔴 Offline"));
   this.renderDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async openBuildConfig(id){
  const c=this.state.clients.find(x=>x.id===id);if(!c)return;
  const branche=c.branche||"";
- this.toast("Lade Konfigurator â€¦");
+ this.toast("Lade Konfigurator …");
  let cfg={empfohlen:"premium",config:{},levels:{}},packs=[];
  try{
   const r1=await fetch(this.apiBase()+"/api/wp/build-config/"+encodeURIComponent(branche||"betrieb"));cfg=await r1.json();
@@ -1732,18 +1717,18 @@ async openBuildConfig(id){
  const cur={level:bc.level||cfg.empfohlen||"premium",pack:bc.pack||"",use3d:bc.use3d!=null?bc.use3d:!!(cfg.config&&cfg.config.use3d),motion:bc.motion||(cfg.config&&cfg.config.motion)||2,output:bc.output||(cfg.config&&cfg.config.output)||"wordpress",accent:bc.accent||"#e8704a",focus:bc.focus||""};
  const R=document.getElementById("MR");
  R.innerHTML=`<div class="ov" onclick="if(event.target===this)App.closeModal()"><div class="mo" style="max-width:560px">
-  <div style="display:flex;align-items:center"><h3>ðŸ­ Build-Konfigurator</h3><button class="xb" onclick="App.closeModal()">Ã—</button></div>
-  <p class="hint" style="margin:0 0 10px">Voreingestellt nach Branche (<b>${esc(cfg.empfohlen||"-")}</b>) â€” justiere fÃ¼r maximale Kundengenauigkeit.</p>
+  <div style="display:flex;align-items:center"><h3>🏭 Build-Konfigurator</h3><button class="xb" onclick="App.closeModal()">×</button></div>
+  <p class="hint" style="margin:0 0 10px">Voreingestellt nach Branche (<b>${esc(cfg.empfohlen||"-")}</b>) — justiere für maximale Kundengenauigkeit.</p>
   <div class="mf"><label>Branche</label><input id="bc-branche" value="${esc(branche)}"></div>
-  <div class="mf"><label>QualitÃ¤ts-Level</label><select id="bc-level">${Object.keys(levels).map(k=>`<option value="${k}" ${k===cur.level?"selected":""}>${esc(levels[k].name||k)}${k===cfg.empfohlen?" (empfohlen)":""}</option>`).join("")}</select></div>
-  <div class="mf"><label>Design-Pack</label><select id="bc-pack"><option value="">Auto (nach Branche)</option>${packs.map(p=>`<option value="${esc(p.key)}" ${p.key===cur.pack?"selected":""}>${esc(p.name)} â€” ${esc(p.mood||"")}</option>`).join("")}</select></div>
+  <div class="mf"><label>Qualitäts-Level</label><select id="bc-level">${Object.keys(levels).map(k=>`<option value="${k}" ${k===cur.level?"selected":""}>${esc(levels[k].name||k)}${k===cfg.empfohlen?" (empfohlen)":""}</option>`).join("")}</select></div>
+  <div class="mf"><label>Design-Pack</label><select id="bc-pack"><option value="">Auto (nach Branche)</option>${packs.map(p=>`<option value="${esc(p.key)}" ${p.key===cur.pack?"selected":""}>${esc(p.name)} — ${esc(p.mood||"")}</option>`).join("")}</select></div>
   <div style="display:flex;gap:12px;align-items:end;flex-wrap:wrap">
    <label style="display:flex;align-items:center;gap:6px;font-size:13px;padding-bottom:8px"><input type="checkbox" id="bc-3d" ${cur.use3d?"checked":""}> 3D-Hero</label>
-   <div class="mf" style="flex:1;min-width:120px"><label>Motion</label><select id="bc-motion">${[1,2,3].map(n=>`<option value="${n}" ${n==cur.motion?"selected":""}>${n} Â· ${["","dezent","reich","immersiv"][n]}</option>`).join("")}</select></div>
+   <div class="mf" style="flex:1;min-width:120px"><label>Motion</label><select id="bc-motion">${[1,2,3].map(n=>`<option value="${n}" ${n==cur.motion?"selected":""}>${n} · ${["","dezent","reich","immersiv"][n]}</option>`).join("")}</select></div>
    <div class="mf" style="flex:1;min-width:150px"><label>Output</label><select id="bc-output"><option value="wordpress" ${cur.output==="wordpress"?"selected":""}>WordPress (editierbar)</option><option value="static" ${cur.output==="static"?"selected":""}>Next.js (Awwwards)</option></select></div>
   </div>
   <div class="mf"><label>Akzentfarbe (optional)</label><input type="color" id="bc-accent" value="${esc(cur.accent)}" style="width:54px;height:32px;padding:2px;cursor:pointer"></div>
-  <div class="mf"><label>Kundengenauigkeit / besondere WÃ¼nsche</label><textarea id="bc-focus" rows="3" placeholder="z. B. Fokus Notdienst, familiÃ¤r, regionale BezÃ¼ge, kein generischer Stockfoto-Look â€¦">${esc(cur.focus)}</textarea></div>
+  <div class="mf"><label>Kundengenauigkeit / besondere Wünsche</label><textarea id="bc-focus" rows="3" placeholder="z. B. Fokus Notdienst, familiär, regionale Bezüge, kein generischer Stockfoto-Look …">${esc(cur.focus)}</textarea></div>
   <div style="display:flex;gap:8px;margin-top:8px"><button class="btn bg" onclick="App.bcSubmit('${id}',false)">Speichern</button><button class="btn bi" onclick="App.bcSubmit('${id}',true)">Speichern & bauen</button></div>
  </div></div>`;
 },
@@ -1754,7 +1739,7 @@ async bcSubmit(id,andBuild){
   const r=await fetch(this.apiBase()+"/api/client/build-config",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id,config})});
   const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   const c=this.state.clients.find(x=>x.id===id);if(c)c.buildConfig=d.buildConfig;
-  this.closeModal();this.toast("âœ“ Konfiguration gespeichert");
+  this.closeModal();this.toast("✓ Konfiguration gespeichert");
   if(andBuild)this.publishWordPress(id);
  }catch(e){this.toast("Fehler: "+e.message);}
 },
@@ -1769,7 +1754,7 @@ async updateRequest(clientId,reqId){
   const d=await res.json();
   if(!res.ok||!d.ok)throw new Error(d.error||"Fehler");
   await this.reloadCloudState();
-  this.toast(d.redeployed?"âœ“ Erledigt â†’ automatisch neu deployt ðŸš€":("Status: "+(d.status||next))+(d.deployError?" (Redeploy-Fehler)":""));
+  this.toast(d.redeployed?"✓ Erledigt → automatisch neu deployt 🚀":("Status: "+(d.status||next))+(d.deployError?" (Redeploy-Fehler)":""));
   this.renderDrawer();
  }catch(e){
   // Fallback: lokal umschalten, falls Backend nicht erreichbar
@@ -1777,27 +1762,27 @@ async updateRequest(clientId,reqId){
  }
 },
 deleteLead(id){
- if(!confirm('Lead wirklich lÃ¶schen? Diese Aktion kann nicht rÃ¼ckgÃ¤ngig gemacht werden.'))return;
+ if(!confirm('Lead wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.'))return;
  this.state.leads=this.state.leads.filter(l=>l.id!==id);
- this.state.events.push({id:uid(),ts:Date.now(),pipeline:'acq',from:'â€”',to:'deleted',actor:'Du',entity:'Lead',note:'Lead gelÃ¶scht'});
+ this.state.events.push({id:uid(),ts:Date.now(),pipeline:'acq',from:'—',to:'deleted',actor:'Du',entity:'Lead',note:'Lead gelöscht'});
  if(this.detail?.id===id)this.detail=null;
- this.persist();this.renderAll();this.renderDrawer();this.toast('Lead gelÃ¶scht');
+ this.persist();this.renderAll();this.renderDrawer();this.toast('Lead gelöscht');
 },
 deleteClient(id){
- if(!confirm('Kunden-Akte wirklich lÃ¶schen? Diese Aktion kann nicht rÃ¼ckgÃ¤ngig gemacht werden.'))return;
+ if(!confirm('Kunden-Akte wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.'))return;
  this.state.clients=this.state.clients.filter(c=>c.id!==id);
  if(this.detail?.id===id)this.detail=null;
- this.persist();this.renderAll();this.renderDrawer();this.toast('Kunde gelÃ¶scht');
+ this.persist();this.renderAll();this.renderDrawer();this.toast('Kunde gelöscht');
 },
 openAddLead(){
  document.getElementById("MR").innerHTML=`<div class="ov" onclick="if(event.target===this)App.closeModal()">
   <div class="mo" style="width:360px">
-   <div style="display:flex;align-items:center"><h3>Lead erfassen</h3><button class="xb" onclick="App.closeModal()">Ã—</button></div>
+   <div style="display:flex;align-items:center"><h3>Lead erfassen</h3><button class="xb" onclick="App.closeModal()">×</button></div>
    <div class="mf"><label>Firmenname</label><input id="al-n"></div>
    <div class="mf"><label>Branche</label><input id="al-b"></div>
    <div class="mf"><label>Ort</label><input id="al-o" value="Aalen"></div>
-   <div class="mf"><label>Website (optional â€“ verbessert Research)</label><input id="al-w" placeholder="https://â€¦"></div>
-   <div class="mf"><label>Telefon (optional)</label><input id="al-t" placeholder="+49 7361 â€¦"></div>
+   <div class="mf"><label>Website (optional – verbessert Research)</label><input id="al-w" placeholder="https://…"></div>
+   <div class="mf"><label>Telefon (optional)</label><input id="al-t" placeholder="+49 7361 …"></div>
    <button class="btn bi" style="width:100%" onclick="App.addLead()">Anlegen</button>
   </div></div>`;
 },
@@ -1805,8 +1790,8 @@ addLead(){
  const n=document.getElementById("al-n").value.trim(),b=document.getElementById("al-b").value.trim(),o=document.getElementById("al-o").value.trim(),w=document.getElementById("al-w").value.trim(),t=document.getElementById("al-t").value.trim();
  if(!n||!b)return;
  const lid=uid();
- this.state.leads.unshift({id:lid,name:n,branche:b,ort:o,website:w,phone:t,score:0,stage:"discovered",next:{label:"Sales-Ready Build starten",due:today()}});
- this.state.events.push({id:uid(),ts:Date.now(),pipeline:"acq",from:"â€”",to:"discovered",actor:"Du",entity:n,note:"Lead manuell erfasst"});
+ this.state.leads.unshift({id:lid,name:n,branche:b,ort:o,website:w,phone:t,score:0,stage:"discovered",next:{label:"Factory-Durchlauf starten",due:today()}});
+ this.state.events.push({id:uid(),ts:Date.now(),pipeline:"acq",from:"—",to:"discovered",actor:"Du",entity:n,note:"Lead manuell erfasst"});
  this.persist();this.closeModal();this.toast("Lead angelegt");
 },
 toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2800);},
@@ -1819,17 +1804,17 @@ rFinder(){
  const f=this.finder;
  document.getElementById("v-finder").innerHTML=`<div class="pad" style="max-width:1060px">
   <div class="panel">
-   <div class="ph">â—Ž Echte Betriebe finden Â· OpenStreetMap Â· kostenlos Â· DSGVO-konform</div>
+   <div class="ph">◎ Echte Betriebe finden · OpenStreetMap · kostenlos · DSGVO-konform</div>
    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;padding:16px">
     <div class="ff"><label>Ort</label><input id="fo" value="${esc(f.ort)}" style="width:140px"></div>
     <div class="ff"><label>Radius km</label><input id="fr" type="number" value="${f.radius}" min="1" max="50" style="width:75px"></div>
-    <div class="ff" style="flex:1"><label>Branchen (mehrere wÃ¤hlbar)</label><div class="fcats">${Object.entries(this.CATS).map(([k,v])=>`<span class="fcat ${f.cats.includes(k)?"on":""}" onclick="App.toggleCat('${k}')">${v.l}</span>`).join("")}</div></div>
-    <button class="btn ba" onclick="App.searchLeads()" ${f.loading?"disabled":""}>${f.loading?'<span class="sp"></span> Suche â€¦':"Betriebe suchen"}</button>
+    <div class="ff" style="flex:1"><label>Branchen (mehrere wählbar)</label><div class="fcats">${Object.entries(this.CATS).map(([k,v])=>`<span class="fcat ${f.cats.includes(k)?"on":""}" onclick="App.toggleCat('${k}')">${v.l}</span>`).join("")}</div></div>
+    <button class="btn ba" onclick="App.searchLeads()" ${f.loading?"disabled":""}>${f.loading?'<span class="sp"></span> Suche …':"Betriebe suchen"}</button>
    </div>
   </div>
   ${f.res.length?`<div class="panel">
-   <div class="ph">Ergebnisse Â· ${f.res.length} Betriebe Â· <span style="color:var(--a);font-weight:600">"Website fehlt!"</span> = Gold-Signal Â· Alle ohne bestehende Website auto-vorgewÃ¤hlt
-    <button class="btn bg bsm" style="margin-left:auto" onclick="App.importSel()">AusgewÃ¤hlte importieren</button>
+   <div class="ph">Ergebnisse · ${f.res.length} Betriebe · <span style="color:var(--a);font-weight:600">"Website fehlt!"</span> = Gold-Signal · Alle ohne bestehende Website auto-vorgewählt
+    <button class="btn bg bsm" style="margin-left:auto" onclick="App.importSel()">Ausgewählte importieren</button>
     <button class="btn bg bsm" onclick="App.exportCSV()">CSV</button>
    </div>
    <div style="max-height:55vh;overflow:auto">
@@ -1840,28 +1825,28 @@ rFinder(){
    ${f.res.map((r,i)=>`<tr>
     <td><input type="checkbox" ${r.sel?"checked":""} onchange="App.finder.res[${i}].sel=this.checked"></td>
     <td style="font-weight:600">${esc(r.name)}</td>
-    <td>${esc(r.branche)}</td><td>${esc(r.ort||"â€“")}</td>
-    <td>${r.website?`<a href="${esc(r.website)}" target="_blank" rel="noopener" style="color:var(--muted);font-size:12px">vorhanden â†—</a>`:`<span class="tag tg">Website fehlt!</span>`}</td>
-    <td style="font-family:ui-monospace,monospace;font-size:12px">${esc(r.phone||"â€“")}</td>
+    <td>${esc(r.branche)}</td><td>${esc(r.ort||"–")}</td>
+    <td>${r.website?`<a href="${esc(r.website)}" target="_blank" rel="noopener" style="color:var(--muted);font-size:12px">vorhanden ↗</a>`:`<span class="tag tg">Website fehlt!</span>`}</td>
+    <td style="font-family:ui-monospace,monospace;font-size:12px">${esc(r.phone||"–")}</td>
     <td><span class="tag ${r.score>=80?"tg":"ts"}">${r.score}</span></td>
    </tr>`).join("")}
    </tbody></table></div>
-  </div>`:f.loading?"":`<div class="panel"><div class="empty">Branchen wÃ¤hlen und â€žBetriebe suchen" klicken. Daten kommen live aus OpenStreetMap.<br><br>
+  </div>`:f.loading?"":`<div class="panel"><div class="empty">Branchen wählen und „Betriebe suchen" klicken. Daten kommen live aus OpenStreetMap.<br><br>
 <b>Der komplette Workflow:</b><br>
-1. Betriebe suchen â†’ Leads ohne Website auswÃ¤hlen â†’ importieren<br>
-2. Karte Ã¶ffnen â†’ Sales-Ready Build starten<br>
-3. System analysiert Kunde, Branche, Website, Inhalte und Sales-Potenzial, sucht Branchenbilder (Pexels), baut ${`<b>`}vollständigen WordPress-Fertigstand${`</b>`}<br>
-4. Sales-Ready WordPress-Staging bereitstellen (echter Link), Klick-Tracking aktiv<br>
-5. Brief mit Abnahme-Link via Pingen physisch versenden (~1,50 â‚¬)<br>
-6. Lead klickt â†’ System meldet dir â†’ du rufst an<br>
-7. Abschluss â†’ Onboarding-Mail, Kunden-Dashboard deployed<br><br>
+1. Betriebe suchen → Leads ohne Website auswählen → importieren<br>
+2. Karte öffnen → Factory-Durchlauf starten<br>
+3. System liest Website(n) + Unterseiten, sucht Branchenbilder (Pexels), baut ${`<b>`}individuelle Multi-Seiten-Website${`</b>`}<br>
+4. Demo deployed auf Cloudflare Pages (echter Link), Klick-Tracking aktiv<br>
+5. Brief mit Demo-Link via Pingen physisch versenden (~1,50 €)<br>
+6. Lead klickt → System meldet dir → du rufst an<br>
+7. Abschluss → Onboarding-Mail, Kunden-Dashboard deployed<br><br>
 <b>Compliance:</b> Erstkontakt per physischem Brief (UWG/BVerwG-konform). Telefon erst ab "Engaged".</div></div>`}
  </div>`;
 },
 toggleCat(k){const c=this.finder.cats;c.includes(k)?this.finder.cats=c.filter(x=>x!==k):c.push(k);this.rFinder();},
 async searchLeads(){
  const f=this.finder;f.ort=document.getElementById("fo").value.trim()||"Aalen";f.radius=Math.min(50,Math.max(1,+document.getElementById("fr").value||20));
- if(!f.cats.length){this.toast("Mindestens eine Branche wÃ¤hlen");return;}
+ if(!f.cats.length){this.toast("Mindestens eine Branche wählen");return;}
  f.loading=true;f.res=[];this.rFinder();
  try{
   const geo=await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q=${encodeURIComponent(f.ort)}`,{headers:{"Accept":"application/json","User-Agent":"WebsiteWerk-Leitstand/1.0"}}).then(r=>r.json());
@@ -1870,20 +1855,20 @@ async searchLeads(){
   const body="[out:json][timeout:45];("+f.cats.map(k=>this.CATS[k].q.replaceAll("{R}",R).replaceAll("{LAT}",f.lat).replaceAll("{LON}",f.lon)).join("")+");out tags center 500;";
   const res=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:"data="+encodeURIComponent(body),headers:{"Content-Type":"application/x-www-form-urlencoded"}}).then(r=>r.json());
   const seen=new Set(this.state.leads.map(l=>l.name.toLowerCase()));
-  const catOf=t=>{if(t.craft)return"Handwerk ("+t.craft+")";if(t.amenity==="restaurant")return"Restaurant";if(t.amenity==="cafe")return"CafÃ©";if(t.amenity==="fast_food")return"Imbiss";if(t.amenity==="bar")return"Bar";if(t.amenity==="biergarten")return"Biergarten";if(t.shop==="hairdresser")return"Friseur";if(["beauty","cosmetics"].includes(t.shop))return"Beauty/Kosmetik";if(t.shop==="nail_salon")return"Nagelstudio";if(t.leisure==="fitness_centre")return"Fitness";if(t.leisure==="sports_centre")return"Sportzentrum";if(t.amenity==="dentist")return"Zahnarzt";if(t.amenity==="doctors")return"Arztpraxis";if(t.amenity==="physiotherapist")return"Physiotherapie";if(t.shop==="car")return"Autohaus";if(t.shop==="car_repair")return"KFZ-Werkstatt";if(t.shop==="tyres")return"Reifenhandel";if(t.amenity==="driving_school")return"Fahrschule";if(t.tourism==="hotel")return"Hotel";if(t.tourism==="guest_house")return"Pension";if(t.amenity==="nursing_home")return"Pflegeheim";if(t.amenity==="social_facility")return"Soziale Einrichtung";return"Sonstiges";};
+  const catOf=t=>{if(t.craft)return"Handwerk ("+t.craft+")";if(t.amenity==="restaurant")return"Restaurant";if(t.amenity==="cafe")return"Café";if(t.amenity==="fast_food")return"Imbiss";if(t.amenity==="bar")return"Bar";if(t.amenity==="biergarten")return"Biergarten";if(t.shop==="hairdresser")return"Friseur";if(["beauty","cosmetics"].includes(t.shop))return"Beauty/Kosmetik";if(t.shop==="nail_salon")return"Nagelstudio";if(t.leisure==="fitness_centre")return"Fitness";if(t.leisure==="sports_centre")return"Sportzentrum";if(t.amenity==="dentist")return"Zahnarzt";if(t.amenity==="doctors")return"Arztpraxis";if(t.amenity==="physiotherapist")return"Physiotherapie";if(t.shop==="car")return"Autohaus";if(t.shop==="car_repair")return"KFZ-Werkstatt";if(t.shop==="tyres")return"Reifenhandel";if(t.amenity==="driving_school")return"Fahrschule";if(t.tourism==="hotel")return"Hotel";if(t.tourism==="guest_house")return"Pension";if(t.amenity==="nursing_home")return"Pflegeheim";if(t.amenity==="social_facility")return"Soziale Einrichtung";return"Sonstiges";};
   f.res=(res.elements||[]).filter(e=>e.tags?.name).map(e=>{const t=e.tags,website=t.website||t["contact:website"]||"",phone=t.phone||t["contact:phone"]||"";let sc=50;if(!website)sc+=25;if(phone)sc+=10;if(t["addr:city"])sc+=5;if(t["addr:street"])sc+=3;if(t.email||t["contact:email"])sc+=5;return{name:t.name,branche:catOf(t),ort:t["addr:city"]||t["addr:town"]||f.ort,website,phone,score:Math.min(sc,95),sel:!website&&!seen.has(t.name.toLowerCase()),dupe:seen.has(t.name.toLowerCase())};}).filter(r=>!r.dupe).sort((a,b)=>b.score-a.score);
-  if(!f.res.length)this.toast("Keine Treffer â€“ Radius vergrÃ¶ÃŸern oder andere Branchen");
- }catch(e){console.error(e);this.toast("Suche fehlgeschlagen â€“ Overpass kurz Ã¼berlastet, 1 Min. warten");}
+  if(!f.res.length)this.toast("Keine Treffer – Radius vergrößern oder andere Branchen");
+ }catch(e){console.error(e);this.toast("Suche fehlgeschlagen – Overpass kurz überlastet, 1 Min. warten");}
  f.loading=false;this.rFinder();
 },
 checkAll(v){this.finder.res.forEach(r=>r.sel=v);this.rFinder();},
 async importSel(){
  const sel=this.finder.res.filter(r=>r.sel);
- if(!sel.length){this.toast("Nichts ausgewÃ¤hlt");return;}
+ if(!sel.length){this.toast("Nichts ausgewählt");return;}
  const ids=[];
- sel.forEach(r=>{const id=uid();ids.push(id);this.state.leads.unshift({id,name:r.name,branche:r.branche,ort:r.ort,score:r.score,stage:"discovered",website:r.website||"",phone:r.phone||"",next:{label:"Sales-Ready Build starten",due:today()}});this.state.events.push({id:uid(),ts:Date.now(),pipeline:"acq",from:"â€”",to:"discovered",actor:"System",entity:r.name,note:"Lead-Finder importiert"});});
+ sel.forEach(r=>{const id=uid();ids.push(id);this.state.leads.unshift({id,name:r.name,branche:r.branche,ort:r.ort,score:r.score,stage:"discovered",website:r.website||"",phone:r.phone||"",next:{label:"Factory-Durchlauf starten",due:today()}});this.state.events.push({id:uid(),ts:Date.now(),pipeline:"acq",from:"—",to:"discovered",actor:"System",entity:r.name,note:"Lead-Finder importiert"});});
  this.finder.res=this.finder.res.filter(r=>!r.sel);
- this.persist();this.toast(sel.length+" Leads importiert â†’ Akquise");this.rFinder();
+ this.persist();this.toast(sel.length+" Leads importiert → Akquise");this.rFinder();
  if(ids.length===1){this.show("akquise");setTimeout(()=>this.openDetail("acq",ids[0]),300);}
  else this.show("akquise");
 },
@@ -1899,9 +1884,9 @@ rLog(){
   ${[...this.state.events].sort((a,b)=>b.ts-a.ts).map(e=>`<div class="lr">
    <span class="lts">${new Date(e.ts).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</span>
    <span class="len">${esc(e.entity||"")}</span>
-   ${bdg(e.from,e.pipeline)} <span style="color:#C5CCD1">â†’</span> ${bdg(e.to,e.pipeline,true)}
+   ${bdg(e.from,e.pipeline)} <span style="color:#C5CCD1">→</span> ${bdg(e.to,e.pipeline,true)}
    <span class="lno">${esc(e.note||"")}</span>
-   <span class="actr ${e.actor==="System"?"au":"ma"}">${e.actor==="System"?"âš™ Auto":"Manuell"}</span>
+   <span class="actr ${e.actor==="System"?"au":"ma"}">${e.actor==="System"?"⚙ Auto":"Manuell"}</span>
   </div>`).join("")||`<div class="empty">Noch keine Ereignisse.</div>`}
  </div></div>`;
 },
@@ -1911,53 +1896,53 @@ rSettings(){
  const c=this.cfg;
  document.getElementById("v-einstellungen").innerHTML=`<div style="max-width:700px;display:flex;flex-direction:column;gap:0"><div class="panel">
   <div class="cfg-sec">
-   <div class="stit" style="color:var(--a);font-size:11px">ðŸŸ¢ BACKEND API (Render) â€“ alle Keys laufen sicher serverseitig</div>
-   <p class="hint" style="margin-bottom:10px">Dein Backend lÃ¤uft auf Render (<b>websitewerk-api.onrender.com</b>). Claude-Key, Pexels-Key, Cloudflare-Token â€“ alles liegt dort als Environment Variable, nie im Browser. Hier nur die Backend-URL eintragen. Wenn dein Render-Service eine eigene Domain hat, diese verwenden.</p>
+   <div class="stit" style="color:var(--a);font-size:11px">🟢 BACKEND API (Render) – alle Keys laufen sicher serverseitig</div>
+   <p class="hint" style="margin-bottom:10px">Dein Backend läuft auf Render (<b>websitewerk-api.onrender.com</b>). Claude-Key, Pexels-Key, Cloudflare-Token – alles liegt dort als Environment Variable, nie im Browser. Hier nur die Backend-URL eintragen. Wenn dein Render-Service eine eigene Domain hat, diese verwenden.</p>
    <div class="mf"><label>Backend API URL</label><input id="c-api" placeholder="https://websitewerk-api.onrender.com" value="${esc(c.apiUrl||"https://websitewerk-api.onrender.com")}"></div>
    <button class="btn bg bsm" style="margin-top:6px" onclick="App.testBackend()">Backend jetzt testen</button>
   </div>
   <div class="cfg-sec">
-   <div class="stit" style="color:var(--a);font-size:11px">MONATSBERICHTE â€” MANUELL / AUTOMATIK</div>
-   <p class="hint" style="margin-bottom:10px">Bei <b>Automatik</b> sendet n8n monatlich Berichte an alle Care-Kunden (Hetzner-Server nÃ¶tig). Bei <b>Manuell</b> erstellst du Berichte per Knopfdruck im Kunden-Drawer.</p>
+   <div class="stit" style="color:var(--a);font-size:11px">MONATSBERICHTE — MANUELL / AUTOMATIK</div>
+   <p class="hint" style="margin-bottom:10px">Bei <b>Automatik</b> sendet n8n monatlich Berichte an alle Care-Kunden (Hetzner-Server nötig). Bei <b>Manuell</b> erstellst du Berichte per Knopfdruck im Kunden-Drawer.</p>
    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 0">
     <input type="checkbox" id="auto-reports" onchange="App.toggleAutoReports(this.checked)" style="width:18px;height:18px;cursor:pointer">
     <span style="font-size:13px">Automatische Monatsberichte aktiviert (via n8n)</span>
    </label>
   </div>
   <div class="cfg-sec">
-   <div class="stit" style="color:var(--a);font-size:11px">AUTO-REDEPLOY BEI Ã„NDERUNGEN</div>
-   <p class="hint" style="margin-bottom:10px">Wenn <b>aktiviert</b>, wird die Kundenseite automatisch neu verÃ¶ffentlicht, sobald du einen Ã„nderungswunsch im Drawer auf <b>â€žerledigt"</b> setzt (nur wenn ein Build vorliegt). Du bekommst eine Benachrichtigung mit dem Live-Link.</p>
+   <div class="stit" style="color:var(--a);font-size:11px">AUTO-REDEPLOY BEI ÄNDERUNGEN</div>
+   <p class="hint" style="margin-bottom:10px">Wenn <b>aktiviert</b>, wird die Kundenseite automatisch neu veröffentlicht, sobald du einen Änderungswunsch im Drawer auf <b>„erledigt"</b> setzt (nur wenn ein Build vorliegt). Du bekommst eine Benachrichtigung mit dem Live-Link.</p>
    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 0">
     <input type="checkbox" id="auto-redeploy" ${this.state.settings?.autoRedeploy?"checked":""} onchange="App.toggleAutoRedeploy(this.checked)" style="width:18px;height:18px;cursor:pointer">
-    <span style="font-size:13px">Erledigte Ã„nderungswÃ¼nsche automatisch neu deployen</span>
+    <span style="font-size:13px">Erledigte Änderungswünsche automatisch neu deployen</span>
    </label>
   </div>
   <div class="cfg-sec">
    <div class="stit" style="color:var(--a);font-size:11px">WORDPRESS-FESTUNG</div>
-   <p class="hint" style="margin-bottom:10px">Einmal pro Kunden-WordPress installieren: hÃ¤rtet die Seite ab und schaltet den REST-Setup-Endpoint frei (fÃ¼r â€žAuf WordPress publishen"). Anleitung: <code>docs/WP-FESTUNG.md</code>.</p>
-   <a class="btn bg bsm" href="${this.apiBase()}/api/wp/plugin" target="_blank" rel="noopener">ðŸ›¡ï¸ Festungs-Plugin herunterladen</a>
+   <p class="hint" style="margin-bottom:10px">Einmal pro Kunden-WordPress installieren: härtet die Seite ab und schaltet den REST-Setup-Endpoint frei (für „Auf WordPress publishen"). Anleitung: <code>docs/WP-FESTUNG.md</code>.</p>
+   <a class="btn bg bsm" href="${this.apiBase()}/api/wp/plugin" target="_blank" rel="noopener">🛡️ Festungs-Plugin herunterladen</a>
   </div>
   <div class="cfg-sec">
    <div class="stit" style="color:var(--a);font-size:11px">NEWSLETTER (Resend)</div>
-   <p class="hint" style="margin-bottom:10px">KI-Entwurf erzeugen, prÃ¼fen, Testmail an dich, dann an ein Segment senden. Abmeldelink wird automatisch angehÃ¤ngt. ${this.state.newsletters?.length?`<b>${this.state.newsletters.length}</b> Kampagne(n) bisher.`:""}</p>
-   <div class="mf" style="margin-bottom:6px"><label>Thema (fÃ¼r KI-Entwurf)</label><input id="nl-thema" placeholder="z. B. Warum Ladezeit Ã¼ber Anfragen entscheidet"></div>
-   <button class="btn bg bsm" style="margin-bottom:8px" onclick="App.nlDraft()">âœ¨ Entwurf generieren</button>
+   <p class="hint" style="margin-bottom:10px">KI-Entwurf erzeugen, prüfen, Testmail an dich, dann an ein Segment senden. Abmeldelink wird automatisch angehängt. ${this.state.newsletters?.length?`<b>${this.state.newsletters.length}</b> Kampagne(n) bisher.`:""}</p>
+   <div class="mf" style="margin-bottom:6px"><label>Thema (für KI-Entwurf)</label><input id="nl-thema" placeholder="z. B. Warum Ladezeit über Anfragen entscheidet"></div>
+   <button class="btn bg bsm" style="margin-bottom:8px" onclick="App.nlDraft()">✨ Entwurf generieren</button>
    <div class="mf" style="margin-bottom:6px"><label>Betreff</label><input id="nl-betreff" placeholder="Betreffzeile"></div>
-   <div class="mf" style="margin-bottom:6px"><label>Inhalt (HTML)</label><textarea id="nl-html" rows="6" placeholder="<p>â€¦</p>" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:8px;font-size:12px;font-family:ui-monospace,monospace"></textarea></div>
+   <div class="mf" style="margin-bottom:6px"><label>Inhalt (HTML)</label><textarea id="nl-html" rows="6" placeholder="<p>…</p>" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:8px;font-size:12px;font-family:ui-monospace,monospace"></textarea></div>
    <div class="mf" style="margin-bottom:8px"><label>Segment</label><select id="nl-seg" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"><option value="clients">Alle Kunden</option><option value="care">Nur Care-Kunden</option><option value="leads">Alle Leads</option><option value="all">Kunden + Leads</option></select></div>
    <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button class="btn bg" onclick="App.nlSend(true)">âœ‰ï¸ Testmail an mich</button>
-    <button class="btn bi" onclick="App.nlSend(false)">ðŸš€ An Segment senden</button>
+    <button class="btn bg" onclick="App.nlSend(true)">✉️ Testmail an mich</button>
+    <button class="btn bi" onclick="App.nlSend(false)">🚀 An Segment senden</button>
    </div>
   </div>
   <div class="cfg-sec">
-   <div class="stit" style="color:var(--a);font-size:11px">STUFE 0 Â· Pexels API Key (nur fÃ¼r lokale Vorschau â€“ optional wenn Backend lÃ¤uft)</div>
-   <p class="hint" style="margin-bottom:10px">pexels.com/api â†’ kostenlos, Pexels License, kein Attribution-Zwang. 200/h, 20k/Monat. Nur Lese-Key. Wird primÃ¤r vom Backend genutzt â€“ hier fÃ¼r optionale lokale Nutzung.</p>
+   <div class="stit" style="color:var(--a);font-size:11px">STUFE 0 · Pexels API Key (nur für lokale Vorschau – optional wenn Backend läuft)</div>
+   <p class="hint" style="margin-bottom:10px">pexels.com/api → kostenlos, Pexels License, kein Attribution-Zwang. 200/h, 20k/Monat. Nur Lese-Key. Wird primär vom Backend genutzt – hier für optionale lokale Nutzung.</p>
    <div class="mf"><label>Pexels API Key</label><input id="c-pex" placeholder="Pexels API Key" value="${esc(c.pexKey||"")}"></div>
   </div>
   <div class="cfg-sec">
-   <div class="stit" style="color:var(--a);font-size:11px">STUFE 0 Â· WordPress-Staging â€“ Demo-Deploy (unbegrenzt, kostenlos, globales CDN)</div>
-   <p class="hint" style="margin-bottom:10px">cloudflare.com â†’ Workers & Pages â†’ Pages-Projekt anlegen (Direct Upload). API Token: Profile â†’ API Tokens â†’ Custom Token â†’ Pages:Edit. Account ID: Dashboard-Startseite rechts.</p>
+   <div class="stit" style="color:var(--a);font-size:11px">STUFE 0 · Cloudflare Pages – Demo-Deploy (unbegrenzt, kostenlos, globales CDN)</div>
+   <p class="hint" style="margin-bottom:10px">cloudflare.com → Workers & Pages → Pages-Projekt anlegen (Direct Upload). API Token: Profile → API Tokens → Custom Token → Pages:Edit. Account ID: Dashboard-Startseite rechts.</p>
    <div class="cfg-g2">
     <div class="mf"><label>Account ID</label><input id="c-cfa" placeholder="32-stellige Hex-ID" value="${esc(c.cfAccount||"")}"></div>
     <div class="mf"><label>Pages Projekt-Name</label><input id="c-cfp" placeholder="websitewerk-demos" value="${esc(c.cfProject||"")}"></div>
@@ -1965,28 +1950,28 @@ rSettings(){
    <div class="mf"><label>API Token (Pages:Edit)</label><input id="c-cft" type="password" value="${esc(c.cfToken||"")}"></div>
   </div>
   <div class="cfg-sec">
-   <div class="stit" style="color:var(--a);font-size:11px">STUFE A Â· Pingen â€“ Automatischer Brief-Versand (~1,50â€“2,50 â‚¬ / Brief)</div>
-   <p class="hint" style="margin-bottom:10px"><a href="https://pingen.de" target="_blank" rel="noopener" style="color:var(--a)">pingen.de</a> â†’ Account â†’ API Keys erstellen â†’ OAuth Client Credentials â†’ Access Token. Org-ID findest du in der URL deines Pingen-Dashboards.</p>
+   <div class="stit" style="color:var(--a);font-size:11px">STUFE A · Pingen – Automatischer Brief-Versand (~1,50–2,50 € / Brief)</div>
+   <p class="hint" style="margin-bottom:10px"><a href="https://pingen.de" target="_blank" rel="noopener" style="color:var(--a)">pingen.de</a> → Account → API Keys erstellen → OAuth Client Credentials → Access Token. Org-ID findest du in der URL deines Pingen-Dashboards.</p>
    <div class="cfg-g2">
     <div class="mf"><label>Pingen Access Token</label><input id="c-pgk" type="password" placeholder="Bearer Token" value="${esc(c.pingenKey||"")}"></div>
     <div class="mf"><label>Pingen Organisations-ID</label><input id="c-pgo" placeholder="uuid" value="${esc(c.pingenOrg||"")}"></div>
    </div>
   </div>
   <div class="cfg-sec">
-   <div class="stit" style="color:var(--a);font-size:11px">STUFE B Â· Klick-Tracking-Webhook (n8n auf Hetzner)</div>
-   <p class="hint" style="margin-bottom:10px">Wenn n8n lÃ¤uft: Webhook-URL hier eintragen. Bei Abnahme-Link-Klick wird eine POST-Anfrage gesendet â†’ n8n setzt Lead auf "Engaged" + Push-Benachrichtigung. Setup in SETUP-ANLEITUNG.md (n8n-Workflow-JSON importieren).</p>
+   <div class="stit" style="color:var(--a);font-size:11px">STUFE B · Klick-Tracking-Webhook (n8n auf Hetzner)</div>
+   <p class="hint" style="margin-bottom:10px">Wenn n8n läuft: Webhook-URL hier eintragen. Bei Demo-Link-Klick wird eine POST-Anfrage gesendet → n8n setzt Lead auf "Engaged" + Push-Benachrichtigung. Setup in SETUP-ANLEITUNG.md (n8n-Workflow-JSON importieren).</p>
    <div class="mf"><label>n8n Webhook-URL (optional)</label><input id="c-n8n" placeholder="https://n8n.deinserver.de/webhook/ww-track" value="${esc(c.n8nWebhook||"")}"></div>
   </div>
   <div class="cfg-sec">
-   <div class="stit" style="color:var(--g);font-size:11px">STUFE E Â· Hetzner + n8n (separates Setup)</div>
-   <p class="hint" style="margin-bottom:10px">n8n selbst hosten auf Hetzner CX22 (~4,35 â‚¬/Monat). Anleitung in SETUP-ANLEITUNG.md. Gibt dir: automatische Monatsmails, SEO-Reports, Uptime-Monitoring, Bewertungs-Alerts, Lead-Scoring-Updates. Nach dem Setup hier den Webhook eintragen.</p>
+   <div class="stit" style="color:var(--g);font-size:11px">STUFE E · Hetzner + n8n (separates Setup)</div>
+   <p class="hint" style="margin-bottom:10px">n8n selbst hosten auf Hetzner CX22 (~4,35 €/Monat). Anleitung in SETUP-ANLEITUNG.md. Gibt dir: automatische Monatsmails, SEO-Reports, Uptime-Monitoring, Bewertungs-Alerts, Lead-Scoring-Updates. Nach dem Setup hier den Webhook eintragen.</p>
   </div>
   <div class="cfg-sec">
    <div class="stit" style="font-size:11px">Absender (Briefe & Onboarding-Mails)</div>
    <div class="cfg-g2">
     <div class="mf"><label>Firma</label><input id="c-fn" value="${esc(c.absFirma||"WebsiteWerk")}"></div>
     <div class="mf"><label>Dein Name</label><input id="c-nn" value="${esc(c.absName||"")}"></div>
-    <div class="mf"><label>StraÃŸe + Nr.</label><input id="c-str" value="${esc(c.absStrasse||"")}"></div>
+    <div class="mf"><label>Straße + Nr.</label><input id="c-str" value="${esc(c.absStrasse||"")}"></div>
     <div class="mf"><label>PLZ + Ort</label><input id="c-ort" value="${esc(c.absOrt||"Aalen")}"></div>
     <div class="mf"><label>Telefon</label><input id="c-tel" value="${esc(c.absTel||"")}"></div>
     <div class="mf"><label>E-Mail</label><input id="c-mail" value="${esc(c.absMail||"")}"></div>
@@ -2010,32 +1995,32 @@ async saveSettings(){
  const g=id=>document.getElementById(id)?.value.trim()||"";
  Object.assign(this.cfg,{apiUrl:g("c-api"),pexKey:g("c-pex"),cfAccount:g("c-cfa"),cfProject:g("c-cfp"),cfToken:g("c-cft"),pingenKey:g("c-pgk"),pingenOrg:g("c-pgo"),n8nWebhook:g("c-n8n"),absFirma:g("c-fn"),absName:g("c-nn"),absStrasse:g("c-str"),absOrt:g("c-ort"),absTel:g("c-tel"),absMail:g("c-mail"),sbUrl:g("c-sbu"),sbKey:g("c-sbk")});
  localStorage.setItem("ww:cfg",JSON.stringify(this.cfg));
- // IMMER zuerst echten Cloud-State laden (Ã¼ber Backend, auch ohne Dashboard-Credentials)
+ // IMMER zuerst echten Cloud-State laden (über Backend, auch ohne Dashboard-Credentials)
  const cloudState=await this.sbLoadViaBackend()||(this.cfg.sbUrl&&this.cfg.sbKey?await this.sbLoad():null);
  if(cloudState&&(cloudState.leads?.length||cloudState.clients?.length)){
-   // Echter Cloud-Stand vorhanden â†’ immer laden (keine Demo-Daten zeigen)
+   // Echter Cloud-Stand vorhanden → immer laden (keine Demo-Daten zeigen)
    this.state=cloudState;
    this.persist();
-   this.toast("âœ“ "+(cloudState.leads?.length||0)+" Leads aus der Cloud geladen");
+   this.toast("✓ "+(cloudState.leads?.length||0)+" Leads aus der Cloud geladen");
  }else if(this.cfg.sbUrl&&this.cfg.sbKey){
    await this.sbSave();
  }
- this.updSync();this.toast("Einstellungen gespeichert âœ“");
+ this.updSync();this.toast("Einstellungen gespeichert ✓");
 },
 async testBackend(){
  const url=(this.cfg.apiUrl||"https://websitewerk-api.onrender.com").replace(/\/$/,"");
- this.toast("Teste Backendâ€¦");
+ this.toast("Teste Backend…");
  try{
   const h=await fetch(url+"/health");
   if(!h.ok)throw new Error("HTTP "+h.status);
   const e=await fetch(url+"/env-check").then(r=>r.json());
   const missing=Object.entries(e).filter(([k,v])=>k!=="allOk"&&!v).map(([k])=>k);
-  if(e.allOk)this.toast("âœ… Backend OK â€“ alle Keys gesetzt");
-  else this.toast("âš ï¸ Backend lÃ¤uft, aber fehlende Keys: "+missing.join(", "));
- }catch(err){this.toast("âŒ Backend nicht erreichbar: "+err.message.slice(0,80));}
+  if(e.allOk)this.toast("✅ Backend OK – alle Keys gesetzt");
+  else this.toast("⚠️ Backend läuft, aber fehlende Keys: "+missing.join(", "));
+ }catch(err){this.toast("❌ Backend nicht erreichbar: "+err.message.slice(0,80));}
 },
 expState(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(this.state,null,2)],{type:"application/json"}));a.download="ww-backup-"+today()+".json";a.click();},
-impState(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{this.state=JSON.parse(r.result);this.persist();this.renderAll();this.toast("Backup importiert âœ“")}catch(e){this.toast("UngÃ¼ltige Datei")}};r.readAsText(file);}
+impState(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{this.state=JSON.parse(r.result);this.persist();this.renderAll();this.toast("Backup importiert ✓")}catch(e){this.toast("Ungültige Datei")}};r.readAsText(file);}
 };
 App.init();
 </script>
