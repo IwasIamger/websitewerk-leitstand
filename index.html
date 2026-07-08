@@ -63,6 +63,15 @@ header h1{font-size:15px;font-weight:600}
 .card.picked{border-color:#0071e3;box-shadow:0 0 0 2px rgba(0,113,227,.25);background:#f5faff}
 .card.selmode{padding-left:32px}
 .card .cpick{position:absolute;top:12px;left:10px;font-size:16px;line-height:1;color:#0071e3;user-select:none}
+/* Quick-Action auf Karte (Hover) */
+.card .cqa{position:absolute;bottom:7px;right:7px;opacity:0;border:1px solid #DDE2E5;background:#fff;border-radius:6px;padding:2px 8px;font-size:14px;cursor:pointer;transition:opacity .12s;box-shadow:0 1px 5px rgba(0,0,0,.1)}
+.card:hover .cqa{opacity:1}
+.card .cqa:hover{background:#fff5f0;border-color:var(--a)}
+/* Kompakt-Ansicht */
+.board.compact .card{padding:8px 11px}
+.board.compact .chips,.board.compact .cnxt{display:none}
+.board.compact .csub{font-size:10px;margin-top:1px}
+.board.compact .card .cqa{bottom:6px}
 .bulkbar{display:flex;gap:8px;align-items:center;padding:8px 16px;flex-wrap:wrap;background:#eef4ff;border-bottom:1px solid #cfe0f7}
 .bulkbar b{color:#0071e3}
 .bulkbar button{border:1px solid #b9d3f2;background:#fff;border-radius:7px;padding:6px 11px;font-size:12px;cursor:pointer;font-weight:600;color:#0a5cc4}
@@ -639,7 +648,7 @@ rBoard(w){
  this.flt=this.flt||{};this.flt[w]=this.flt[w]||{q:"",branche:"",minScore:0,tag:"",sort:"default"};
  const items=this.applyBoardFilter(all,w);
  const al=this.drag&&this.drag.pl===pl?new Set(tm[this.drag.from]||[]):null;
- document.getElementById("v-"+w).innerHTML=this.boardToolbar(w,items.length,all.length)+`<div class="board">${stages.map(st=>{
+ document.getElementById("v-"+w).innerHTML=this.boardToolbar(w,items.length,all.length)+`<div class="board${(this.compact&&this.compact[w])?" compact":""}">${stages.map(st=>{
   const cards=items.filter(i=>i[kF]===st.id);
   let cls="col";if(al){if(al.has(st.id))cls+=" dok";else if(st.id!==this.drag.from)cls+=" dno";}
   return`<div class="${cls}" ondragover="App.dOver(event,'${pl}','${st.id}')" ondrop="App.dDrop(event,'${pl}','${st.id}')">
@@ -676,6 +685,7 @@ boardToolbar(w,shown,total){
   ${tags.length?`<select onchange="App.setFlt('${w}','tag',this.value)"><option value="">Alle Tags</option>${tags.map(t=>`<option ${f.tag===t?"selected":""}>${esc(t)}</option>`).join("")}</select>`:""}
   <select onchange="App.setFlt('${w}','sort',this.value)"><option value="default">Sortierung</option><option value="score" ${f.sort==="score"?"selected":""}>Score ↓</option><option value="name" ${f.sort==="name"?"selected":""}>Name A–Z</option><option value="due" ${f.sort==="due"?"selected":""}>Fällig zuerst</option><option value="new" ${f.sort==="new"?"selected":""}>Neueste</option></select>
   <button class="fltbulk ${selMode?"on":""}" onclick="App.toggleSel('${w}')">☑ Auswahl</button>
+  <button class="fltbulk ${(this.compact&&this.compact[w])?"on":""}" onclick="App.toggleCompact('${w}')" title="Kompakte Kartenansicht">⊟ Kompakt</button>
   <span class="fltcount">${shown}/${total}</span>
   ${active?`<button class="fltclr" onclick="App.clearFlt('${w}')">✕ Filter</button>`:""}
  </div>`;
@@ -690,6 +700,7 @@ boardToolbar(w,shown,total){
 },
 setFlt(w,k,v){this.flt=this.flt||{};this.flt[w]=this.flt[w]||{q:"",branche:"",minScore:0,tag:"",sort:"default"};this.flt[w][k]=v;this.rBoard(w);},
 clearFlt(w){this.flt[w]={q:"",branche:"",minScore:0,tag:"",sort:"default"};this.rBoard(w);},
+toggleCompact(w){this.compact=this.compact||{};this.compact[w]=!this.compact[w];this.rBoard(w);},
 _selInit(){this.selMode=this.selMode||{};this.sel=this.sel||{akquise:new Set(),kunden:new Set()};},
 toggleSel(w){this._selInit();this.selMode[w]=!this.selMode[w];if(!this.selMode[w])this.sel[w]=new Set();this.rBoard(w);},
 togglePick(w,id,ev){if(ev)ev.stopPropagation();this._selInit();const s=this.sel[w];s.has(id)?s.delete(id):s.add(id);this.rBoard(w);},
@@ -712,6 +723,7 @@ cardH(c,pl,sid){
  return`<div class="card${picked?" picked":""}${selMode?" selmode":""}" draggable="${selMode?"false":"true"}" ondragstart="App.dStart(event,'${pl}','${c.id}','${sid}')" ondragend="App.dEnd()" onclick="${clickH}" style="cursor:pointer">
   ${selMode?`<span class="cpick">${picked?"☑":"☐"}</span>`:""}
   ${top}${tagchips}${c.next?.label?`<div class="cnxt ${od?"od":""}">⏱ <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.next.label)}</span></div>`:""}
+  ${(pl==="acq"&&!selMode)?`<button class="cqa" title="Factory-Durchlauf starten" onclick="event.stopPropagation();App.runFactory('${c.id}')">🏭</button>`:""}
  </div>`;
 },
 dStart(e,pl,id,from){this.drag={pl,id,from};setTimeout(()=>this.renderAll(),0);},
