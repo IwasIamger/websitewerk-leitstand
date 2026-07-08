@@ -59,7 +59,16 @@ header h1{font-size:15px;font-weight:600}
 .ch .cc{font-family:ui-monospace,monospace;font-size:10px;color:#9AA4AC}
 .cb{padding:0 6px 6px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
 .ce{font-family:ui-monospace,monospace;font-size:10px;color:#C5CCD1;text-align:center;padding:12px 0}
-.card{background:#fff;border:1px solid #DDE2E5;border-radius:8px;padding:13px;cursor:grab;transition:box-shadow .15s,border-color .15s,transform .1s}.card:hover{box-shadow:0 3px 12px rgba(0,0,0,.08);border-color:#c0c8cd;transform:translateY(-1px)}
+.card{position:relative;background:#fff;border:1px solid #DDE2E5;border-radius:8px;padding:13px;cursor:grab;transition:box-shadow .15s,border-color .15s,transform .1s}.card:hover{box-shadow:0 3px 12px rgba(0,0,0,.08);border-color:#c0c8cd;transform:translateY(-1px)}
+.card.picked{border-color:#0071e3;box-shadow:0 0 0 2px rgba(0,113,227,.25);background:#f5faff}
+.card.selmode{padding-left:32px}
+.card .cpick{position:absolute;top:12px;left:10px;font-size:16px;line-height:1;color:#0071e3;user-select:none}
+.bulkbar{display:flex;gap:8px;align-items:center;padding:8px 16px;flex-wrap:wrap;background:#eef4ff;border-bottom:1px solid #cfe0f7}
+.bulkbar b{color:#0071e3}
+.bulkbar button{border:1px solid #b9d3f2;background:#fff;border-radius:7px;padding:6px 11px;font-size:12px;cursor:pointer;font-weight:600;color:#0a5cc4}
+.bulkbar button:hover{background:#f0f6ff}
+.bulkbar button.prim{background:#0071e3;color:#fff;border-color:#0071e3}
+.bulkbar button.prim:hover{background:#005ec0}
 .card:active{cursor:grabbing}.card:hover{box-shadow:0 2px 8px rgba(26,37,48,.1)}
 .card .cnm{font-weight:600;font-size:13px;line-height:1.3}
 .card .csub{font-size:11px;color:#8A949C;margin-top:2px}
@@ -659,18 +668,35 @@ boardToolbar(w,shown,total){
  const branchen=[...new Set(all.map(i=>i.branche).filter(Boolean))].sort();
  const tags=[...new Set(all.flatMap(i=>i.tags||[]))].sort();
  const active=f.q||f.branche||f.minScore||f.tag||(f.sort&&f.sort!=="default");
- return `<div class="fltbar">
+ const selMode=this.selMode&&this.selMode[w];const n=(this.sel&&this.sel[w])?this.sel[w].size:0;
+ const bar=`<div class="fltbar">
   <input id="fltq-${w}" class="fltq" placeholder="🔍 Suche: Name · Branche · Ort…" value="${esc(f.q)}" oninput="App.setFlt('${w}','q',this.value)" onfocus="App._fltFocus='${w}'" onblur="App._fltFocus=null">
   <select onchange="App.setFlt('${w}','branche',this.value)"><option value="">Alle Branchen</option>${branchen.map(b=>`<option ${f.branche===b?"selected":""}>${esc(b)}</option>`).join("")}</select>
   ${acq?`<select onchange="App.setFlt('${w}','minScore',+this.value)"><option value="0">Score: alle</option>${[60,75,85].map(s=>`<option value="${s}" ${f.minScore===s?"selected":""}>≥ ${s}</option>`).join("")}</select>`:""}
   ${tags.length?`<select onchange="App.setFlt('${w}','tag',this.value)"><option value="">Alle Tags</option>${tags.map(t=>`<option ${f.tag===t?"selected":""}>${esc(t)}</option>`).join("")}</select>`:""}
   <select onchange="App.setFlt('${w}','sort',this.value)"><option value="default">Sortierung</option><option value="score" ${f.sort==="score"?"selected":""}>Score ↓</option><option value="name" ${f.sort==="name"?"selected":""}>Name A–Z</option><option value="due" ${f.sort==="due"?"selected":""}>Fällig zuerst</option><option value="new" ${f.sort==="new"?"selected":""}>Neueste</option></select>
+  <button class="fltbulk ${selMode?"on":""}" onclick="App.toggleSel('${w}')">☑ Auswahl</button>
   <span class="fltcount">${shown}/${total}</span>
   ${active?`<button class="fltclr" onclick="App.clearFlt('${w}')">✕ Filter</button>`:""}
  </div>`;
+ const bulk=selMode?`<div class="bulkbar">
+  <span><b>${n}</b> ausgewählt</span>
+  <button onclick="App.bulkSelectAll('${w}')">Alle (${shown}) wählen</button>
+  <button onclick="App.bulkClear('${w}')">Aufheben</button>
+  <button ${n?"":"disabled"} onclick="App.bulkTag('${w}')">+ Tag</button>
+  ${acq?`<button class="prim" ${n?"":"disabled"} onclick="App.bulkFactory('${w}')">🏭 Factory-Run (${n})</button>`:""}
+ </div>`:"";
+ return bar+bulk;
 },
 setFlt(w,k,v){this.flt=this.flt||{};this.flt[w]=this.flt[w]||{q:"",branche:"",minScore:0,tag:"",sort:"default"};this.flt[w][k]=v;this.rBoard(w);},
 clearFlt(w){this.flt[w]={q:"",branche:"",minScore:0,tag:"",sort:"default"};this.rBoard(w);},
+_selInit(){this.selMode=this.selMode||{};this.sel=this.sel||{akquise:new Set(),kunden:new Set()};},
+toggleSel(w){this._selInit();this.selMode[w]=!this.selMode[w];if(!this.selMode[w])this.sel[w]=new Set();this.rBoard(w);},
+togglePick(w,id,ev){if(ev)ev.stopPropagation();this._selInit();const s=this.sel[w];s.has(id)?s.delete(id):s.add(id);this.rBoard(w);},
+bulkSelectAll(w){this._selInit();this.sel[w]=new Set(this.applyBoardFilter(w==="akquise"?this.state.leads:this.state.clients,w).map(i=>i.id));this.rBoard(w);},
+bulkClear(w){this._selInit();this.sel[w]=new Set();this.rBoard(w);},
+bulkTag(w){this._selInit();const t=(prompt("Tag für alle Ausgewählten (z. B. Heiß, Premium, Region Aalen):","")||"").trim().replace(/["'<>]/g,"").slice(0,24);if(!t)return;const pl=w==="akquise"?"acq":"cli";let n=0;this.sel[w].forEach(id=>{const it=this._find(pl,id);if(it){it.tags=it.tags||[];if(!it.tags.includes(t)){it.tags.push(t);n++;}}});this.persist();this.rBoard(w);this.toast(`Tag „${t}" zu ${n} hinzugefügt`);},
+async bulkFactory(w){this._selInit();const ids=[...this.sel[w]];if(!ids.length)return;if(!confirm(`Factory-Durchlauf für ${ids.length} Lead(s) starten?\nJeder Lauf kostet ~0,70 € Claude und dauert 4–8 Min.`))return;this.toast(`🏭 Starte ${ids.length} Factory-Läufe…`);const apiBase=this.apiBase();let ok=0;for(const id of ids){try{const r=await fetch(apiBase+"/api/factory/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({leadId:id})});if(r.ok)ok++;}catch(e){}}this.toast(`✓ ${ok}/${ids.length} Factory-Läufe gestartet`);try{await this.reloadCloudState();}catch(e){}this.selMode[w]=false;this.sel[w]=new Set();this.rBoard(w);},
 cardH(c,pl,sid){
  const od=isOD(c.next?.due);
  const chips=pl==="acq"?`<div class="chips">${c.twin?'<span class="chip">Twin</span>':''}${c.blueprint?'<span class="chip" style="background:#e8f4ff;color:#0071e3">Agent ✓</span>':''}${c.demoUrl?`<span class="chip ok">Demo ✓</span>`:''}${c.psiScore!=null?`<span class="chip" style="background:${c.psiScore>=85?'#ebfbee':c.psiScore>=60?'#fff9e6':'#fff5f5'};color:${c.psiScore>=85?'var(--g)':c.psiScore>=60?'var(--amb)':'var(--red)'}">PSI ${c.psiScore}</span>`:''}${c.trackUrl?`<span class="chip live">Track ✓</span>`:''}${c.briefSent?`<span class="chip hot2">✉ Brief</span>`:''}${c.buildPages?`<span class="chip">${c.buildPages}p</span>`:''}</div>`:"";
@@ -679,7 +705,12 @@ cardH(c,pl,sid){
   ?`<div class="crow"><div class="cnm">${esc(c.name)}</div>${c.score?`<span class="csc ${c.score>=85?"hot":""}">${c.score}</span>`:""}</div><div class="csub">${esc(c.branche||"")} · ${esc(c.ort||"")}</div>${chips}`
   :`<div class="crow"><span class="dot9" style="background:${hC(c.health)};margin-top:3px"></span><div class="cnm" style="flex:1">${esc(c.name)}</div>${c.mrr?`<span class="cmrr">${fmt(c.mrr)}€</span>`:""}</div><div class="csub" style="margin-left:17px">${esc(c.branche||"")} · ${esc(c.paket||"")}</div>`;
  const tagchips=(c.tags||[]).length?`<div class="chips">${c.tags.slice(0,4).map(t=>`<span class="chip tagchip">${esc(t)}</span>`).join("")}</div>`:"";
- return`<div class="card" draggable="true" ondragstart="App.dStart(event,'${pl}','${c.id}','${sid}')" ondragend="App.dEnd()" onclick="App.openDetail('${pl}','${c.id}')" style="cursor:pointer">
+ const w=pl==="acq"?"akquise":"kunden";
+ const selMode=this.selMode&&this.selMode[w];
+ const picked=selMode&&this.sel&&this.sel[w]&&this.sel[w].has(c.id);
+ const clickH=selMode?`App.togglePick('${w}','${c.id}',event)`:`App.openDetail('${pl}','${c.id}')`;
+ return`<div class="card${picked?" picked":""}${selMode?" selmode":""}" draggable="${selMode?"false":"true"}" ondragstart="App.dStart(event,'${pl}','${c.id}','${sid}')" ondragend="App.dEnd()" onclick="${clickH}" style="cursor:pointer">
+  ${selMode?`<span class="cpick">${picked?"☑":"☐"}</span>`:""}
   ${top}${tagchips}${c.next?.label?`<div class="cnxt ${od?"od":""}">⏱ <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.next.label)}</span></div>`:""}
  </div>`;
 },
