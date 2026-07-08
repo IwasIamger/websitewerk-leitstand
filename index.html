@@ -64,20 +64,29 @@ header h1{font-size:15px;font-weight:600}
 .card.selmode{padding-left:32px}
 .card .cpick{position:absolute;top:12px;left:10px;font-size:16px;line-height:1;color:#0071e3;user-select:none}
 /* Quick-Action auf Karte (Hover) */
-.card .cqa{position:absolute;bottom:7px;right:7px;opacity:0;border:1px solid #DDE2E5;background:#fff;border-radius:6px;padding:2px 8px;font-size:14px;cursor:pointer;transition:opacity .12s;box-shadow:0 1px 5px rgba(0,0,0,.1)}
-.card:hover .cqa{opacity:1}
+.card .cqarow{position:absolute;bottom:7px;right:7px;display:flex;gap:5px;opacity:0;transition:opacity .12s}
+.card:hover .cqarow,.card.pinned .cqarow{opacity:1}
+.card .cqa{border:1px solid #DDE2E5;background:#fff;border-radius:6px;padding:2px 8px;font-size:14px;cursor:pointer;line-height:1.2;box-shadow:0 1px 5px rgba(0,0,0,.1)}
 .card .cqa:hover{background:#fff5f0;border-color:var(--a)}
+.card.pinned{border-left:3px solid #f0b429}
 /* Kompakt-Ansicht */
 .board.compact .card{padding:8px 11px}
 .board.compact .chips,.board.compact .cnxt{display:none}
 .board.compact .csub{font-size:10px;margin-top:1px}
-.board.compact .card .cqa{bottom:6px}
+.board.compact .card .cqarow{bottom:6px}
 .bulkbar{display:flex;gap:8px;align-items:center;padding:8px 16px;flex-wrap:wrap;background:#eef4ff;border-bottom:1px solid #cfe0f7}
 .bulkbar b{color:#0071e3}
 .bulkbar button{border:1px solid #b9d3f2;background:#fff;border-radius:7px;padding:6px 11px;font-size:12px;cursor:pointer;font-weight:600;color:#0a5cc4}
 .bulkbar button:hover{background:#f0f6ff}
 .bulkbar button.prim{background:#0071e3;color:#fff;border-color:#0071e3}
 .bulkbar button.prim:hover{background:#005ec0}
+/* Gespeicherte Ansichten (Smart Views) */
+.viewsrow{display:flex;gap:7px;align-items:center;padding:7px 16px;flex-wrap:wrap;background:#fafbfc;border-bottom:1px solid #EEF1F3}
+.viewsrow .vlbl{font-size:11px;color:#8A929A;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.viewchip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #DDE2E5;border-radius:14px;padding:4px 6px 4px 11px;font-size:12px;cursor:pointer;font-weight:600;color:#334}
+.viewchip:hover{border-color:var(--a);background:#fff9f6}
+.viewchip button{border:none;background:#eef0f2;color:#8A929A;border-radius:50%;width:16px;height:16px;font-size:11px;line-height:1;cursor:pointer;padding:0}
+.viewchip button:hover{background:#ffd7d7;color:#d64545}
 .card:active{cursor:grabbing}.card:hover{box-shadow:0 2px 8px rgba(26,37,48,.1)}
 .card .cnm{font-weight:600;font-size:13px;line-height:1.3}
 .card .csub{font-size:11px;color:#8A949C;margin-top:2px}
@@ -371,7 +380,15 @@ async init(){
  if(this.cfg.sbUrl&&this.cfg.sbKey)d=await this.sbLoad();
  if(!d){try{const r=localStorage.getItem("ww:state");if(r)d=JSON.parse(r)}catch(e){}}
  this.state=d||seed();
- this.renderNav();this.show("heute");this.updSync();
+ this.renderNav();this.show("heute");this.updSync();this.initKeys();
+},
+initKeys(){
+ document.addEventListener("keydown",e=>{
+  const tag=(e.target.tagName||"").toLowerCase();const typing=tag==="input"||tag==="textarea"||tag==="select"||e.target.isContentEditable;
+  const onBoard=this.view==="akquise"||this.view==="kunden";
+  if(e.key==="/"&&!typing&&onBoard){e.preventDefault();const si=document.getElementById("fltq-"+this.view);if(si){this._fltFocus=this.view;si.focus();}}
+  else if(e.key==="Escape"&&onBoard){this._fltFocus=null;if(typing&&e.target.blur)e.target.blur();this.clearFlt(this.view);}
+ });
 },
 persist(){clearTimeout(this.saveT);this.saveT=setTimeout(async()=>{try{localStorage.setItem("ww:state",JSON.stringify(this.state))}catch(e){}if(this.cfg.sbUrl&&this.cfg.sbKey)await this.sbSave();},500);},
 sbH(){return{"apikey":this.cfg.sbKey,"Authorization":"Bearer "+this.cfg.sbKey,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates"}},
@@ -670,6 +687,7 @@ applyBoardFilter(all,w){
  else if(f.sort==="name")out=out.slice().sort((a,b)=>String(a.name||"").localeCompare(String(b.name||"")));
  else if(f.sort==="due")out=out.slice().sort((a,b)=>String(a.next?.due||"9999").localeCompare(String(b.next?.due||"9999")));
  else if(f.sort==="new")out=out.slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+ out=out.filter(i=>i.pinned).concat(out.filter(i=>!i.pinned)); // gepinnte immer zuerst
  return out;
 },
 boardToolbar(w,shown,total){
@@ -686,6 +704,7 @@ boardToolbar(w,shown,total){
   <select onchange="App.setFlt('${w}','sort',this.value)"><option value="default">Sortierung</option><option value="score" ${f.sort==="score"?"selected":""}>Score ↓</option><option value="name" ${f.sort==="name"?"selected":""}>Name A–Z</option><option value="due" ${f.sort==="due"?"selected":""}>Fällig zuerst</option><option value="new" ${f.sort==="new"?"selected":""}>Neueste</option></select>
   <button class="fltbulk ${selMode?"on":""}" onclick="App.toggleSel('${w}')">☑ Auswahl</button>
   <button class="fltbulk ${(this.compact&&this.compact[w])?"on":""}" onclick="App.toggleCompact('${w}')" title="Kompakte Kartenansicht">⊟ Kompakt</button>
+  <button class="fltbulk" onclick="App.saveView('${w}')" title="Aktuellen Filter als Ansicht speichern">💾 Ansicht</button>
   <span class="fltcount">${shown}/${total}</span>
   ${active?`<button class="fltclr" onclick="App.clearFlt('${w}')">✕ Filter</button>`:""}
  </div>`;
@@ -696,11 +715,17 @@ boardToolbar(w,shown,total){
   <button ${n?"":"disabled"} onclick="App.bulkTag('${w}')">+ Tag</button>
   ${acq?`<button class="prim" ${n?"":"disabled"} onclick="App.bulkFactory('${w}')">🏭 Factory-Run (${n})</button>`:""}
  </div>`:"";
- return bar+bulk;
+ const savedViews=(this.state.views&&this.state.views[w])||[];
+ const views=savedViews.length?`<div class="viewsrow"><span class="vlbl">Ansichten</span>${savedViews.map((v,i)=>`<span class="viewchip" onclick="App.applyView('${w}',${i})">${esc(v.name)}<button title="Ansicht löschen" onclick="event.stopPropagation();App.delView('${w}',${i})">×</button></span>`).join("")}</div>`:"";
+ return bar+views+bulk;
 },
 setFlt(w,k,v){this.flt=this.flt||{};this.flt[w]=this.flt[w]||{q:"",branche:"",minScore:0,tag:"",sort:"default"};this.flt[w][k]=v;this.rBoard(w);},
 clearFlt(w){this.flt[w]={q:"",branche:"",minScore:0,tag:"",sort:"default"};this.rBoard(w);},
 toggleCompact(w){this.compact=this.compact||{};this.compact[w]=!this.compact[w];this.rBoard(w);},
+togglePin(pl,id,ev){if(ev)ev.stopPropagation();const it=this._find(pl,id);if(!it)return;it.pinned=!it.pinned;this.persist();this.rBoard(pl==="acq"?"akquise":"kunden");if(this.detail)this.renderDrawer();},
+saveView(w){const f=this.flt[w]||{};const active=f.q||f.branche||f.minScore||f.tag||(f.sort&&f.sort!=="default");if(!active){this.toast("Erst Suche/Filter setzen, dann als Ansicht speichern.");return;}const name=(prompt("Name der Ansicht (z. B. Heiße Cafés Aalen):","")||"").trim().replace(/[<>]/g,"").slice(0,40);if(!name)return;this.state.views=this.state.views||{};this.state.views[w]=this.state.views[w]||[];this.state.views[w].push({name,flt:{...f}});this.persist();this.rBoard(w);this.toast(`Ansicht „${name}" gespeichert`);},
+applyView(w,i){const v=((this.state.views||{})[w]||[])[i];if(!v)return;this.flt[w]={q:"",branche:"",minScore:0,tag:"",sort:"default",...v.flt};this.rBoard(w);},
+delView(w,i){if(!this.state.views||!this.state.views[w])return;this.state.views[w].splice(i,1);this.persist();this.rBoard(w);},
 _selInit(){this.selMode=this.selMode||{};this.sel=this.sel||{akquise:new Set(),kunden:new Set()};},
 toggleSel(w){this._selInit();this.selMode[w]=!this.selMode[w];if(!this.selMode[w])this.sel[w]=new Set();this.rBoard(w);},
 togglePick(w,id,ev){if(ev)ev.stopPropagation();this._selInit();const s=this.sel[w];s.has(id)?s.delete(id):s.add(id);this.rBoard(w);},
@@ -720,10 +745,13 @@ cardH(c,pl,sid){
  const selMode=this.selMode&&this.selMode[w];
  const picked=selMode&&this.sel&&this.sel[w]&&this.sel[w].has(c.id);
  const clickH=selMode?`App.togglePick('${w}','${c.id}',event)`:`App.openDetail('${pl}','${c.id}')`;
- return`<div class="card${picked?" picked":""}${selMode?" selmode":""}" draggable="${selMode?"false":"true"}" ondragstart="App.dStart(event,'${pl}','${c.id}','${sid}')" ondragend="App.dEnd()" onclick="${clickH}" style="cursor:pointer">
+ return`<div class="card${picked?" picked":""}${selMode?" selmode":""}${c.pinned?" pinned":""}" draggable="${selMode?"false":"true"}" ondragstart="App.dStart(event,'${pl}','${c.id}','${sid}')" ondragend="App.dEnd()" onclick="${clickH}" style="cursor:pointer">
   ${selMode?`<span class="cpick">${picked?"☑":"☐"}</span>`:""}
   ${top}${tagchips}${c.next?.label?`<div class="cnxt ${od?"od":""}">⏱ <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.next.label)}</span></div>`:""}
-  ${(pl==="acq"&&!selMode)?`<button class="cqa" title="Factory-Durchlauf starten" onclick="event.stopPropagation();App.runFactory('${c.id}')">🏭</button>`:""}
+  ${!selMode?`<div class="cqarow">
+   <button class="cqa" title="${c.pinned?"Anheften aufheben":"Anheften"}" onclick="event.stopPropagation();App.togglePin('${pl}','${c.id}')">${c.pinned?"⭐":"☆"}</button>
+   ${pl==="acq"?`<button class="cqa" title="Factory-Durchlauf starten" onclick="event.stopPropagation();App.runFactory('${c.id}')">🏭</button>`:""}
+  </div>`:""}
  </div>`;
 },
 dStart(e,pl,id,from){this.drag={pl,id,from};setTimeout(()=>this.renderAll(),0);},
