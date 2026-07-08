@@ -42,7 +42,17 @@ header h1{font-size:15px;font-weight:600}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 /* boards */
 .board{display:flex;gap:10px;padding:16px;min-width:max-content;height:100%}
-.col{width:280px;flex-shrink:0;display:flex;flex-direction:column;background:#F7F8F9;border:1px solid #DDE2E5;border-radius:8px;max-height:calc(100vh - 88px)}
+.col{width:280px;flex-shrink:0;display:flex;flex-direction:column;background:#F7F8F9;border:1px solid #DDE2E5;border-radius:8px;max-height:calc(100vh - 142px)}
+/* Filter/Suche/Sortierung-Leiste */
+.fltbar{display:flex;gap:8px;align-items:center;padding:9px 16px;flex-wrap:wrap;border-bottom:1px solid #E5E9EC;background:#fff}
+.fltbar input.fltq{flex:1;min-width:190px;border:1px solid #CBD2D6;border-radius:7px;padding:8px 11px;font-size:13px}
+.fltbar input.fltq:focus{outline:none;border-color:var(--a);box-shadow:0 0 0 3px rgba(232,112,74,.12)}
+.fltbar select{border:1px solid #CBD2D6;border-radius:7px;padding:7px 9px;font-size:12px;background:#fff;cursor:pointer;max-width:160px}
+.fltbar .fltcount{font-size:12px;color:#7A828A;font-weight:700;white-space:nowrap;margin-left:auto}
+.fltbar .fltclr{border:1px solid #E3B7B7;background:#fff5f5;color:#d64545;border-radius:7px;padding:7px 10px;font-size:12px;cursor:pointer;font-weight:600}
+.fltbar .fltclr:hover{background:#ffecec}
+.fltbar .fltbulk{border:1px solid #CBD2D6;background:#fff;border-radius:7px;padding:7px 10px;font-size:12px;cursor:pointer;font-weight:600}
+.fltbar .fltbulk.on{background:#eef4ff;border-color:#0071e3;color:#0071e3}
 .col.dok{background:#FFF8F2;border:2px dashed var(--a)}.col.dno{opacity:.3;pointer-events:none}
 .ch{padding:9px 10px 6px;display:flex;align-items:center}
 .ch .cn{font-family:ui-monospace,monospace;font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#5A6670;flex:1}
@@ -616,16 +626,51 @@ rHeute(){
 
 /* === Boards, Drag & Drop, Move-Modal === */
 rBoard(w){
- const acq=w==="akquise",stages=acq?AS:CS,items=acq?this.state.leads:this.state.clients,kF=acq?"stage":"phase",pl=acq?"acq":"cli",tm=acq?AT:CT;
+ const acq=w==="akquise",stages=acq?AS:CS,all=acq?this.state.leads:this.state.clients,kF=acq?"stage":"phase",pl=acq?"acq":"cli",tm=acq?AT:CT;
+ this.flt=this.flt||{};this.flt[w]=this.flt[w]||{q:"",branche:"",minScore:0,tag:"",sort:"default"};
+ const items=this.applyBoardFilter(all,w);
  const al=this.drag&&this.drag.pl===pl?new Set(tm[this.drag.from]||[]):null;
- document.getElementById("v-"+w).innerHTML=`<div class="board">${stages.map(st=>{
+ document.getElementById("v-"+w).innerHTML=this.boardToolbar(w,items.length,all.length)+`<div class="board">${stages.map(st=>{
   const cards=items.filter(i=>i[kF]===st.id);
   let cls="col";if(al){if(al.has(st.id))cls+=" dok";else if(st.id!==this.drag.from)cls+=" dno";}
   return`<div class="${cls}" ondragover="App.dOver(event,'${pl}','${st.id}')" ondrop="App.dDrop(event,'${pl}','${st.id}')">
    <div class="ch"><span class="cn" ${st.t?'style="color:#A8B1B8"':''}>${st.l}</span><span class="cc">${cards.length}</span></div>
    <div class="cb">${cards.length?cards.map(c=>this.cardH(c,pl,st.id)).join(""):`<div class="ce">leer</div>`}</div>
   </div>`;}).join("")}</div>`;
+ if(this._fltFocus===w){const si=document.getElementById("fltq-"+w);if(si){const v=si.value;si.focus();si.setSelectionRange(v.length,v.length);}}
 },
+applyBoardFilter(all,w){
+ const f=(this.flt&&this.flt[w])||{};const norm=s=>String(s||"").toLowerCase();
+ let out=all.filter(i=>{
+  if(f.q){const q=norm(f.q);if(!(norm(i.name).includes(q)||norm(i.branche).includes(q)||norm(i.ort).includes(q)))return false;}
+  if(f.branche&&norm(i.branche)!==norm(f.branche))return false;
+  if(f.minScore&&(+i.score||0)<f.minScore)return false;
+  if(f.tag&&!(i.tags||[]).map(norm).includes(norm(f.tag)))return false;
+  return true;
+ });
+ if(f.sort==="score")out=out.slice().sort((a,b)=>(+b.score||0)-(+a.score||0));
+ else if(f.sort==="name")out=out.slice().sort((a,b)=>String(a.name||"").localeCompare(String(b.name||"")));
+ else if(f.sort==="due")out=out.slice().sort((a,b)=>String(a.next?.due||"9999").localeCompare(String(b.next?.due||"9999")));
+ else if(f.sort==="new")out=out.slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+ return out;
+},
+boardToolbar(w,shown,total){
+ const acq=w==="akquise",all=acq?this.state.leads:this.state.clients,f=this.flt[w];
+ const branchen=[...new Set(all.map(i=>i.branche).filter(Boolean))].sort();
+ const tags=[...new Set(all.flatMap(i=>i.tags||[]))].sort();
+ const active=f.q||f.branche||f.minScore||f.tag||(f.sort&&f.sort!=="default");
+ return `<div class="fltbar">
+  <input id="fltq-${w}" class="fltq" placeholder="🔍 Suche: Name · Branche · Ort…" value="${esc(f.q)}" oninput="App.setFlt('${w}','q',this.value)" onfocus="App._fltFocus='${w}'" onblur="App._fltFocus=null">
+  <select onchange="App.setFlt('${w}','branche',this.value)"><option value="">Alle Branchen</option>${branchen.map(b=>`<option ${f.branche===b?"selected":""}>${esc(b)}</option>`).join("")}</select>
+  ${acq?`<select onchange="App.setFlt('${w}','minScore',+this.value)"><option value="0">Score: alle</option>${[60,75,85].map(s=>`<option value="${s}" ${f.minScore===s?"selected":""}>≥ ${s}</option>`).join("")}</select>`:""}
+  ${tags.length?`<select onchange="App.setFlt('${w}','tag',this.value)"><option value="">Alle Tags</option>${tags.map(t=>`<option ${f.tag===t?"selected":""}>${esc(t)}</option>`).join("")}</select>`:""}
+  <select onchange="App.setFlt('${w}','sort',this.value)"><option value="default">Sortierung</option><option value="score" ${f.sort==="score"?"selected":""}>Score ↓</option><option value="name" ${f.sort==="name"?"selected":""}>Name A–Z</option><option value="due" ${f.sort==="due"?"selected":""}>Fällig zuerst</option><option value="new" ${f.sort==="new"?"selected":""}>Neueste</option></select>
+  <span class="fltcount">${shown}/${total}</span>
+  ${active?`<button class="fltclr" onclick="App.clearFlt('${w}')">✕ Filter</button>`:""}
+ </div>`;
+},
+setFlt(w,k,v){this.flt=this.flt||{};this.flt[w]=this.flt[w]||{q:"",branche:"",minScore:0,tag:"",sort:"default"};this.flt[w][k]=v;this.rBoard(w);},
+clearFlt(w){this.flt[w]={q:"",branche:"",minScore:0,tag:"",sort:"default"};this.rBoard(w);},
 cardH(c,pl,sid){
  const od=isOD(c.next?.due);
  const chips=pl==="acq"?`<div class="chips">${c.twin?'<span class="chip">Twin</span>':''}${c.blueprint?'<span class="chip" style="background:#e8f4ff;color:#0071e3">Agent ✓</span>':''}${c.demoUrl?`<span class="chip ok">Demo ✓</span>`:''}${c.psiScore!=null?`<span class="chip" style="background:${c.psiScore>=85?'#ebfbee':c.psiScore>=60?'#fff9e6':'#fff5f5'};color:${c.psiScore>=85?'var(--g)':c.psiScore>=60?'var(--amb)':'var(--red)'}">PSI ${c.psiScore}</span>`:''}${c.trackUrl?`<span class="chip live">Track ✓</span>`:''}${c.briefSent?`<span class="chip hot2">✉ Brief</span>`:''}${c.buildPages?`<span class="chip">${c.buildPages}p</span>`:''}</div>`:"";
