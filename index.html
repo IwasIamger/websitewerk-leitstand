@@ -1373,6 +1373,9 @@ renderDrawer(){
      <button class="btn bg action-btn" onclick="App.captureScreenshot('${id}')">
       <span class="act-top"><span>📸 Demo-Screenshot<small>Erzeugt ein Vorschaubild der Live-/Demo-URL (für Angebote & Social).</small></span></span>
      </button>
+     <button class="btn bg action-btn" onclick="App.generate3d('${id}')">
+      <span class="act-top"><span>🧊 3D-Modell generieren<small>KI (Meshy) erzeugt ein echtes GLB-Modell. Ergebnis kommt per Webhook automatisch.</small></span></span>
+     </button>
      <button class="btn bg action-btn" onclick="App.openBuildConfig('${id}')">
       <span class="act-top"><span>🏭 Konfigurieren & bauen<small>Build-Fenster: Level, Pack, 3D, Output & Kundengenauigkeit vor dem Lauf einstellen.</small></span></span>
      </button>
@@ -1396,6 +1399,7 @@ renderDrawer(){
      <div id="dom-out-${id}" style="margin-top:6px"></div>
     </div>
     ${item.screenshot?`<div style="margin-top:8px"><div class="stit" style="font-size:11px">Demo-Screenshot</div><a href="${esc(item.screenshot.url)}" target="_blank" rel="noopener"><img src="${esc(item.screenshot.url)}" alt="Screenshot ${esc(item.name)}" style="width:100%;border-radius:8px;border:1px solid var(--border)" loading="lazy"></a><div style="font-size:10px;color:var(--muted);margin-top:3px">Quelle: ${esc(item.screenshot.source||"")} · ${new Date(item.screenshot.ts).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</div></div>`:""}
+    ${item.model3d?.glb?`<div class="infobox" style="margin-top:8px"><b>🧊 3D-Modell</b>${item.model3d.thumbnail?`<br><img src="${esc(item.model3d.thumbnail)}" alt="3D" style="width:100%;max-width:200px;border-radius:8px;margin-top:4px">`:""}<br><a href="${esc(item.model3d.glb)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600;font-size:11px">GLB öffnen ↗</a></div>`:""}
     ${(item.socialPosts||[]).length?`<div style="margin-top:8px"><div class="stit" style="font-size:11px">Social-Posts (${item.socialPosts.length})</div>${item.socialPosts.slice(0,3).map(p=>{const blk=(label,txt,tags)=>txt?`<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">${label}</span><button class="btn bg" style="font-size:10px;padding:2px 8px" onclick="App.copyEl(this)">Kopieren</button></div><div class="copysrc" style="white-space:pre-wrap;font-size:12px;margin-top:3px">${esc(txt)}${tags&&tags.length?"\n\n"+esc(tags.join(" ")):""}</div></div>`:"";return `<div class="infobox" style="margin-bottom:6px"><div style="font-size:11px;color:var(--muted);margin-bottom:2px">${esc(p.thema||"")}</div>${blk("LinkedIn",p.linkedin?.text,p.linkedin?.hashtags)}${blk("Instagram",p.instagram?.text,p.instagram?.hashtags)}${blk("X",p.x?.text)}</div>`;}).join("")}</div>`:""}
     ${(item.blog||[]).length?`<div style="margin-top:8px"><div class="stit" style="font-size:11px">Blog-Artikel (${item.blog.length})</div>${item.blog.slice(0,6).map(a=>`<div class="infobox" style="margin-bottom:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="flex:1;min-width:160px;font-size:12px"><b>${esc(a.titel)}</b></span><span class="chip" style="font-size:10px">${esc(a.status||'entwurf')}</span><a href="${this.apiBase()}/api/blog/${esc(item.id)}/${esc(a.slug)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600;font-size:11px">Lesen ↗</a></div>`).join('')}</div>`:''}
     ${item.seoReport?`<div class="infobox" style="margin-top:8px"><b>SEO-Score: ${item.seoReport.onpage?.score||"–"}/100</b>${item.seoReport.onpage?.issues?.length?`<br><span style="font-size:11px;color:var(--amb)">${item.seoReport.onpage.issues.slice(0,3).map(esc).join(" · ")}</span>`:""}${item.seoReport.rankings?.length?`<br><span style="font-size:11px">Rankings: ${item.seoReport.rankings.map(r=>esc(r.keyword)+": "+(r.position||"&gt;100")).join(" · ")}</span>`:""}<br><a href="${this.apiBase()}/api/seo-report/${esc(item.id)}" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;font-size:11px;font-weight:700">SEO-Report PDF ↗</a></div>`:""}
@@ -1632,6 +1636,18 @@ async captureScreenshot(id){
   await this.reloadCloudState();
   this.toast(d.reachable===false?"⚠ Screenshot gespeichert (Provider evtl. noch am Rendern)":"✓ Screenshot erstellt");
   this.renderDrawer();
+ }catch(e){this.toast("Fehler: "+e.message);}
+},
+async generate3d(id){
+ const c=this.state.clients.find(x=>x.id===id);
+ const desc=prompt("Beschreibung des 3D-Modells (Englisch wirkt am besten):","a sleek crystalline product object, dark chrome and glass, premium, single centered");
+ if(desc===null)return;
+ this.toast("🧊 3D-Generierung gestartet …");
+ try{
+  const r=await fetch(this.apiBase()+"/api/media/3d",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id,prompt:desc||undefined})});
+  const d=await r.json();
+  if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
+  this.toast("✓ Läuft (Task "+(d.taskId||"")+") — Ergebnis kommt per Webhook (~1 Min).");
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async publishWordPress(id){
