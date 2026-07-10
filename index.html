@@ -600,6 +600,7 @@ rWachstum(){
  const kpis=`<div class="wx-card"><div class="wx-title">📊 Überblick</div><div class="wx-kpis">
    ${k(fmt(mrr)+" €","MRR")}${k(fmt(mrr*12)+" €","ARR")}${k(fmt(pipe)+" €","Pipeline")}
    ${k(active.length,"Aktive Kunden")}${k(ld.filter(l=>l.stage==="sales_ready").length,"Sales Ready","var(--g)")}${k(cl.filter(c=>c.phase==="at_risk").length,"At Risk",hd.krit?"var(--red)":"")}
+   ${s.spendEur!=null?k((+s.spendEur).toFixed(2)+" €","KI-Kosten gesamt","var(--amb)"):""}
  </div>
  <div class="wx-bars">
    <div class="wx-bar"><span>Health gut</span><b>${hd.gut}</b></div>
@@ -1354,6 +1355,7 @@ renderDrawer(){
     <div class="stit">Build & Deploy</div>
     <div class="infobox" style="margin-bottom:9px">
      <div class="row"><div class="key">Build</div><div class="val">${hasBuild?`✅ ${item.buildPages||0} Seiten · ${buildKb}KB`:"❌ nicht vorhanden"}</div></div>
+     ${item.buildCost?.eur!=null?`<div class="row"><div class="key">Kosten (Lauf)</div><div class="val"><span style="font-weight:700;font-family:ui-monospace,monospace;color:${item.buildCost.eur<=2?"var(--g)":item.buildCost.eur<=4?"var(--amb)":"var(--red)"}">${item.buildCost.eur.toFixed(2)} €</span> <span style="font-size:10px;color:#9AA4AC">${item.buildCost.calls} Calls · ${Math.round((item.buildCost.outTok||0)/1000)}k out</span></div></div>`:""}
      <div class="row"><div class="key">Design Pack</div><div class="val">${esc(item.designPack||"–")}</div></div>
      <div class="row"><div class="key">Branch</div><div class="val">${esc(bc?.branchCategory||"–")}</div></div>
      <div class="row"><div class="key">Demo</div><div class="val">${item.demoUrl?`<a href="${esc(item.demoUrl)}" target="_blank" rel="noopener" style="color:var(--a);font-weight:600">${esc(item.demoUrl).slice(0,45)}… ↗</a>`:"–"}</div></div>
