@@ -1259,6 +1259,22 @@ async leadAction(lid,action,pageKey){
  }
 },
 
+async downloadPackage(id){
+ const item=[...(this.state.leads||[]),...(this.state.clients||[])].find(x=>x.id===id);
+ if(!item||!item.buildHtml||!(typeof item.buildHtml==="object"?Object.keys(item.buildHtml).length:item.buildHtml.length)){this.toast("Kein Build – erst Factory starten");return;}
+ this.toast("📦 Paket wird geschnürt — Medien werden lokal gebündelt (dauert kurz) …");
+ try{
+  const r=await fetch(this.apiBase()+"/api/client/package",{method:"POST",headers:{"Content-Type":"application/json","x-ww-key":localStorage.getItem("ww_api_key")||""},body:JSON.stringify({leadId:id})});
+  const d=await r.json();
+  if(!r.ok||!d.ok)throw new Error(d.error||("HTTP "+r.status));
+  const li=(this.state.leads||[]).findIndex(x=>x.id===id);if(li>=0){this.state.leads[li].packageUrl=d.url;this.state.leads[li].packageKb=d.kb;this.state.leads[li].packageAt=Date.now();}
+  const ci=(this.state.clients||[]).findIndex(x=>x.id===id);if(ci>=0){this.state.clients[ci].packageUrl=d.url;this.state.clients[ci].packageKb=d.kb;this.state.clients[ci].packageAt=Date.now();}
+  this.toast("✅ Paket fertig ("+d.kb+" KB) — Download startet");
+  window.open(d.url,"_blank");
+  this.renderDrawer();
+ }catch(e){this.toast("⚠ Paket fehlgeschlagen: "+e.message.slice(0,120));console.error("[Package]",e);}
+},
+
 
 /* === Detail-Drawer === */
 openDetail(pl,id){this.detail={pl,id};this.renderDrawer();},
@@ -1399,6 +1415,10 @@ renderDrawer(){
      <button class="btn bg action-btn" onclick="App.leadAction('${id}','reset_factory_flags')">
       <span class="act-top"><span>🗑 Fehler/Blocker zurücksetzen<small>Löscht Factory/Deploy/QA-Fehler aus dem Lead.</small></span><span class="cost free">0€</span></span>
      </button>
+     <button class="btn bg action-btn" ${hasBuild?"":"disabled"} onclick="App.downloadPackage('${id}')">
+      <span class="act-top"><span>📦 Deploy-Paket herunterladen (ZIP)<small>Komplette Website zum Hochladen (Strato/Webspace) — Medien, Fonts & Rechtstexte lokal gebündelt.</small></span><span class="cost free">0€</span></span>
+     </button>
+     ${item.packageUrl?`<a class="btn ba action-btn" href="${esc(item.packageUrl)}" target="_blank" rel="noopener" style="text-decoration:none"><span class="act-top"><span>⬇ Letztes Paket öffnen<small>${item.packageKb?item.packageKb+" KB · ":""}${item.packageAt?new Date(item.packageAt).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):""}</small></span></span></a>`:""}
     </div>
    </div>
    <!-- ── Actions: Low-Cost Claude ─────────────────────── -->
