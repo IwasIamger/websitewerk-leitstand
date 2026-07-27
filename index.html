@@ -2054,6 +2054,8 @@ rSettings(){
    <p class="hint" style="margin-bottom:10px">Dein Backend läuft auf Render (<b>websitewerk-api.onrender.com</b>). Claude-Key, Pexels-Key, Cloudflare-Token – alles liegt dort als Environment Variable, nie im Browser. Hier nur die Backend-URL eintragen. Wenn dein Render-Service eine eigene Domain hat, diese verwenden.</p>
    <div class="mf"><label>Backend API URL</label><input id="c-api" placeholder="https://websitewerk-api.onrender.com" value="${esc(c.apiUrl||"https://websitewerk-api.onrender.com")}"></div>
    <button class="btn bg bsm" style="margin-top:6px" onclick="App.testBackend()">Backend jetzt testen</button>
+   <div class="mf" style="margin-top:12px"><label>Leitstand-Schlüssel (x-ww-key)</label><input id="c-wwkey" type="password" placeholder="= LEITSTAND_SECRET aus Render" value="${esc(localStorage.getItem('ww_api_key')||'')}"></div>
+   <div style="font-size:11px;color:#9AA4AC;margin-top:3px;line-height:1.5">Pflicht für Cloud-Sync, Factory-Runs &amp; Deploy-Downloads. Wert = die Render-Variable <code>LEITSTAND_SECRET</code> (Render → Service → Environment). Danach „Alles speichern" + Seite neu laden.</div>
   </div>
   <div class="cfg-sec">
    <div class="stit" style="color:var(--a);font-size:11px">MONATSBERICHTE — MANUELL / AUTOMATIK</div>
@@ -2149,6 +2151,8 @@ async saveSettings(){
  const g=id=>document.getElementById(id)?.value.trim()||"";
  Object.assign(this.cfg,{apiUrl:g("c-api"),pexKey:g("c-pex"),cfAccount:g("c-cfa"),cfProject:g("c-cfp"),cfToken:g("c-cft"),pingenKey:g("c-pgk"),pingenOrg:g("c-pgo"),n8nWebhook:g("c-n8n"),absFirma:g("c-fn"),absName:g("c-nn"),absStrasse:g("c-str"),absOrt:g("c-ort"),absTel:g("c-tel"),absMail:g("c-mail"),sbUrl:g("c-sbu"),sbKey:g("c-sbk")});
  localStorage.setItem("ww:cfg",JSON.stringify(this.cfg));
+ // Leitstand-Schlüssel (x-ww-key) separat in localStorage — der fetch-Wrapper liest ihn dort.
+ const _wk=g("c-wwkey"); if(_wk)localStorage.setItem("ww_api_key",_wk); else localStorage.removeItem("ww_api_key");
  // IMMER zuerst echten Cloud-State laden (über Backend, auch ohne Dashboard-Credentials)
  const cloudState=await this.sbLoadViaBackend()||(this.cfg.sbUrl&&this.cfg.sbKey?await this.sbLoad():null);
  if(cloudState&&(cloudState.leads?.length||cloudState.clients?.length)){
