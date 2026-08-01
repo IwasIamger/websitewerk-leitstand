@@ -1382,6 +1382,7 @@ renderDrawer(){
      ${item.imageSources?.length?`<div class="row"><div class="key">Bild-Quellen</div><div class="val" style="font-size:11px">${item.imageSources.map(esc).join(" + ")}</div></div>`:""}
      ${bc?`<div class="row"><div class="key">Seiten-Plan</div><div class="val">${(bc.pages||[]).map(p=>`<span style="font-family:ui-monospace,monospace;font-size:10px;background:#EDF0F2;padding:1px 4px;border-radius:3px;margin:1px">${esc(p.f)}</span>`).join(" ")}</div></div>`:""}
      ${buildFiles.length?`<div class="row"><div class="key">Deployed Files</div><div class="val" style="font-size:10px;color:#9AA4AC">${buildFiles.map(esc).join(" · ")}</div></div>`:""}
+     ${item.kundenInput?.length?`<div class="row"><div class="key">Kunde liefert noch</div><div class="val">${item.kundenInput.map(k=>`<span style="display:inline-block;font-size:10.5px;background:#fdf2d8;border:1px solid #e6c877;color:#8a6d1a;padding:1px 6px;border-radius:4px;margin:1px;cursor:help" title="${esc(k.text)}">📋 ${esc(k.titel)}</span>`).join(" ")}</div></div>`:""}
     </div>
    </div>
    <!-- ── Fehler & QA ───────────────────────────────────── -->
