@@ -860,7 +860,7 @@ rFactory(){
   <div class="mo wide">
    <div style="display:flex;align-items:center;margin-bottom:12px">
     <div><h3 style="margin-bottom:3px">⚙ Factory-Durchlauf</h3><div style="font-weight:600">${esc(f.name)}</div></div>
-    ${running?"":`<button class="xb" onclick="App.closeFactory()">×</button>`}
+    <button class="xb" title="Schliessen — der Build laeuft weiter" onclick="App.closeFactory()">×</button>
    </div>
    ${f.steps.map((s,i)=>`<div class="fstep ${s.state!=="pending"?"f"+s.state:"fpend"}">
     <span class="fnum">${i+1}</span>
@@ -873,7 +873,12 @@ rFactory(){
     ${f.briefOk?`<button class="btn bg" onclick="App.printBrief('${f.leadId}')">🖶 Brief drucken</button>`:""}
     ${f.pingenReady?`<button class="btn ba" onclick="App.sendPingenBrief('${f.leadId}')">📮 Brief jetzt versenden (Pingen)</button>`:""}
     <button class="btn bi" onclick="App.closeFactory()">Fertig</button>
-   </div>`:running?`<p class="hint" style="margin-top:12px"><span class="sp"></span> Läuft … Fenster offen lassen. ~1–3 Min. gesamt.</p>`:""}
+   </div>`:running?`<div style="margin-top:14px;border-top:1px solid var(--bd,#e5e5e5);padding-top:12px">
+    <p class="hint" style="margin:0 0 6px"><span class="sp"></span> <b>${esc(f.phase||"Build läuft …")}</b></p>
+    <p class="hint" style="margin:0;opacity:.75">Läuft seit <span id="factory-elapsed">0m 00s</span>${f.info?" · "+esc(f.info):""}<br>
+    Der Build läuft auf dem Server weiter, auch wenn du das Fenster schließt.
+    Mit KI-Film (Welt-Modus) dauert er <b>20–40 Minuten</b> — die meiste Zeit geht für Kling-Clips und das 4K-Hochrechnen drauf.</p>
+   </div>`:""}
   </div></div>`;
 },
 closeFactory(){if(this.fact?._poll)clearInterval(this.fact._poll);if(this.fact?._ticker)clearInterval(this.fact._ticker);this.fact=null;document.getElementById("FR").innerHTML="";this.renderAll();},
@@ -885,17 +890,19 @@ async runFactory(lid){
  /* Prüfen ob Backend erreichbar */
  try{const h=await fetch(apiBase+"/health");if(!h.ok)throw new Error(h.status);}
  catch(e){this.toast("Backend nicht erreichbar ("+apiBase+") – Einstellungen prüfen");this.show("einstellungen");return;}
+ /* Schritte = was der Build WIRKLICH tut (Reihenfolge = factoryStep 1..9).
+    Der Live-Text darunter kommt vom Backend (factoryPhase). */
  this.fact={leadId:lid,name:lead.name,_poll:null,steps:[
-  {label:"Deep Research – Website, Bilder, Schema, Social",state:"pending"},
-  {label:"Company Twin (Research-Agent)",state:"pending"},
-  {label:"Bilder sammeln (Pexels + Unsplash + Pixabay + Openverse)",state:"pending"},
-  {label:"Agentur: Stratege → Texter → Art Director → Motion → QA",state:"pending"},
-  {label:"Frontend-Build: jede Seite individuell",state:"pending"},
-  {label:"QA-Gates: Contract, Links, Inhalte",state:"pending"},
-  {label:"Deploy (Cloudflare Pages) + PageSpeed-Check",state:"pending"},
-  {label:"Akquise-Brief (Texter-Agent)",state:"pending"},
-  {label:"Sales Ready",state:"pending"}
- ],doneAll:false,demoUrl:null,localHtml:false,briefOk:false,pingenReady:false};
+  {label:"Recherche – Website, Google-Profil, Bilder, Schema",state:"pending"},
+  {label:"Company Twin – verstehen, was der Betrieb wirklich ist",state:"pending"},
+  {label:"Bildmaterial sammeln + filtern",state:"pending"},
+  {label:"Struktur + Design-Pack festlegen",state:"pending"},
+  {label:"Agentur + Welt-Medien (KI-Film, 4K, Frames) – längster Schritt",state:"pending"},
+  {label:"Seiten bauen",state:"pending"},
+  {label:"Qualitätsprüfung – Gates + Kritiker",state:"pending"},
+  {label:"Deploy (Cloudflare Pages) + PageSpeed",state:"pending"},
+  {label:"Fertig – verkaufsbereit",state:"pending"}
+ ],doneAll:false,demoUrl:null,localHtml:false,briefOk:false,pingenReady:false,phase:null,info:null};
  this.rFactory();
  /* Backend-Job starten */
  try{
@@ -925,20 +932,28 @@ async runFactory(lid){
    if(!sr.ok)return;
    const st=await sr.json();
    const step=st.factoryStep||0;
+   /* Live-Text + Kennzahlen aus dem Build (statt geraten) */
+   const infoBits=[];
+   if(st.buildLevel)infoBits.push(st.buildLevel==="signature"?"Signature":st.buildLevel);
+   if(st.designPack)infoBits.push(st.designPack);
+   if(st.world&&st.world.fonts)infoBits.push(st.world.fonts);
+   if(st.world&&st.world.seiten)infoBits.push(st.world.seiten+" Seite(n) mit Film");
+   if(st.buildPages)infoBits.push(st.buildPages+" Seiten");
+   if(st.costEur)infoBits.push(st.costEur.toFixed(2).replace(".",",")+" €"+(st.mediaCount?(" · "+st.mediaCount+" Medien"):""));
+   const newPhase=st.factoryPhase||null,newInfo=infoBits.join(" · ")||null;
+   if(newPhase!==_this.fact.phase||newInfo!==_this.fact.info){
+    _this.fact.phase=newPhase;_this.fact.info=newInfo;_this.rFactory();
+   }
    /* Steps animieren */
    if(step>lastStep){
     for(let i=lastStep+1;i<step;i++)_this.fSet(i,"done");
-    if(step<_this.fact.steps.length){
-     const stepInfo=st.custImgCount>0&&step===3?`${st.buildKb||'?'}KB · ${st.custImgCount} Kunden-Bilder`:
-       step===4?`${st.designPack||'Design wird geplant…'}`:``;
-     _this.fSet(step,"run",stepInfo);
-    }
+    if(step<_this.fact.steps.length)_this.fSet(step,"run",newPhase||"");
     lastStep=step;stuckCount=0;
    }else{stuckCount++;}
    /* Abschluss-Status */
    const done=["sales_ready","review_needed","blocked"].includes(st.stage);
    const err=!!st.factoryError;
-   if(done||err||stuckCount>120){
+   if(done||err||stuckCount>900){
     clearInterval(_this.fact._poll);
     /* Frischen State aus Supabase laden */
     const fresh=await _this.sbLoad();
@@ -957,7 +972,7 @@ async runFactory(lid){
     _this.fact.briefOk=!!freshLead?.briefText;
     _this.fact.pingenReady=!!freshLead?.briefText&&!!((_this.cfg.pingenKey||"")||false);
     _this.rFactory();_this.renderAll();
-    if(stuckCount>120)_this.toast("Factory: Timeout nach 6 Min – Status im Board prüfen");
+    if(stuckCount>900)_this.toast("Factory: seit 45 Min keine Statusänderung – Render-Log prüfen");
    }
   }catch(e){console.warn("Poll-Fehler:",e.message);}
  },3000);
@@ -1382,7 +1397,6 @@ renderDrawer(){
      ${item.imageSources?.length?`<div class="row"><div class="key">Bild-Quellen</div><div class="val" style="font-size:11px">${item.imageSources.map(esc).join(" + ")}</div></div>`:""}
      ${bc?`<div class="row"><div class="key">Seiten-Plan</div><div class="val">${(bc.pages||[]).map(p=>`<span style="font-family:ui-monospace,monospace;font-size:10px;background:#EDF0F2;padding:1px 4px;border-radius:3px;margin:1px">${esc(p.f)}</span>`).join(" ")}</div></div>`:""}
      ${buildFiles.length?`<div class="row"><div class="key">Deployed Files</div><div class="val" style="font-size:10px;color:#9AA4AC">${buildFiles.map(esc).join(" · ")}</div></div>`:""}
-     ${item.kundenInput?.length?`<div class="row"><div class="key">Kunde liefert noch</div><div class="val">${item.kundenInput.map(k=>`<span style="display:inline-block;font-size:10.5px;background:#fdf2d8;border:1px solid #e6c877;color:#8a6d1a;padding:1px 6px;border-radius:4px;margin:1px;cursor:help" title="${esc(k.text)}">📋 ${esc(k.titel)}</span>`).join(" ")}</div></div>`:""}
     </div>
    </div>
    <!-- ── Fehler & QA ───────────────────────────────────── -->
