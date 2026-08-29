@@ -372,12 +372,17 @@ events:[
 /* === App-Kern === */
 const App={
 state:null,view:"heute",drag:null,modal:null,detail:null,fact:null,
-cfg:{},saveT:null,sync:"local",
+cfg:{},saveT:null,sync:"local",cloudOk:false,
 
 async init(){
  try{this.cfg=JSON.parse(localStorage.getItem("ww:cfg")||"{}")}catch(e){this.cfg={}}
  let d=null;
- if(this.cfg.sbUrl&&this.cfg.sbKey)d=await this.sbLoad();
+ // Cloud ZUERST und IMMER. sbLoad faellt intern auf das Backend zurueck, das die
+ // Supabase-Keys serverseitig haelt. Vorher lief das nur, wenn Supabase-Zugangsdaten
+ // im Browser lagen — ein frischer Browser sah deshalb die Demo-Saat statt der echten
+ // Daten, und man musste jedes Mal "Cloud-Daten laden" druecken.
+ d=await this.sbLoad();
+ if(d)this.cloudOk=true;
  if(!d){try{const r=localStorage.getItem("ww:state");if(r)d=JSON.parse(r)}catch(e){}}
  this.state=d||seed();
  this.renderNav();this.show("heute");this.updSync();this.initKeys();
@@ -390,23 +395,35 @@ initKeys(){
   else if(e.key==="Escape"&&onBoard){this._fltFocus=null;if(typing&&e.target.blur)e.target.blur();this.clearFlt(this.view);}
  });
 },
-persist(){clearTimeout(this.saveT);this.saveT=setTimeout(async()=>{try{localStorage.setItem("ww:state",JSON.stringify(this.state))}catch(e){}if(this.cfg.sbUrl&&this.cfg.sbKey)await this.sbSave();},500);},
+persist(){clearTimeout(this.saveT);this.saveT=setTimeout(async()=>{try{localStorage.setItem("ww:state",JSON.stringify(this.state))}catch(e){}
+ if(this.cfg.sbUrl&&this.cfg.sbKey)await this.sbSave();
+ else if(this.cloudOk)await this.apiSave();
+ },500);},
+async apiSave(){
+  // Schreibt den State ueber das Backend zurueck (dort liegen die Supabase-Keys).
+  // Harte Bedingung cloudOk: nur ein Browser, der den State vorher AUS der Cloud
+  // geladen hat, darf schreiben — sonst ueberschreibt die Demo-Saat die echten Daten.
+  if(!this.cloudOk)return;
+  try{const r=await fetch(this.apiBase()+"/api/state",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(this.state)});this.sync=r.ok?"cloud":"error";}
+  catch(e){this.sync="error";}
+  this.updSync();
+},
 sbH(){return{"apikey":this.cfg.sbKey,"Authorization":"Bearer "+this.cfg.sbKey,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates"}},
 async sbLoad(){
   // Methode 1: Direkt von Supabase (wenn Credentials im Dashboard)
   if(this.cfg.sbUrl&&this.cfg.sbKey){
-    try{const r=await fetch(this.cfg.sbUrl.replace(/\/$/,"")+"/rest/v1/ww_state?id=eq.main&select=data",{headers:this.sbH()});if(r.ok){const rows=await r.json();this.sync="cloud";if(rows.length)return rows[0].data;}}catch(e){}
+    try{const r=await fetch(this.cfg.sbUrl.replace(/\/$/,"")+"/rest/v1/ww_state?id=eq.main&select=data",{headers:this.sbH()});if(r.ok){const rows=await r.json();this.sync="cloud";if(rows.length){this.cloudOk=true;return rows[0].data;}}}catch(e){}
   }
   // Methode 2: Über Backend-API (Backend hat die Supabase-Keys serverseitig!)
   // Das funktioniert AUCH wenn Browser-Cache gelöscht wurde
   try{
     const r=await fetch(this.apiBase()+"/api/state");
-    if(r.ok){const d=await r.json();this.sync="cloud";if(d&&d.leads)return d;}
+    if(r.ok){const d=await r.json();this.sync="cloud";if(d&&d.leads){this.cloudOk=true;return d;}}
   }catch(e){}
   this.sync="error";return null;
 },
 async sbLoadViaBackend(){
-  try{const r=await fetch(this.apiBase()+"/api/state");if(r.ok){const d=await r.json();if(d&&(d.leads||d.clients)){this.sync="cloud";return d;}}}catch(e){}
+  try{const r=await fetch(this.apiBase()+"/api/state");if(r.ok){const d=await r.json();if(d&&(d.leads||d.clients)){this.sync="cloud";this.cloudOk=true;return d;}}}catch(e){}
   return null;
 },
 async sbSave(){try{const r=await fetch(this.cfg.sbUrl.replace(/\/$/,"")+"/rest/v1/ww_state",{method:"POST",headers:this.sbH(),body:JSON.stringify({id:"main",data:this.state,updated_at:new Date().toISOString()})});this.sync=r.ok?"cloud":"error"}catch(e){this.sync="error"}this.updSync();},
