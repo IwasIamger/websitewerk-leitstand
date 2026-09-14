@@ -296,6 +296,7 @@ a{color:inherit;text-decoration:none}
       <h1 id="vt">Heute</h1>
       <div class="hs" id="hs"></div>
       <button class="btn ba" onclick="App.openAddLead()" style="margin-left:10px">+ Lead</button>
+      <button class="btn" onclick="wwHelp()" title="Hilfe, Erklärungen & Infos zum Leitstand" style="margin-left:8px;font-weight:800">? Hilfe</button>
     </header>
     <div class="view pad" id="v-heute"></div>
     <div class="view bv" id="v-akquise"></div>
@@ -2213,6 +2214,66 @@ expState(){const a=document.createElement("a");a.href=URL.createObjectURL(new Bl
 impState(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{this.state=JSON.parse(r.result);this.persist();this.renderAll();this.toast("Backup importiert ✓")}catch(e){this.toast("Ungültige Datei")}};r.readAsText(file);}
 };
 App.init();
+</script>
+<!-- ══ In-App-Hilfe (isoliert, additiv — rührt die App-Logik nicht an) ══ -->
+<div id="wwHelpOv" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(20,20,24,.5);backdrop-filter:blur(2px)" onclick="if(event.target===this)wwHelpClose()">
+  <div style="position:absolute;top:0;right:0;bottom:0;width:min(560px,94vw);background:#faf9f7;color:#1e1c1a;overflow-y:auto;box-shadow:-20px 0 60px rgba(0,0,0,.25);font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.6">
+    <div style="position:sticky;top:0;background:#faf9f7;border-bottom:1px solid #e7e3dc;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;z-index:2">
+      <div><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#c0872b;font-weight:700">WebsiteWerk Leitstand</div><div style="font-size:21px;font-weight:800;letter-spacing:-.01em">Hilfe &amp; Erklärungen</div></div>
+      <button onclick="wwHelpClose()" style="background:#1e1c1a;color:#fff;border:0;width:34px;height:34px;border-radius:9px;font-size:17px;cursor:pointer">✕</button>
+    </div>
+    <div id="wwHelpBody" style="padding:8px 24px 40px"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var acc="#c0872b", ink="#1e1c1a", mut="#6a655d", line="#e7e3dc", soft="#f2efe9";
+  function h2(t){return '<h3 style="font-size:16.5px;font-weight:800;margin:26px 0 8px;display:flex;align-items:center;gap:9px">'+t+'</h3>';}
+  function card(inner){return '<div style="background:#fff;border:1px solid '+line+';border-radius:12px;padding:14px 16px;margin-bottom:10px">'+inner+'</div>';}
+  function row(name,desc){return '<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid '+line+'"><b style="min-width:118px;font-weight:700">'+name+'</b><span style="color:'+mut+'">'+desc+'</span></div>';}
+  function step(n,t,d){return '<div style="display:flex;gap:12px;margin-bottom:12px"><div style="flex:none;width:26px;height:26px;border-radius:8px;background:'+soft+';color:'+acc+';font-weight:800;display:grid;place-items:center;font-size:13px">'+n+'</div><div><b>'+t+'</b><div style="color:'+mut+';font-size:14px">'+d+'</div></div></div>';}
+  var BODY=
+    h2('🚀 So arbeitest du damit')+
+    card(
+      step(1,'Morgens: „Heute" öffnen','Alle fälligen Aufgaben nach Dringlichkeit — Rückrufe, At-Risk-Calls, Freigaben. Arbeite die Liste von oben ab.')+
+      step(2,'Leads bewegen','In „Akquise" ziehst du Leads durch die Stufen (Discovered → … → Won). Jede Stufe löst automatische To-dos aus.')+
+      step(3,'Kunden pflegen','Gewonnene Leads werden Kunden (Ansicht „Kunden") und durchlaufen den Lebenszyklus bis „Care Active".')+
+      step(4,'Nichts liegt still','Eiserne Regel: jede Akte hat eine nächste Aktion mit Datum. Das Dashboard erinnert dich.')
+    )+
+    h2('🗂️ Die Ansichten')+
+    card(
+      row('⌂ Heute','Dein Startpunkt — fällige Aufgaben priorisiert, plus Conversion-Funnel.')+
+      row('⚙ Akquise','Kanban-Board der Leads. Spalten = Verkaufsstufen. Ziehen = Stufe ändern.')+
+      row('◉ Kunden','Kanban der Bestandskunden entlang des Pflege-Lebenszyklus.')+
+      row('▦ Anfragen','Eingehende Anfragen/Projekte (Inbound).')+
+      row('↗ Wachstum','Übersicht Umsatz, MRR, Pipeline-Wert, Empfehlungen.')+
+      row('◎ Lead-Finder','Neue Betriebe finden & als Leads aufnehmen.')+
+      row('≡ Protokoll','Lückenloses Ereignis-Log — wer/was/wann (DSGVO-Nachweis).')+
+      row('✦ Einstellungen','Backend verbinden, Backup export/import, Schalter.')
+    )+
+    h2('📊 Die Kennzahlen oben')+
+    card(
+      row('MRR','Wiederkehrender Umsatz/Monat aus aktiven Care-Kunden.')+
+      row('Angebote','Summe offener Angebote (Stufen Offer Sent + Negotiation).')+
+      row('Sales Ready','Leads mit fertiger Demo — bereit zum Ansprechen.')+
+      row('At Risk','Kunden mit Churn-Signal — brauchen Aufmerksamkeit.')+
+      row('Leads / Kunden','Gesamtzahlen im System.')
+    )+
+    h2('🎯 Akquise-Stufen (der Trichter)')+
+    card('<div style="color:'+mut+';font-size:14px">Discovered → Researching → Twin Ready → Build Queue/Running → QA → <b style="color:'+ink+'">Sales Ready</b> (Demo fertig) → Letter/Kontakt → Engaged → In Conversation → Offer Sent → Negotiation → <b style="color:#2f8a5f">Won</b>. Seitenzweige: Nurture (später), Lost, Disqualified.</div>')+
+    h2('🤝 Kunden-Lebenszyklus')+
+    card('<div style="color:'+mut+';font-size:14px">Onboarding → Production → Client Review → Pre-Launch → <b style="color:'+ink+'">Live</b> → Stabilization → <b style="color:#2f8a5f">Care Active</b> → Growth/Renewal. Warnzweige: At Risk, Paused, Offboarding.</div>')+
+    h2('☁️ Cloud vs. Lokal')+
+    card('<div style="color:'+mut+';font-size:14px">Gelbes Banner oben = <b>nicht verbunden</b>, Daten liegen nur im Browser. Für die echten Geschäftsdaten in <b>Einstellungen</b> das Backend verbinden (API-Key). Dann „Cloud-Daten laden". Ohne Verbindung siehst du Beispiel-Daten.</div>')+
+    h2('⚖️ Eiserne Gesetze')+
+    card('<div style="color:'+mut+';font-size:14px"><b>Keine Akte ohne nächste Aktion.</b> Kein Lead/Kunde ohne datierten nächsten Schritt — so fällt nichts durchs Raster.<br><b>Kein Outreach ohne Rechtsgrundlage.</b> Kontakt nur mit dokumentierter Grundlage (DSGVO).</div>')+
+    h2('💡 Tipps')+
+    card('<div style="color:'+mut+';font-size:14px">• <b>+ Lead</b> oben rechts legt schnell einen neuen Lead an.<br>• In <b>Einstellungen</b> regelmäßig <b>Backup exportieren</b>.<br>• Karten sind ziehbar (Drag &amp; Drop) zwischen den Stufen.<br>• Rot = braucht Handlung (At Risk, Blocked, Overdue).</div>')+
+    '<div style="text-align:center;color:'+mut+';font-size:12px;margin-top:22px">Diese Hilfe erklärt den Leitstand — geöffnet über „? Hilfe" oben.</div>';
+  window.wwHelp=function(){var b=document.getElementById("wwHelpBody");if(b&&!b.innerHTML)b.innerHTML=BODY;document.getElementById("wwHelpOv").style.display="block";document.body.style.overflow="hidden";};
+  window.wwHelpClose=function(){document.getElementById("wwHelpOv").style.display="none";document.body.style.overflow="";};
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")wwHelpClose();});
+})();
 </script>
 </body>
 </html>
