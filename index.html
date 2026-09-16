@@ -276,6 +276,25 @@ a{color:inherit;text-decoration:none}
 .pj-card:hover{transform:translateY(-1px)}
 .pj-badge{margin-right:4px}
 
+/* ═══════════ Design-Polish v1 — mehr Tiefe & Hierarchie (additiv, überschreibt Basis) ═══════════ */
+:root{--shadow-sm:0 1px 2px rgba(20,32,44,.05),0 3px 10px rgba(20,32,44,.05);--shadow-md:0 3px 8px rgba(20,32,44,.07),0 12px 30px rgba(20,32,44,.09)}
+body{background:linear-gradient(180deg,#EFF2F4 0%,#E8ECEF 100%)}
+header{box-shadow:0 1px 3px rgba(20,32,44,.05);position:relative;z-index:5}
+aside{box-shadow:1px 0 0 rgba(20,32,44,.03)}
+nav a{transition:background .14s,color .14s,box-shadow .14s}
+nav a.active{box-shadow:0 4px 12px rgba(26,37,48,.28)}
+.fltbar{box-shadow:0 1px 2px rgba(20,32,44,.03)}
+.col{background:#FCFDFE;border:1px solid #E3E8EC;box-shadow:var(--shadow-sm);border-radius:10px}
+.ch{padding:12px 13px 8px}
+.ch .cn{font-size:10.5px;letter-spacing:.13em;color:#475059;font-weight:600}
+.ce{color:#AAB2B9;border:1.5px dashed #DBE0E4;border-radius:9px;margin:4px 6px 8px;padding:22px 8px;font-size:10.5px;background:#fafbfc}
+.card{box-shadow:var(--shadow-sm);border:1px solid #E3E8EB;border-radius:10px;transition:box-shadow .18s cubic-bezier(.2,.7,.3,1),transform .14s cubic-bezier(.2,.7,.3,1),border-color .18s}
+.card:hover{box-shadow:var(--shadow-md);border-color:#C7D0D6;transform:translateY(-2px)}
+.panel{box-shadow:var(--shadow-sm);border-radius:10px}
+.btn{transition:opacity .12s,transform .1s,box-shadow .15s}
+.btn.ba:hover:not(:disabled){box-shadow:0 5px 16px rgba(232,89,12,.32);transform:translateY(-1px)}
+.btn.bi:hover:not(:disabled){box-shadow:0 5px 16px rgba(26,37,48,.28);transform:translateY(-1px)}
+
 </style>
 </head>
 <body>
