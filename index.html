@@ -316,6 +316,7 @@ nav a.active{box-shadow:0 4px 12px rgba(26,37,48,.28)}
       <div class="hs" id="hs"></div>
       <button class="btn ba" onclick="App.openAddLead()" style="margin-left:10px">+ Lead</button>
       <button class="btn" onclick="wwHelp()" title="Hilfe, Erklärungen & Infos zum Leitstand" style="margin-left:8px;font-weight:800">? Hilfe</button>
+      <button class="btn bg" onclick="App.healthScanAll()" title="Alle Kunden-Websites prüfen (Erreichbarkeit, SSL, Sicherheit, SEO)" style="margin-left:8px">🩺 Alle prüfen</button>
     </header>
     <div class="view pad" id="v-heute"></div>
     <div class="view bv" id="v-akquise"></div>
@@ -1907,6 +1908,19 @@ async wpHealth(id){
   const h=d.health;
   this.toast(h.ok?"🟢 Seite gesund"+(h.ms!=null?" ("+h.ms+"ms)":""):(h.reachable?"🟡 "+(h.issues||[]).join(", "):"🔴 Offline"));
   this.renderDrawer();
+ }catch(e){this.toast("Fehler: "+e.message);}
+},
+async healthScanAll(){
+ if(!confirm("Alle Kunden-Websites jetzt prüfen (Erreichbarkeit, SSL, Sicherheit, SEO)?"))return;
+ this.toast("🩺 Prüfe alle Kunden-Websites …");
+ try{
+  const r=await fetch(this.apiBase()+"/api/client/health-scan-all",{method:"POST",headers:{"Content-Type":"application/json"}});
+  const d=await r.json();
+  if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
+  await this.reloadCloudState();
+  const bad=(d.results||[]).filter(x=>!x.ok).length;
+  this.toast("✓ "+d.checked+" geprüft"+(bad?" · "+bad+" mit Hinweisen":" · alle gesund"));
+  this.renderAll();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async openBuildConfig(id){
