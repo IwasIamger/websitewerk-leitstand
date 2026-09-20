@@ -298,6 +298,7 @@ nav a.active{box-shadow:0 4px 12px rgba(26,37,48,.28)}
 </style>
 </head>
 <body>
+<a href="#main-content" style="position:absolute;left:-9999px;top:0;background:#fff;color:#111;padding:10px 16px;z-index:100001;border-radius:0 0 8px 0" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Zum Inhalt springen</a>
 <div id="sync-warn" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#fff3cd;color:#856404;padding:8px 16px;font-size:13px;text-align:center;border-bottom:1px solid #ffc107">⚠ Nicht mit Cloud verbunden — Daten werden nur lokal gespeichert. <button onclick="App.reloadFromCloud()" style="background:#856404;color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;margin-left:8px">Cloud-Daten laden</button></div>
 <div id="app">
   <aside>
@@ -310,7 +311,7 @@ nav a.active{box-shadow:0 4px 12px rgba(26,37,48,.28)}
       <button onclick="App.resetAll()">↺ Demo zurücksetzen</button>
     </div>
   </aside>
-  <main>
+  <main id="main-content">
     <header>
       <h1 id="vt">Heute</h1>
       <div class="hs" id="hs"></div>
