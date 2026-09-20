@@ -649,6 +649,13 @@ rWachstum(){
    <div class="wx-bar"><span>Health kritisch</span><b style="color:var(--red)">${hd.krit}</b></div>
    ${Object.entries(bySrc).map(([s2,n])=>`<div class="wx-bar"><span>Quelle: ${esc(s2)}</span><b>${n}</b></div>`).join("")}
  </div></div>`;
+ // Zufriedenheit (aus Feedback aller Kunden) — Quote + 6-Monats-Verlauf
+ const fbAll=[];cl.forEach(c=>(c.changeRequests||[]).forEach(r=>{if(r.feedback&&r.feedback.ts)fbAll.push({ts:r.feedback.ts,up:r.feedback.rating==="up"});}));
+ const fbUp=fbAll.filter(x=>x.up).length,fbTot=fbAll.length,fbPct=fbTot?Math.round(fbUp/fbTot*100):0;
+ const _now=new Date(),_mo=[];for(let i=5;i>=0;i--){const d=new Date(_now.getFullYear(),_now.getMonth()-i,1);_mo.push({y:d.getFullYear(),m:d.getMonth(),label:d.toLocaleDateString("de-DE",{month:"short"}),up:0,total:0});}
+ fbAll.forEach(x=>{const d=new Date(x.ts),b=_mo.find(z=>z.y===d.getFullYear()&&z.m===d.getMonth());if(b){b.total++;if(x.up)b.up++;}});
+ const _spark=_mo.map(z=>{const p=z.total?z.up/z.total:0,h=z.total?Math.round(p*36)+4:3,col=!z.total?"#e5e5e5":p>=.8?"var(--g)":p>=.5?"var(--amb)":"var(--red)";return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1"><div style="width:100%;max-width:30px;height:${h}px;background:${col};border-radius:4px" title="${z.total?Math.round(p*100)+'%':'—'}"></div><span style="font-size:10px;color:var(--muted)">${z.label}</span></div>`;}).join("");
+ const satCard=`<div class="wx-card" style="margin-top:16px"><div class="wx-title">😊 Zufriedenheit ${fbTot?`· <span style="color:${fbPct>=80?'var(--g)':fbPct>=50?'var(--amb)':'var(--red)'}">${fbPct}%</span> (👍 ${fbUp} · 👎 ${fbTot-fbUp})`:""}</div>${fbTot?`<div style="display:flex;align-items:flex-end;gap:6px;height:46px;margin-top:10px">${_spark}</div>`:'<div class="wx-empty">Noch keine Rückmeldungen. Kunden bewerten erledigte Änderungswünsche im Portal.</div>'}</div>`;
  const inb=(s.leads||[]).filter(l=>l.inbound||/website|mountainium|website-check/i.test(l.source||""));
  const inbRows=inb.length?inb.map(l=>`<tr><td><b>${esc(l.name||"—")}</b><br><span class="wx-sub">${esc(l.email||"")}</span></td><td>${esc(l.branche||l.topic||"—")}</td><td>${esc(l.source||"")}</td><td>${esc(sl(l.stage,"acq"))}</td><td>${l.createdAt?new Date(l.createdAt).toLocaleDateString("de-DE"):""}</td></tr>`).join(""):`<tr><td colspan="5" class="wx-empty">Noch keine eingehenden Anfragen. Sobald die Website angebunden ist (WW_OS_URL), erscheinen sie hier.</td></tr>`;
  const refClients=(s.clients||[]).filter(c=>c.referralCode||(c.referrals&&c.referrals.length));
@@ -660,6 +667,7 @@ rWachstum(){
  }).join(""):`<div class="wx-empty">Noch keine A/B-Daten. Events kommen über POST /api/ab/event (z.B. vom Website-Check-Funnel der Firmen-Website).</div>`;
  el.innerHTML=`
   ${kpis}
+  ${satCard}
   <div class="wx-card" style="margin-top:16px"><div class="wx-title">📥 Eingehende Anfragen (Website) · ${inb.length}</div>
    <table class="wx-table"><thead><tr><th>Kontakt</th><th>Anliegen</th><th>Quelle</th><th>Status</th><th>Datum</th></tr></thead><tbody>${inbRows}</tbody></table></div>
   <div class="wx-card" style="margin-top:16px"><div class="wx-title" style="display:flex;justify-content:space-between;align-items:center">🎁 Empfehlungen (Referrals)<button class="wx-btn" onclick="App.genReferralCodes()">Codes erzeugen</button></div>
