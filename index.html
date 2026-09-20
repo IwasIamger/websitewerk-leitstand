@@ -457,8 +457,10 @@ async resetAll(){if(!confirm("Demo-Daten wiederherstellen?"))return;this.state=s
 
 renderNav(){
  const items=[["heute","⌂","Heute"],["akquise","⚙","Akquise"],["kunden","◉","Kunden"],["projekte","▦","Anfragen"],["wachstum","↗","Wachstum"],["finder","◎","Lead-Finder"],["protokoll","≡","Protokoll"],["einstellungen","✦","Einstellungen"]];
- document.getElementById("nav").innerHTML=items.map(([id,ic,l])=>`<a id="n-${id}" onclick="App.show('${id}')"><span class="ic">${ic}</span>${l}</a>`).join("");
+ document.getElementById("nav").innerHTML=items.map(([id,ic,l])=>`<a id="n-${id}" onclick="App.show('${id}')"><span class="ic">${ic}</span>${l}${id==="projekte"?`<span id="nav-badge-anfragen" style="display:none;margin-left:auto;background:var(--a);color:#fff;font-size:10px;font-weight:700;border-radius:999px;padding:1px 7px;min-width:18px;text-align:center">0</span>`:""}</a>`).join("");
+ this.updateInboxBadge();
 },
+updateInboxBadge(){const b=document.getElementById("nav-badge-anfragen");if(!b)return;const n=(this.kpis&&this.kpis().anfr)||0;if(n>0){b.textContent=n;b.style.display="";}else{b.style.display="none";}},
 show(v){
  this.view=v;this.detail=null;this.renderDrawer();
  document.querySelectorAll(".view").forEach(e=>e.classList.remove("active"));
@@ -472,6 +474,7 @@ kpis(){const s=this.state,mrr=s.clients.filter(c=>!["former","offboarding"].incl
 renderAll(){
  const k=this.kpis();
  document.getElementById("hs").innerHTML=`<div class="hst" style="cursor:help" title="Monatlich wiederkehrender Umsatz aus aktiven Care-Kunden"><div class="hl">MRR</div><div class="hv">${fmt(k.mrr)} €</div></div><div class="hst" style="cursor:help" title="Summe aller offenen Angebote (Stufen Offer Sent + Negotiation)"><div class="hl">Angebote</div><div class="hv">${fmt(k.off)} €</div></div><div class="hst" style="cursor:help" title="Leads mit fertiger Demo — bereit zum Ansprechen"><div class="hl">Sales Ready</div><div class="hv" style="color:${k.sr>0?'var(--g)':'inherit'}">${k.sr}</div></div><div class="hst" style="cursor:help" title="Kunden mit Churn-Signal — brauchen jetzt Aufmerksamkeit"><div class="hl">At Risk</div><div class="hv ${k.ar?"warn":""}">${k.ar}</div></div><div class="hst" style="cursor:pointer" title="Posteingang öffnen — alle offenen Portal-Anfragen + angenommene Angebote" onclick="App.openInbox()"><div class="hl">📥 Anfragen</div><div class="hv" style="color:${k.anfr>0?'var(--a)':'inherit'}">${k.anfr}</div></div><div class="hst" style="cursor:help" title="Alle Leads (Interessenten) im System"><div class="hl">Leads</div><div class="hv">${this.state.leads.length}</div></div><div class="hst" style="cursor:help" title="Alle Bestandskunden im System"><div class="hl">Kunden</div><div class="hv">${this.state.clients.length}</div></div>`;
+ this.updateInboxBadge();
  if(this.view==="heute")this.rHeute();
  else if(this.view==="akquise")this.rBoard("akquise");
  else if(this.view==="kunden")this.rBoard("kunden");
