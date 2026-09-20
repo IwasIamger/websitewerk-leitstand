@@ -1456,6 +1456,7 @@ renderDrawer(){
     ${item.website?`<div style="grid-column:1/-1"><div class="kl">Website (alt)</div><a href="${esc(item.website.startsWith("http")?item.website:"https://"+item.website)}" target="_blank" rel="noopener" style="color:var(--muted);font-size:12px">${esc(item.website)} ↗</a></div>`:""}
     ${item.phone?`<div><div class="kl">Telefon</div><a href="tel:${esc(item.phone)}" style="font-family:ui-monospace,monospace;font-size:12px">${esc(item.phone)}</a></div>`:""}
    </div>
+   ${(item.website&&(item.demoUrl||item.liveUrl))?`<div style="margin:4px 0 10px"><a href="${App.apiBase()}/api/compare/${id}" target="_blank" rel="noopener" style="display:inline-block;font-size:12px;color:var(--a);font-weight:700">📊 Website-Vergleich (alt vs. neu) ↗</a><div style="font-size:10px;color:var(--muted)">Messbarer Qualitäts-Sprung — als Akquise-Argument zum Senden.</div></div>`:""}
    <!-- ── Nächste Aktion ────────────────────────────────── -->
    <div>
     <div class="stit">Nächste Aktion (Pflicht)</div>
