@@ -1605,6 +1605,9 @@ renderDrawer(){
      <button class="btn bg action-btn" onclick="App.setClientEmail('${id}')">
       <span class="act-top"><span>💾 Portal-E-Mail speichern<small>Kunde kann sich dann im Portal mit dieser E-Mail anmelden.</small></span></span>
      </button>
+     ${item.email?`<button class="btn bg action-btn" onclick="App.sendPortalInvite('${id}')">
+      <span class="act-top"><span>✉ Portal-Einladung senden<small>Willkommens-Mail an den Kunden: Portal-Link + wie man sich anmeldet.${item.portalInvitedAt?' (schon gesendet)':''}</small></span></span>
+     </button>`:""}
      <button class="btn bg action-btn" onclick="App.createInvoice('${id}')">
       <span class="act-top"><span>🧾 Rechnung erstellen<small>Erstellt Rechnung (+ Lexoffice falls konfiguriert). Erscheint im Kunden-Portal.</small></span></span>
      </button>
@@ -1806,6 +1809,7 @@ async setBranding(id){
   this.persist();this.toast("✓ Branding gespeichert");this.renderDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
 },
+async sendPortalInvite(id){const c=this.state.clients.find(x=>x.id===id);if(!(c&&c.email)){this.toast("Erst Portal-E-Mail speichern");return;}if(!confirm("Willkommens-/Einladungs-Mail ans Portal an den Kunden senden?"))return;this.toast("Sende Einladung …");try{const r=await fetch(this.apiBase()+"/api/client/portal-invite",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id})});const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");await this.reloadCloudState();if(this.detail)this.renderDrawer();this.toast(d.mailed?"✓ Portal-Einladung gesendet":"Markiert (Mail evtl. nicht zustellbar)");}catch(e){this.toast("Fehler: "+e.message);}},
 async setClientEmail(id){
  const email=document.getElementById("cli-email-"+id)?.value.trim();
  if(!email){this.toast("Bitte E-Mail eingeben");return;}
