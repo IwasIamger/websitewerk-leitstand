@@ -2213,6 +2213,13 @@ rSettings(){
    <div style="font-size:11px;color:#9AA4AC;margin-top:3px;line-height:1.5">Pflicht für Cloud-Sync, Factory-Runs &amp; Deploy-Downloads. Wert = die Render-Variable <code>LEITSTAND_SECRET</code> (Render → Service → Environment). Danach „Alles speichern" + Seite neu laden.</div>
   </div>
   <div class="cfg-sec">
+   <div class="stit" style="color:var(--a);font-size:11px">🛡️ DATENSICHERUNG</div>
+   <p class="hint" style="margin-bottom:10px">Automatische Backups laufen alle 8 Stunden (3 rotierende Stände, ~24h Rollback-Schutz). Hier der Stand — plus manuelles Sichern zum Download.</p>
+   <div id="backup-status" style="font-size:12px;color:var(--muted);line-height:1.7">Lade …</div>
+   <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn bg bsm" onclick="App.loadBackups()">↻ Status aktualisieren</button></div>
+   <p class="hint" style="margin-top:8px;font-size:11px">Manuelles Sichern/Wiederherstellen ganz unten („Backup exportieren/importieren").</p>
+  </div>
+  <div class="cfg-sec">
    <div class="stit" style="color:var(--a);font-size:11px">MONATSBERICHTE — MANUELL / AUTOMATIK</div>
    <p class="hint" style="margin-bottom:10px">Bei <b>Automatik</b> sendet n8n monatlich Berichte an alle Care-Kunden (Hetzner-Server nötig). Bei <b>Manuell</b> erstellst du Berichte per Knopfdruck im Kunden-Drawer.</p>
    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 0">
@@ -2301,7 +2308,9 @@ rSettings(){
    <label class="btn bg" style="cursor:pointer">Backup importieren<input type="file" accept=".json" style="display:none" onchange="App.impState(this.files[0])"></label>
   </div>
  </div></div>`;
+ this.loadBackups();
 },
+async loadBackups(){const el=document.getElementById("backup-status");if(!el)return;el.textContent="Lade …";try{const r=await fetch(this.apiBase()+"/api/admin/backups");const d=await r.json();if(!d.ok)throw new Error(d.error||"Fehler");const b=d.backups||[];el.innerHTML=(b.length?b.map(x=>`<div>💾 <b>${esc(x.slot.replace("ww-backup-","Slot "))}</b> · ${new Date(x.updated_at).toLocaleString("de-DE")} · ${x.clients} Kunden · ${x.leads} Leads · ${x.events} Events</div>`).join(""):"<div>Noch keine Auto-Backups — das erste entsteht beim nächsten Speichern (Intervall 8h).</div>")+(d.main?`<div style="margin-top:4px;color:#9AA4AC">Aktuell (main): ${d.main.clients} Kunden · ${d.main.leads} Leads · ${d.main.events} Events</div>`:"");}catch(e){el.textContent="Backup-Status nicht ladbar (Leitstand-Schlüssel gesetzt?): "+e.message;}},
 async saveSettings(){
  const g=id=>document.getElementById(id)?.value.trim()||"";
  Object.assign(this.cfg,{apiUrl:g("c-api"),pexKey:g("c-pex"),cfAccount:g("c-cfa"),cfProject:g("c-cfp"),cfToken:g("c-cft"),pingenKey:g("c-pgk"),pingenOrg:g("c-pgo"),n8nWebhook:g("c-n8n"),absFirma:g("c-fn"),absName:g("c-nn"),absStrasse:g("c-str"),absOrt:g("c-ort"),absTel:g("c-tel"),absMail:g("c-mail"),sbUrl:g("c-sbu"),sbKey:g("c-sbk")});
