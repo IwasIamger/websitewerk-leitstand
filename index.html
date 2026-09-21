@@ -863,7 +863,7 @@ applyMove(){
   const lead=s.leads.find(l=>l.id===m.id);ev.entity=lead.name;Object.assign(lead,m.vals,{stage:m.to});
   const nx={letter_sent:["Klick-Tracking + Wiedervorlage",10],engaged:["Rückruf (SLA 1h)",0],offer_sent:["Angebot nachfassen",3],nurture:["Wiedervorlage",90],in_conversation:["Follow-up senden",2]}[m.to];
   if(nx)lead.next={label:nx[0],due:dP(nx[1])};
-  if(m.to==="won"){wonLead=lead;s.clients.unshift({id:uid(),name:lead.name,branche:lead.branche,ort:lead.ort,phase:"onboarding",health:75,mrr:+m.vals.mrr||0,paket:m.vals.paket||"Premium",auftragswert:+m.vals.auftragswert||0,demoUrl:lead.demoUrl||"",twin:lead.twin||null,buildPages:lead.buildPages||1,next:{label:"Onboarding-Mail senden",due:today()}});s.events.push({id:uid(),ts:Date.now(),pipeline:"cli",from:"—",to:"onboarding",actor:"System",entity:lead.name,note:"Client-Akte aus Won erzeugt"});}
+  if(m.to==="won"){wonLead=lead;s.clients.unshift({id:uid(),name:lead.name,branche:lead.branche,ort:lead.ort,phase:"onboarding",health:75,mrr:+m.vals.mrr||0,paket:m.vals.paket||"Premium",auftragswert:+m.vals.auftragswert||0,website:lead.website||"",email:lead.email||"",portalEmail:lead.email||"",phone:lead.phone||"",demoUrl:lead.demoUrl||"",twin:lead.twin||null,buildPages:lead.buildPages||1,next:{label:"Onboarding-Mail senden",due:today()}});s.events.push({id:uid(),ts:Date.now(),pipeline:"cli",from:"—",to:"onboarding",actor:"System",entity:lead.name,note:"Client-Akte aus Won erzeugt"});}
  }else{
   const c=s.clients.find(x=>x.id===m.id);ev.entity=c.name;Object.assign(c,m.vals,{phase:m.to});
   if(m.to==="at_risk")c.health=Math.min(c.health,45);
