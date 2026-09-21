@@ -1736,6 +1736,12 @@ renderDrawer(){
     <div class="mf" style="margin-bottom:6px;display:flex;gap:8px;align-items:center"><label style="margin:0">Farbe</label><input type="color" id="br-color-${id}" value="${esc(item.branding?.color||"#e8704a")}" style="width:48px;height:32px;border:1px solid #CBD2D6;border-radius:6px;cursor:pointer"><label style="margin:0;margin-left:8px">Subdomain</label><input id="br-sub-${id}" placeholder="kunde" value="${esc(item.branding?.subdomain||"")}" style="flex:1;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
     <button class="btn bg bsm" onclick="App.setBranding('${id}')">Branding speichern</button>
     ${item.branding?.subdomain?`<div style="font-size:11px;color:#5A6670;margin-top:6px">Portal-Link: <code>websitewerk-portal.pages.dev/?b=${esc(item.branding.subdomain)}</code></div>`:""}
+    <div class="stit" style="margin-top:16px">🔗 Externe Datenquelle (sein System)</div>
+    <div style="font-size:11px;color:#5A6670;margin-bottom:6px;line-height:1.5">Verbindet das Dashboard mit der eigenen Supabase des Kunden (z.B. Avanis Buchungssystem). Service-Key wird nur serverseitig gespeichert.</div>
+    <div class="mf" style="margin-bottom:6px"><label>Supabase-URL</label><input id="ext-url-${id}" placeholder="https://xxxx.supabase.co" value="${esc(item.externalDb?.url||"")}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
+    <div class="mf" style="margin-bottom:6px"><label>Service-Role-Key</label><input id="ext-key-${id}" type="password" placeholder="${item.externalDb?.serviceKey?"•••• (gesetzt — zum Ändern neu eingeben)":"eyJ..."}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
+    <div style="display:flex;gap:8px"><button class="btn bg bsm" onclick="App.saveExtDb('${id}')">Verbinden &amp; testen</button>${item.externalDb?`<button class="btn bg bsm" onclick="App.saveExtDb('${id}',true)">Trennen</button>`:""}</div>
+    <div id="ext-status-${id}" style="font-size:11px;color:#5A6670;margin-top:6px">${item.externalDb?"✅ verbunden — „Verbinden & testen" prüft erneut":""}</div>
    </div>
    ${pl==="cli"?`<div><div class="stit" style="display:flex;justify-content:space-between;align-items:center">Projektanfragen / Sprint Desk<button class="btn bg bsm" onclick="App.show('projekte')">Alle öffnen</button></div>${this.projectMiniList(id)}</div>`:""}
    `:""}
@@ -1847,6 +1853,25 @@ async sendReport(id,send){
   this.toast("✓ Bericht erstellt"+(d.sent?" und gemailt":"")+" · PSI "+(d.report.psiScore||"—"));
   this.renderDrawer();
  }catch(e){this.toast("Fehler: "+e.message);}
+},
+async saveExtDb(id,remove){
+ const key=localStorage.getItem("ww_api_key")||"";
+ const url=(document.getElementById("ext-url-"+id)||{}).value||"";
+ const svc=(document.getElementById("ext-key-"+id)||{}).value||"";
+ const st=document.getElementById("ext-status-"+id);
+ if(!remove&&!/^https?:\/\//.test(url)){this.toast("Bitte gültige Supabase-URL");return;}
+ if(st)st.textContent=remove?"Trenne …":"Verbinde …";
+ try{
+  const body=remove?{clientId:id,remove:true}:{clientId:id,url:url,serviceKey:svc,availWeekdayField:"weekday"};
+  const r=await fetch(this.apiBase()+"/api/client/external-db",{method:"POST",headers:{"Content-Type":"application/json","x-ww-key":key},body:JSON.stringify(body)});
+  const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
+  if(remove){this.toast("Getrennt");if(st)st.textContent="";await this.reloadFromCloud();if(this.detail)this.renderDrawer();return;}
+  if(st)st.textContent="Teste Verbindung …";
+  const tr=await fetch(this.apiBase()+"/api/client/external-db/test?clientId="+encodeURIComponent(id),{headers:{"x-ww-key":key}});
+  const td=await tr.json();
+  if(tr.ok&&td.ok){if(st)st.textContent="✅ Verbunden — "+td.programsCount+" Programme · Buchungen "+(td.bookingsReadable?"lesbar":"nicht lesbar");this.toast("✓ Verbunden");await this.reloadFromCloud();}
+  else{if(st)st.textContent="⚠ Gespeichert, aber Test fehlgeschlagen: "+(td.error||tr.status);}
+ }catch(e){if(st)st.textContent="Fehler: "+e.message;this.toast("Fehler: "+e.message);}
 },
 async setBranding(id){
  const company=document.getElementById("br-company-"+id)?.value.trim();
