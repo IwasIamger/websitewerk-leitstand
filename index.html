@@ -1741,7 +1741,7 @@ renderDrawer(){
     <div class="mf" style="margin-bottom:6px"><label>Supabase-URL</label><input id="ext-url-${id}" placeholder="https://xxxx.supabase.co" value="${esc(item.externalDb?.url||"")}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
     <div class="mf" style="margin-bottom:6px"><label>Service-Role-Key</label><input id="ext-key-${id}" type="password" placeholder="${item.externalDb?.serviceKey?"•••• (gesetzt — zum Ändern neu eingeben)":"eyJ..."}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
     <div style="display:flex;gap:8px"><button class="btn bg bsm" onclick="App.saveExtDb('${id}')">Verbinden &amp; testen</button>${item.externalDb?`<button class="btn bg bsm" onclick="App.saveExtDb('${id}',true)">Trennen</button>`:""}</div>
-    <div id="ext-status-${id}" style="font-size:11px;color:#5A6670;margin-top:6px">${item.externalDb?"✅ verbunden — „Verbinden & testen" prüft erneut":""}</div>
+    <div id="ext-status-${id}" style="font-size:11px;color:#5A6670;margin-top:6px">${item.externalDb?"✅ verbunden — erneut prüfen jederzeit möglich":""}</div>
    </div>
    ${pl==="cli"?`<div><div class="stit" style="display:flex;justify-content:space-between;align-items:center">Projektanfragen / Sprint Desk<button class="btn bg bsm" onclick="App.show('projekte')">Alle öffnen</button></div>${this.projectMiniList(id)}</div>`:""}
    `:""}
