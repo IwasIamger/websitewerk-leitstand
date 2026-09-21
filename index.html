@@ -452,7 +452,9 @@ async sbSave(){try{const r=await fetch(this.cfg.sbUrl.replace(/\/$/,"")+"/rest/v
 updSync(){
  // Deutliche Warnung wenn nicht mit Cloud verbunden
  const warn=document.getElementById('sync-warn');
- if(warn)warn.style.display=this.sync==='cloud'?'none':'block';
+ // Banner zeigt den VERBINDUNGS-Status (einmal aus der Cloud geladen = verbunden), nicht das letzte Speicher-Ergebnis.
+ // Sonst kippte er nach einem einzelnen fehlgeschlagenen Save faelschlich auf „nur lokal", obwohl die Daten aus der Cloud kamen.
+ if(warn)warn.style.display=this.cloudOk?'none':'block';
  const d=document.getElementById("sd"),l=document.getElementById("sl");const m={local:["#C5CCD1","Lokal"],cloud:["var(--g)","Supabase ✓"],error:["var(--red)","Sync-Fehler"]}[this.sync];d.style.background=m[0];l.textContent=m[1];},
 async resetAll(){if(!confirm("Demo-Daten wiederherstellen?"))return;this.state=seed();this.persist();this.renderAll();this.toast("Zurückgesetzt");},
 
@@ -1642,6 +1644,7 @@ renderDrawer(){
    <div>
     <div class="stit">Kunden-Portal</div>
     <div class="infobox" style="margin-bottom:9px">
+     <div class="row"><div class="key">Client-ID</div><div class="val"><code style="font-size:11px">${esc(id)}</code> <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${esc(id)}');App.toast('Client-ID kopiert')" style="background:none;border:1px solid #CBD2D6;border-radius:4px;padding:1px 7px;font-size:10px;cursor:pointer">kopieren</button></div></div>
      <div class="row"><div class="key">Portal-Zugang</div><div class="val">${item.portalToken?"✅ Kunde eingeloggt":item.email?"E-Mail hinterlegt":"❌ keine E-Mail"}</div></div>
      <div class="row"><div class="key">Live-URL</div><div class="val">${item.liveUrl?`<a href="${esc(item.liveUrl)}" target="_blank" style="color:var(--a)">öffnen ↗</a>`:"–"}</div></div>
      <div class="row"><div class="key">Änderungswünsche</div><div class="val">${(item.changeRequests||[]).length} offen</div></div>
