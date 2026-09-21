@@ -1373,10 +1373,11 @@ openInbox(){
   (this.state.clients||[]).forEach(c=>{
     (c.careRequests||[]).filter(q=>!done.includes(q.status)).forEach(q=>rows.push({cid:c.id,cn:c.name,type:"care",kind:q.kind,rid:q.id,oname:q.offerName||"",text:(KL[q.kind]||"Anfrage")+": "+(q.offerName||"")+(q.note?" — "+q.note:""),ts:q.ts}));
     (c.assistantHandoffs||[]).filter(h=>!done.includes(h.status)).forEach(h=>rows.push({cid:c.id,cn:c.name,type:"handoff",rid:h.id,text:h.question||"",ts:h.ts}));
-    (c.changeRequests||[]).filter(r=>r.status!=="erledigt"&&r.status!=="abgelehnt").forEach(r=>rows.push({cid:c.id,cn:c.name,type:"change",rid:r.id,text:r.title||"",ts:r.ts}));
+    (c.changeRequests||[]).filter(r=>r.status!=="erledigt"&&r.status!=="abgelehnt").forEach(r=>rows.push({cid:c.id,cn:c.name,type:"change",rid:r.id,text:r.title||"",ts:r.ts,prio:r.priority||"normal"}));
     (c.offers||[]).filter(o=>o.status==="angenommen"&&o.acceptedAt&&o.acceptedAt>Date.now()-14*864e5).forEach(o=>rows.push({cid:c.id,cn:c.name,type:"won",text:"Angebot angenommen: "+(o.title||"")+" ("+(o.total||0)+" €)",ts:o.acceptedAt}));
   });
-  rows.sort((a,b)=>b.ts-a.ts);
+  rows.forEach(r=>{r.urgent=(r.type==="change"&&r.prio==="hoch")||(r.type==="care"&&r.kind==="cancel");});
+  rows.sort((a,b)=>((b.urgent?1:0)-(a.urgent?1:0))||(b.ts-a.ts));
   const ic={care:"💶",handoff:"💬",change:"✍️",won:"✅"};
   const body=rows.length?rows.map(r=>{
     let act="";
@@ -1384,7 +1385,7 @@ openInbox(){
     else if(r.type==="care"&&["book","upgrade"].includes(r.kind))act=`<button class="btn bp" style="font-size:11px;padding:4px 10px;white-space:nowrap" onclick="App.inboxAction('careActivate','${r.cid}','${r.rid}')">✓ Annehmen</button>`;
     else if(r.type==="care")act=`<button class="btn bg" style="font-size:11px;padding:4px 10px;white-space:nowrap" onclick="App.inboxAction('resolveCare','${r.cid}','${r.rid}')">✓ erledigt</button>`;
     else if(r.type==="handoff")act=`<button class="btn bg" style="font-size:11px;padding:4px 10px;white-space:nowrap" onclick="App.inboxAction('resolveHandoff','${r.cid}','${r.rid}')">✓ erledigt</button>`;
-    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="font-size:16px">${ic[r.type]||"•"}</span><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">${esc(r.cn)}</div><div style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.text)}</div></div><span style="font-size:10px;color:var(--muted);white-space:nowrap">${new Date(r.ts).toLocaleDateString("de-DE")}</span>${act}<button class="btn bg" style="font-size:11px;padding:4px 10px;white-space:nowrap" onclick="App.closeModal();App.openDetail('cli','${r.cid}')">→ öffnen</button></div>`;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 8px;border-bottom:1px solid var(--bd)${r.urgent?';background:rgba(220,38,38,.06);border-radius:8px':''}"><span style="font-size:16px">${r.urgent?"🔴":(ic[r.type]||"•")}</span><div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">${esc(r.cn)}${r.urgent?' <span style="font-size:9px;color:var(--red);font-weight:800;letter-spacing:.04em">DRINGEND</span>':''}</div><div style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.text)}</div></div><span style="font-size:10px;color:var(--muted);white-space:nowrap">${new Date(r.ts).toLocaleDateString("de-DE")}</span>${act}<button class="btn bg" style="font-size:11px;padding:4px 10px;white-space:nowrap" onclick="App.closeModal();App.openDetail('cli','${r.cid}')">→ öffnen</button></div>`;
   }).join(""):`<div class="empty" style="padding:24px 0;text-align:center"><div class="ico">📭</div>Keine offenen Anfragen — alles erledigt!</div>`;
   document.getElementById("MR").innerHTML=`<div class="ov" onclick="if(event.target===this)App.closeModal()"><div class="mo" style="max-width:640px"><div style="display:flex;align-items:center;justify-content:space-between"><h3>📥 Posteingang · ${rows.length}</h3><button class="xb" onclick="App.closeModal()">×</button></div><p class="hint" style="margin:0 0 8px">Alle offenen Portal-Anfragen aller Kunden + angenommene Angebote (14 Tage).</p><div>${body}</div></div></div>`;
 },
