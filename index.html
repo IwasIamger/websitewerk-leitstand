@@ -1665,7 +1665,7 @@ renderDrawer(){
      <button class="btn bg action-btn" onclick="App.createContract('${id}')">
       <span class="act-top"><span>📄 Vertrag erstellen<small>Webdesign-Werkvertrag mit §§ als PDF + digitale Annahme (Link teilbar).</small></span></span>
      </button>
-     <a class="btn bg action-btn" href="https://websitewerk-demos.pages.dev/portal" target="_blank">
+     <a class="btn bg action-btn" href="https://websitewerk-portal.pages.dev/portal${item.branding?.subdomain?('?b='+esc(item.branding.subdomain)):''}" target="_blank">
       <span class="act-top"><span>🔗 Portal öffnen<small>Kunden-Portal in neuem Tab ansehen.</small></span></span>
      </a>
      <button class="btn bg action-btn" onclick="App.sendReport('${id}',false)">
