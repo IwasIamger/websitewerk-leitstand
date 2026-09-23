@@ -1680,6 +1680,9 @@ renderDrawer(){
     </div>
     <div class="mf" style="margin-bottom:8px"><label>Portal-E-Mail des Kunden</label><input id="cli-email-${id}" placeholder="kunde@email.de" value="${esc(item.email||"")}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
     <div class="action-grid">
+     ${!item.portalInvitedAt?`<button class="btn bp action-btn" onclick="App.onboardClient('${id}')">
+      <span class="act-top"><span>🚀 Onboarding starten<small>1 Klick: Portal-E-Mail speichern + Willkommens-Einladung senden + Willkommens-Chat anlegen.</small></span></span>
+     </button>`:""}
      <button class="btn bg action-btn" onclick="App.setClientEmail('${id}')">
       <span class="act-top"><span>💾 Portal-E-Mail speichern<small>Kunde kann sich dann im Portal mit dieser E-Mail anmelden.</small></span></span>
      </button>
@@ -1910,6 +1913,25 @@ async setBranding(id){
   if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");
   const c=this.state.clients.find(x=>x.id===id);if(c)c.branding=d.branding;
   this.persist();this.toast("✓ Branding gespeichert");this.renderDrawer();
+ }catch(e){this.toast("Fehler: "+e.message);}
+},
+async onboardClient(id){
+ const c=this.state.clients.find(x=>x.id===id);
+ const inp=document.getElementById("cli-email-"+id);
+ const email=((inp&&inp.value.trim())||(c&&(c.email||c.portalEmail))||"").trim();
+ if(!email){this.toast("Bitte zuerst die Portal-E-Mail eingeben");return;}
+ if(!confirm("Onboarding starten?\n\n• Portal-E-Mail speichern\n• Willkommens-/Einladungs-Mail an "+email+" senden\n• Willkommens-Chat im Portal anlegen"))return;
+ this.toast("Onboarding läuft …");
+ try{
+  const r1=await fetch(this.apiBase()+"/api/client/portal-email",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id,email})});
+  const d1=await r1.json().catch(()=>({}));
+  if(!r1.ok||!d1.ok)throw new Error(d1.error||"E-Mail speichern fehlgeschlagen");
+  if(c){c.email=d1.email||email;c.portalEmail=d1.portalEmail||email;}
+  const r2=await fetch(this.apiBase()+"/api/client/portal-invite",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id})});
+  const d2=await r2.json();
+  if(!r2.ok||!d2.ok)throw new Error(d2.error||"Einladung fehlgeschlagen");
+  await this.reloadCloudState();if(this.detail)this.renderDrawer();
+  this.toast(d2.mailed?"🚀 Onboarding gestartet — Einladung gesendet":"✓ E-Mail gespeichert (Einladung evtl. nicht zustellbar)");
  }catch(e){this.toast("Fehler: "+e.message);}
 },
 async sendPortalInvite(id){const c=this.state.clients.find(x=>x.id===id);if(!(c&&c.email)){this.toast("Erst Portal-E-Mail speichern");return;}if(!confirm("Willkommens-/Einladungs-Mail ans Portal an den Kunden senden?"))return;this.toast("Sende Einladung …");try{const r=await fetch(this.apiBase()+"/api/client/portal-invite",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id})});const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");await this.reloadCloudState();if(this.detail)this.renderDrawer();this.toast(d.mailed?"✓ Portal-Einladung gesendet":"Markiert (Mail evtl. nicht zustellbar)");}catch(e){this.toast("Fehler: "+e.message);}},
