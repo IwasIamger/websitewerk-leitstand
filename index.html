@@ -2532,12 +2532,23 @@ App.init();
 </div>
 <script>
 (function(){
-  var DM={open:false,tab:'inbox',cur:null,aiHist:[]};
+  var DM={open:false,tab:'inbox',cur:null,aiHist:[],unread:0};
   function el(id){return document.getElementById(id);}
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(ch){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[ch];});}
   function base(){try{return App.apiBase();}catch(e){return '';}}
   function tfmt(ts){try{var d=new Date(ts),n=new Date();var t=d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});return d.toDateString()===n.toDateString()?t:(d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+' '+t);}catch(e){return '';}}
-  function dmSetBadge(n){var b=el('dmBadge');if(b){if(n>0){b.textContent=n;b.style.display='inline-block';}else{b.style.display='none';}}}
+  function dmSetBadge(n){DM.unread=n||0;var b=el('dmBadge');if(b){if(n>0){b.textContent=n;b.style.display='inline-block';}else{b.style.display='none';}}var l=el('dmLauncher');if(l)l.style.animation=n>0?'dmPulse 1.6s ease-in-out infinite':'';dmInjectHeute();}
+  function dmInjectHeute(){try{
+    if(typeof App==='undefined'||App.view!=='heute')return;
+    var v=el('v-heute');if(!v)return;var ex=el('dmHeuteCard');
+    if(!DM.unread){if(ex)ex.remove();return;}
+    if(ex){var n=ex.querySelector('.dmhc-n');if(n)n.textContent=DM.unread;return;}
+    var card=document.createElement('div');card.id='dmHeuteCard';card.className='panel';card.style.cssText='cursor:pointer;border-left:4px solid #e8704a;margin-bottom:14px';
+    card.onclick=function(){if(window.dmToggle)dmToggle();};
+    card.innerHTML='<div class="ph">📬 Kundennachrichten</div><div style="padding:12px 14px;font-size:14px"><b class="dmhc-n">'+DM.unread+'</b> wartende Nachricht(en) von Kunden — <span style="color:#e8704a;font-weight:600">Postfach öffnen →</span></div>';
+    v.insertBefore(card,v.firstChild);
+  }catch(e){}}
+  function dmPatchHeute(){try{if(window.App&&typeof App.rHeute==='function'&&!App._dmPatched){App._dmPatched=true;var orig=App.rHeute.bind(App);App.rHeute=function(){orig();dmInjectHeute();};}}catch(e){}}
   window.dmToggle=function(){var p=el('dmPanel'),l=el('dmLauncher');if(p.style.display==='flex'){p.style.display='none';l.style.display='flex';DM.open=false;dmBadge();return;}p.style.display='flex';l.style.display='none';DM.open=true;dmTab('inbox');};
   window.dmTab=function(t){DM.tab=t;el('dmTabInbox').style.background=t==='inbox'?'#e8704a':'rgba(255,255,255,.14)';el('dmTabAi').style.background=t==='ai'?'#e8704a':'rgba(255,255,255,.14)';
     el('dmBack').style.display='none';
@@ -2609,6 +2620,8 @@ App.init();
   window.dmBadge=async function(){
     try{var r=await fetch(base()+'/api/admin/inbox');var d=await r.json();dmSetBadge((d&&d.totalUnread)||0);}catch(e){}
   };
+  try{var _st=document.createElement('style');_st.textContent='@keyframes dmPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}';document.head.appendChild(_st);}catch(e){}
+  dmPatchHeute();setTimeout(dmPatchHeute,1500);
   setInterval(function(){if(DM.open&&DM.tab==='inbox'&&DM.cur===null)dmLoadInbox();else if(!DM.open)dmBadge();},30000);
   setTimeout(dmBadge,2500);
 })();
