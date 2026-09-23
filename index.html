@@ -394,7 +394,7 @@ events:[
 /* === App-Kern === */
 const App={
 state:null,view:"heute",drag:null,modal:null,detail:null,fact:null,
-cfg:{},saveT:null,sync:"local",cloudOk:false,
+cfg:{},saveT:null,sync:"local",cloudOk:false,syncErr:"",
 
 async init(){
  try{this.cfg=JSON.parse(localStorage.getItem("ww:cfg")||"{}")}catch(e){this.cfg={}}
@@ -426,9 +426,21 @@ async apiSave(){
   // Harte Bedingung cloudOk: nur ein Browser, der den State vorher AUS der Cloud
   // geladen hat, darf schreiben — sonst ueberschreibt die Demo-Saat die echten Daten.
   if(!this.cloudOk)return;
-  try{const r=await fetch(this.apiBase()+"/api/state",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(this.state)});this.sync=r.ok?"cloud":"error";}
-  catch(e){this.sync="error";}
-  this.updSync();
+  const body=JSON.stringify(this.state);
+  for(let attempt=0;attempt<2;attempt++){
+    try{
+      const r=await fetch(this.apiBase()+"/api/state",{method:"POST",headers:{"Content-Type":"application/json"},body});
+      if(r.ok){this.sync="cloud";this.syncErr="";this.updSync();return;}
+      let t="";try{t=await r.text();}catch(e){}
+      console.error("[Sync] Speichern fehlgeschlagen:",r.status,t);
+      if(r.status===401){this.syncErr="Kein/falscher Leitstand-Schlüssel (401) — in Einstellungen setzen";break;}
+      if(r.status===409){this.syncErr="Schutz gegen Datenverlust (409) — Stand wirkt geschrumpft";break;}
+      this.syncErr="HTTP "+r.status+(t?" · "+t.slice(0,120):"");
+    }catch(e){this.syncErr="Netzwerk/Timeout"+(e&&e.message?(" · "+e.message):"");console.error("[Sync]",e&&e.message);}
+    if(attempt===0)await new Promise(s=>setTimeout(s,1500)); // kurzer Retry (Render-Kaltstart/Blip)
+  }
+  this.sync="error";this.updSync();
+  if(this.syncErr&&!this._syncToasted){this._syncToasted=true;this.toast("Speichern fehlgeschlagen — "+this.syncErr);setTimeout(()=>{this._syncToasted=false;},9000);}
 },
 sbH(){return{"apikey":this.cfg.sbKey,"Authorization":"Bearer "+this.cfg.sbKey,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates"}},
 async sbLoad(){
@@ -448,14 +460,24 @@ async sbLoadViaBackend(){
   try{const r=await fetch(this.apiBase()+"/api/state");if(r.ok){const d=await r.json();if(d&&(d.leads||d.clients)){this.sync="cloud";this.cloudOk=true;return d;}}}catch(e){}
   return null;
 },
-async sbSave(){try{const r=await fetch(this.cfg.sbUrl.replace(/\/$/,"")+"/rest/v1/ww_state",{method:"POST",headers:this.sbH(),body:JSON.stringify({id:"main",data:this.state,updated_at:new Date().toISOString()})});this.sync=r.ok?"cloud":"error"}catch(e){this.sync="error"}this.updSync();},
+async sbSave(){
+  try{
+    const r=await fetch(this.cfg.sbUrl.replace(/\/$/,"")+"/rest/v1/ww_state",{method:"POST",headers:this.sbH(),body:JSON.stringify({id:"main",data:this.state,updated_at:new Date().toISOString()})});
+    if(r.ok){this.sync="cloud";this.syncErr="";}
+    else{let t="";try{t=await r.text();}catch(e){}console.error("[Sync/Supabase]",r.status,t);this.sync="error";
+      this.syncErr=(r.status===401||r.status===403)?("Supabase-Schlüssel darf nicht schreiben ("+r.status+") — Service-Key nötig oder auf Backend-Speichern umstellen"):("Supabase HTTP "+r.status+(t?" · "+t.slice(0,120):""));
+      if(!this._syncToasted){this._syncToasted=true;this.toast("Speichern fehlgeschlagen — "+this.syncErr);setTimeout(()=>{this._syncToasted=false;},9000);}}
+  }catch(e){this.sync="error";this.syncErr="Netzwerk/Supabase"+(e&&e.message?(" · "+e.message):"");console.error("[Sync/Supabase]",e&&e.message);}
+  this.updSync();
+},
 updSync(){
  // Deutliche Warnung wenn nicht mit Cloud verbunden
  const warn=document.getElementById('sync-warn');
  // Banner zeigt den VERBINDUNGS-Status (einmal aus der Cloud geladen = verbunden), nicht das letzte Speicher-Ergebnis.
  // Sonst kippte er nach einem einzelnen fehlgeschlagenen Save faelschlich auf „nur lokal", obwohl die Daten aus der Cloud kamen.
  if(warn)warn.style.display=this.cloudOk?'none':'block';
- const d=document.getElementById("sd"),l=document.getElementById("sl");const m={local:["#C5CCD1","Lokal"],cloud:["var(--g)","Supabase ✓"],error:["var(--red)","Sync-Fehler"]}[this.sync];d.style.background=m[0];l.textContent=m[1];},
+ const d=document.getElementById("sd"),l=document.getElementById("sl");const m={local:["#C5CCD1","Lokal"],cloud:["var(--g)","Supabase ✓"],error:["var(--red)","Sync-Fehler"]}[this.sync];d.style.background=m[0];l.textContent=m[1];
+ var _si=l&&l.parentNode;if(_si)_si.title=this.sync==="error"?(this.syncErr||"Speichern fehlgeschlagen — Details in der Konsole"):(this.sync==="cloud"?"Mit Supabase verbunden":"Nur lokal gespeichert");},
 async resetAll(){if(!confirm("Demo-Daten wiederherstellen?"))return;this.state=seed();this.persist();this.renderAll();this.toast("Zurückgesetzt");},
 
 renderNav(){
