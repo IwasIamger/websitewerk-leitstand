@@ -2308,10 +2308,28 @@ rLog(){
  </div></div>`;
 },
 
+async sysCheck(){
+ const box=document.getElementById("sysStatus");if(box)box.innerHTML="Prüfe …";
+ try{
+  const r=await fetch(this.apiBase()+"/api/admin/selfcheck");
+  if(!r.ok){if(box)box.innerHTML='<span style="color:var(--red)">Fehler '+r.status+' — ist der Leitstand-Schlüssel gesetzt?</span>';return;}
+  const d=await r.json();const I=d.integrations||{},c2=d.counts||{};
+  const dot=ok=>`<span>${ok?"🟢":"⚪"}</span>`;
+  const rows=[["Supabase",I.supabase&&d.supabaseRead],["Mistral · KI (EU)",I.mistral],["Brevo · Mail",I.brevo],["Claude · Builds",I.claude],["Stripe",I.stripe],["PayPal",I.paypal],["Cloudflare",I.cloudflare],["Cron-Secret",I.cron],["Leitstand-Secret",I.leitstandSecret]];
+  if(box)box.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;margin-top:4px">'+rows.map(([n,ok])=>dot(!!ok)+" "+n).join("")+'</div>'+
+   '<div style="margin-top:12px;font-size:12px;color:#7A858D;line-height:1.7;border-top:1px solid var(--bd,#eee);padding-top:10px">State: <b>'+(d.stateSizeKB||0)+' KB</b> · Kunden '+(c2.clients||0)+' · Leads '+(c2.leads||0)+' · Events '+(c2.events||0)+' · Chats '+(c2.conversations||0)+'<br>Ungelesene Kundennachrichten: <b>'+(d.unreadInbox||0)+'</b> · Letztes Backup: <b>'+(d.backup&&d.backup.ageHours!=null?d.backup.ageHours+" h her":"—")+'</b></div>';
+ }catch(e){if(box)box.innerHTML='<span style="color:var(--red)">Verbindung fehlgeschlagen</span>';}
+},
 /* === Einstellungen (alle 5 Stufen) === */
 rSettings(){
  const c=this.cfg;
  document.getElementById("v-einstellungen").innerHTML=`<div style="max-width:700px;display:flex;flex-direction:column;gap:0"><div class="panel">
+  <div class="cfg-sec">
+   <div class="stit" style="font-size:11px">🩺 SYSTEM-STATUS</div>
+   <div id="sysStatus" style="font-size:13px;color:#7A858D;margin-top:6px">Prüft, ob alle Systeme laufen (Supabase, KI, Mail, Zahlungen, Backup).</div>
+   <button class="btn bg bsm" style="margin-top:8px" onclick="App.sysCheck()">System-Status prüfen</button>
+  </div>
+  </div><div class="panel">
   <div class="cfg-sec">
    <div class="stit" style="color:var(--a);font-size:11px">🟢 BACKEND API (Render) – alle Keys laufen sicher serverseitig</div>
    <p class="hint" style="margin-bottom:10px">Dein Backend läuft auf Render (<b>websitewerk-api.onrender.com</b>). Claude-Key, Pexels-Key, Cloudflare-Token – alles liegt dort als Environment Variable, nie im Browser. Hier nur die Backend-URL eintragen. Wenn dein Render-Service eine eigene Domain hat, diese verwenden.</p>
