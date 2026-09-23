@@ -315,7 +315,8 @@ nav a.active{box-shadow:0 4px 12px rgba(26,37,48,.28)}
     <header>
       <h1 id="vt">Heute</h1>
       <div class="hs" id="hs"></div>
-      <button class="btn ba" onclick="App.openAddLead()" style="margin-left:10px">+ Lead</button>
+      <button class="btn bg" onclick="wwSearch()" title="Globale Suche über alle Leads & Kunden (Strg/⌘+K)" style="margin-left:10px">🔎 Suche</button>
+      <button class="btn ba" onclick="App.openAddLead()" style="margin-left:8px">+ Lead</button>
       <button class="btn" onclick="wwHelp()" title="Hilfe, Erklärungen & Infos zum Leitstand" style="margin-left:8px;font-weight:800">? Hilfe</button>
       <button class="btn bg" onclick="App.healthScanAll()" title="Alle Kunden-Websites prüfen (Erreichbarkeit, SSL, Sicherheit, SEO)" style="margin-left:8px">🩺 Alle prüfen</button>
     </header>
@@ -2730,6 +2731,81 @@ App.init();
   dmPatchHeute();setTimeout(dmPatchHeute,1500);
   setInterval(function(){if(DM.open&&DM.tab==='inbox'&&DM.cur===null)dmLoadInbox();else if(!DM.open)dmBadge();},30000);
   setTimeout(dmBadge,2500);
+})();
+</script>
+<!-- ── Globale Suche (Befehls-Palette) + Dubletten-Cleaner ── -->
+<div id="wwk" style="display:none;position:fixed;inset:0;z-index:100001;background:rgba(20,18,16,.55);backdrop-filter:blur(3px)" onclick="if(event.target===this)wwkClose()">
+  <div style="max-width:600px;margin:9vh auto 0;background:#fff;border-radius:16px;box-shadow:0 30px 80px rgba(20,18,16,.4);overflow:hidden;font-family:system-ui,sans-serif">
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid #eee">
+      <span style="font-size:18px">🔎</span>
+      <input id="wwkIn" placeholder="Leads & Kunden durchsuchen — Name, Branche, Ort, Tag …" style="flex:1;border:0;outline:none;font-size:15px;background:none">
+      <button onclick="wwkClose()" style="background:#f0ece8;border:0;width:26px;height:26px;border-radius:7px;cursor:pointer;font-size:14px">✕</button>
+    </div>
+    <div id="wwkList" style="max-height:56vh;overflow-y:auto"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 14px;border-top:1px solid #eee;background:#faf8f6;font-size:11px;color:#8a8580">
+      <span>↵ öffnen · Esc schließen · ⌘/Strg+K</span>
+      <button onclick="wwkDupes()" style="background:none;border:1px solid #e0dad3;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:600;color:#8a5a2a;cursor:pointer">🧹 Dubletten & Test-Daten prüfen</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function el(id){return document.getElementById(id);}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});}
+  function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9äöüß]/g,'');}
+  function st(){try{return App.state||{};}catch(e){return {};}}
+  function all(){var A=st();return [].concat((A.leads||[]).map(function(x){return{x:x,pl:'acq'};}),(A.clients||[]).map(function(x){return{x:x,pl:'cli'};}));}
+  function stageLabel(o){try{return slabel(o.pl==='acq'?o.x.stage:o.x.phase,o.pl);}catch(e){return o.pl==='acq'?o.x.stage:o.x.phase;}}
+  function row(o){
+    var typ=o.pl==='acq'?'<span style="font-size:10px;font-weight:700;color:#c26a2c;background:#fbeee3;padding:2px 7px;border-radius:6px">LEAD</span>':'<span style="font-size:10px;font-weight:700;color:#2f7a4f;background:#e6f5ec;padding:2px 7px;border-radius:6px">KUNDE</span>';
+    return '<div class="wwk-row" data-pl="'+o.pl+'" data-id="'+esc(o.x.id)+'" onclick="wwkOpen(\''+o.pl+'\',\''+esc(o.x.id)+'\')" style="display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid #f2efec;cursor:pointer">'+
+      '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:14px;color:#231f1c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(o.x.name||'—')+'</div>'+
+      '<div style="font-size:12px;color:#9a938c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc([o.x.branche,o.x.ort].filter(Boolean).join(' · '))+' · '+esc(stageLabel(o))+'</div></div>'+typ+'</div>';
+  }
+  function search(q){
+    var list=el('wwkList');q=norm(q);
+    var items=all();
+    if(q){items=items.filter(function(o){return norm([o.x.name,o.x.branche,o.x.ort,(o.x.tags||[]).join(' ')].join(' ')).indexOf(q)>=0;});}
+    items=items.slice(0,40);
+    if(!items.length){list.innerHTML='<div style="padding:26px;text-align:center;color:#9a938c">Nichts gefunden.</div>';return;}
+    list.innerHTML=items.map(row).join('');
+  }
+  window.wwkOpen=function(pl,id){wwkClose();try{App.openDetail(pl,id);}catch(e){}};
+  window.wwSearch=function(){var o=el('wwk');o.style.display='block';document.body.style.overflow='hidden';var i=el('wwkIn');i.value='';search('');setTimeout(function(){i.focus();},30);};
+  window.wwkClose=function(){el('wwk').style.display='none';document.body.style.overflow='';};
+  window.wwkDupes=function(){
+    var list=el('wwkList');var leads=(st().leads||[]);
+    // Union-Find über Namensähnlichkeit (gleich / Teilstring)
+    var it=leads.map(function(l){return{id:l.id,name:l.name,n:norm(l.name),stage:l.stage};});
+    var p=it.map(function(_,i){return i;});
+    function find(i){while(p[i]!==i){p[i]=p[p[i]];i=p[i];}return i;}
+    function match(a,b){if(a===b)return true;if(a.length<6||b.length<6)return false;return a.indexOf(b)>=0||b.indexOf(a)>=0;}
+    for(var i=0;i<it.length;i++)for(var j=i+1;j<it.length;j++){if(match(it[i].n,it[j].n))p[find(i)]=find(j);}
+    var groups={};it.forEach(function(o,i){var r=find(i);(groups[r]=groups[r]||[]).push(o);});
+    var dupes=Object.keys(groups).map(function(k){return groups[k];}).filter(function(g){return g.length>1;});
+    var testPat=/^(test|xxx|probe|asdf|demo lead|lukas ackermann)$/i;
+    var tests=it.filter(function(o){return testPat.test((o.name||'').trim())||/test/i.test(o.name||'');});
+    var h='';
+    if(!dupes.length&&!tests.length){h='<div style="padding:26px;text-align:center;color:#2f7a4f">✓ Keine Dubletten oder Test-Einträge gefunden.</div>';}
+    else{
+      if(tests.length){h+='<div style="padding:10px 16px;background:#fff6f1;font-size:11px;font-weight:700;color:#c0392b">⚠ Mögliche Test-Einträge ('+tests.length+')</div>';h+=tests.map(dupeRow).join('');}
+      dupes.forEach(function(g){h+='<div style="padding:10px 16px;background:#faf6ef;font-size:11px;font-weight:700;color:#8a5a2a">Mögliche Dublette ('+g.length+' Einträge)</div>';h+=g.map(dupeRow).join('');});
+    }
+    list.innerHTML=h;
+  };
+  function dupeRow(o){
+    return '<div id="wwkd-'+esc(o.id)+'" style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #f2efec">'+
+      '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(o.name||'—')+'</div><div style="font-size:11px;color:#9a938c">'+esc(o.stage||'')+' · '+esc(o.id)+'</div></div>'+
+      '<button onclick="wwkOpen(\'acq\',\''+esc(o.id)+'\')" style="background:none;border:1px solid #e0dad3;border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer">öffnen</button>'+
+      '<button onclick="wwkDel(\''+esc(o.id)+'\')" style="background:none;border:1px solid #f0b7ab;color:#c0392b;border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer">🗑 löschen</button></div>';
+  }
+  window.wwkDel=function(id){try{App.deleteLead(id);var r=el('wwkd-'+id);if(r)r.remove();}catch(e){}};
+  el('wwkIn').addEventListener('input',function(){search(this.value);});
+  document.addEventListener('keydown',function(e){
+    if((e.metaKey||e.ctrlKey)&&(e.key==='k'||e.key==='K')){e.preventDefault();wwSearch();}
+    else if(e.key==='Escape'&&el('wwk').style.display==='block'){wwkClose();}
+    else if(e.key==='Enter'&&el('wwk').style.display==='block'){var f=el('wwkList').querySelector('.wwk-row');if(f)f.click();}
+  });
 })();
 </script>
 </body>
