@@ -2487,5 +2487,133 @@ App.init();
   document.addEventListener("keydown",function(e){if(e.key==="Escape")wwHelpClose();});
 })();
 </script>
+<!-- ── Postfach (Leitstand: alle Kunden-Chats + antworten + eigener KI-Chat) ── -->
+<button id="dmLauncher" onclick="dmToggle()" aria-label="Postfach öffnen" style="position:fixed;right:20px;bottom:20px;z-index:99998;display:flex;align-items:center;gap:9px;background:#231f1c;color:#fff;border:0;border-radius:999px;padding:12px 18px 12px 15px;box-shadow:0 10px 30px rgba(20,18,16,.32);cursor:pointer;font:600 14px system-ui,sans-serif">
+  <span style="font-size:17px">📬</span><span>Postfach</span>
+  <span id="dmBadge" style="display:none;background:#e8704a;color:#fff;font-size:11px;font-weight:800;min-width:18px;height:18px;border-radius:999px;padding:0 5px;line-height:18px;text-align:center"></span>
+</button>
+<div id="dmPanel" style="display:none;position:fixed;right:20px;bottom:20px;z-index:99999;width:min(420px,calc(100vw - 32px));height:min(600px,calc(100vh - 40px));background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(20,18,16,.34);overflow:hidden;flex-direction:column;font-family:system-ui,sans-serif">
+  <div style="background:#231f1c;color:#fff;display:flex;align-items:center;padding:10px 12px;gap:8px">
+    <button id="dmBack" onclick="dmShowInbox()" style="display:none;background:rgba(255,255,255,.16);color:#fff;border:0;width:28px;height:28px;border-radius:8px;font-size:18px;cursor:pointer">‹</button>
+    <div style="display:flex;gap:4px;flex:1">
+      <button id="dmTabInbox" onclick="dmTab('inbox')" style="background:#e8704a;color:#fff;border:0;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer">Postfach</button>
+      <button id="dmTabAi" onclick="dmTab('ai')" style="background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer">KI-Chat</button>
+    </div>
+    <button onclick="dmToggle()" aria-label="Schließen" style="background:rgba(255,255,255,.16);color:#fff;border:0;width:28px;height:28px;border-radius:8px;font-size:15px;cursor:pointer">✕</button>
+  </div>
+  <!-- Inbox -->
+  <div id="dmInbox" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:10px 12px;background:#faf8f6;border-bottom:1px solid #eee">
+      <button onclick="dmComposeToggle()" style="width:100%;background:#231f1c;color:#fff;border:0;border-radius:9px;padding:9px;font-size:13px;font-weight:600;cursor:pointer">+ Kunde anschreiben</button>
+      <div id="dmCompose" style="display:none;margin-top:9px;display:none;flex-direction:column;gap:7px">
+        <select id="dmClient" style="border:1px solid #ddd;border-radius:8px;padding:8px;font-size:13px"></select>
+        <textarea id="dmComposeText" rows="2" placeholder="Nachricht an den Kunden …" style="border:1px solid #ddd;border-radius:8px;padding:8px;font-size:13px;resize:vertical;font-family:inherit"></textarea>
+        <button onclick="dmComposeSend()" style="background:#e8704a;color:#fff;border:0;border-radius:8px;padding:8px;font-size:13px;font-weight:600;cursor:pointer">Senden</button>
+      </div>
+    </div>
+    <div id="dmInboxList" style="flex:1;overflow-y:auto;background:#faf8f6"></div>
+  </div>
+  <!-- Chat -->
+  <div id="dmChat" style="flex:1;display:none;flex-direction:column;overflow:hidden">
+    <div id="dmChatMsgs" style="flex:1;overflow-y:auto;padding:14px;background:#faf8f6;display:flex;flex-direction:column;gap:9px"></div>
+    <form onsubmit="dmReply(event)" style="display:flex;gap:8px;padding:11px;border-top:1px solid #eee;background:#fff">
+      <input id="dmReplyInput" autocomplete="off" placeholder="Antwort an den Kunden …" style="flex:1;border:1px solid #e2ddd8;border-radius:10px;padding:10px 12px;font-size:14px;outline:none">
+      <button type="submit" style="background:#e8704a;color:#fff;border:0;border-radius:10px;padding:0 16px;font-size:16px;cursor:pointer">➤</button>
+    </form>
+  </div>
+  <!-- KI-Chat -->
+  <div id="dmAi" style="flex:1;display:none;flex-direction:column;overflow:hidden">
+    <div id="dmAiMsgs" style="flex:1;overflow-y:auto;padding:14px;background:#faf8f6;display:flex;flex-direction:column;gap:9px"></div>
+    <form onsubmit="dmAiSend(event)" style="display:flex;gap:8px;padding:11px;border-top:1px solid #eee;background:#fff">
+      <input id="dmAiInput" autocomplete="off" placeholder="Frag die KI (nur für dich) …" style="flex:1;border:1px solid #e2ddd8;border-radius:10px;padding:10px 12px;font-size:14px;outline:none">
+      <button type="submit" style="background:#231f1c;color:#fff;border:0;border-radius:10px;padding:0 16px;font-size:16px;cursor:pointer">➤</button>
+    </form>
+  </div>
+</div>
+<script>
+(function(){
+  var DM={open:false,tab:'inbox',cur:null,aiHist:[]};
+  function el(id){return document.getElementById(id);}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(ch){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[ch];});}
+  function base(){try{return App.apiBase();}catch(e){return '';}}
+  function tfmt(ts){try{var d=new Date(ts),n=new Date();var t=d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});return d.toDateString()===n.toDateString()?t:(d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+' '+t);}catch(e){return '';}}
+  window.dmToggle=function(){var p=el('dmPanel'),l=el('dmLauncher');if(p.style.display==='flex'){p.style.display='none';l.style.display='flex';DM.open=false;dmBadge();return;}p.style.display='flex';l.style.display='none';DM.open=true;dmTab('inbox');};
+  window.dmTab=function(t){DM.tab=t;el('dmTabInbox').style.background=t==='inbox'?'#e8704a':'rgba(255,255,255,.14)';el('dmTabAi').style.background=t==='ai'?'#e8704a':'rgba(255,255,255,.14)';
+    el('dmBack').style.display='none';
+    el('dmInbox').style.display=t==='inbox'?'flex':'none';el('dmChat').style.display='none';el('dmAi').style.display=t==='ai'?'flex':'none';
+    if(t==='inbox')dmShowInbox();
+    if(t==='ai'&&!el('dmAiMsgs').innerHTML){dmAiBubble('ki','Hey Iwas! Ich bin dein interner KI-Assistent (läuft EU/Mistral). Frag mich alles — Texte, Ideen, Kunden-Antworten formulieren, Entscheidungen.');}
+  };
+  window.dmShowInbox=function(){DM.cur=null;el('dmChat').style.display='none';el('dmInbox').style.display='flex';el('dmBack').style.display='none';dmLoadInbox();};
+  async function dmLoadInbox(){
+    var box=el('dmInboxList');box.innerHTML='<div style="padding:20px;text-align:center;color:#a99">Lädt …</div>';
+    try{var r=await fetch(base()+'/api/admin/inbox');var d=await r.json();var rows=(d&&d.inbox)||[];
+      if(!rows.length){box.innerHTML='<div style="padding:26px 18px;text-align:center;color:#8a8580"><div style="font-size:26px">📭</div>Noch keine Kunden-Nachrichten.</div>';dmBadge();return;}
+      box.innerHTML=rows.map(function(x){
+        var who=x.last?(x.last.role==='team'?'Du: ':(x.last.role==='assistant'?'KI: ':'')):'';
+        var badge=x.unread?('<span style="background:#e8704a;color:#fff;font-size:10px;font-weight:800;min-width:17px;height:17px;line-height:17px;border-radius:999px;text-align:center;padding:0 5px">'+x.unread+'</span>'):'';
+        var flag=x.needsTeam?'<span style="font-size:10px;color:#2f9e44;font-weight:700">● wartet auf dich</span> ':'';
+        return '<div onclick="dmOpen(\''+x.clientId+'\',\''+x.convId+'\')" style="display:flex;align-items:center;gap:10px;padding:12px 13px;border-bottom:1px solid #efe9e3;cursor:pointer;background:'+(x.unread?'#fff6f1':'#fff')+'">'+
+          '<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;color:#231f1c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(x.clientName)+' <span style="font-weight:400;color:#9a938b;font-size:11.5px">· '+esc(x.title)+'</span></div><div style="font-size:12px;color:#8a8580;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+flag+esc(who+((x.last&&x.last.text)||''))+'</div></div>'+(badge||'')+'</div>';
+      }).join('');
+      dmBadge();
+    }catch(e){box.innerHTML='<div style="padding:20px;text-align:center;color:#c0392b">Fehler beim Laden. Ist der Leitstand-Schlüssel gesetzt?</div>';}
+  }
+  window.dmOpen=async function(clientId,convId){
+    DM.cur={clientId:clientId,convId:convId};
+    el('dmInbox').style.display='none';el('dmAi').style.display='none';el('dmChat').style.display='flex';el('dmBack').style.display='block';
+    var box=el('dmChatMsgs');box.innerHTML='<div style="text-align:center;color:#a99;font-size:12px;padding:10px">Lädt …</div>';
+    try{var r=await fetch(base()+'/api/admin/inbox/'+encodeURIComponent(clientId)+'/'+encodeURIComponent(convId));var d=await r.json();
+      box.innerHTML='';(d.messages||[]).forEach(dmMsg);
+      setTimeout(function(){var i=el('dmReplyInput');if(i)i.focus();},50);
+    }catch(e){box.innerHTML='<div style="text-align:center;color:#c0392b;padding:12px">Konnte Chat nicht laden.</div>';}
+  };
+  function dmMsg(m){
+    var box=el('dmChatMsgs');var role=m.role;
+    var wrap=document.createElement('div');wrap.style.cssText='display:flex;flex-direction:column;max-width:85%;'+(role==='team'?'align-self:flex-end;align-items:flex-end':'align-self:flex-start;align-items:flex-start');
+    var lblTxt=role==='customer'?'Kunde':(role==='assistant'?'KI-Assistent':'Du');
+    var lbl=document.createElement('div');lbl.textContent=lblTxt;lbl.style.cssText='font-size:10px;color:#a99e93;font-weight:700;margin:0 2px 3px';wrap.appendChild(lbl);
+    var b=document.createElement('div');
+    b.style.cssText='padding:9px 12px;border-radius:13px;font-size:13.6px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word;'+(role==='team'?'background:#231f1c;color:#fff;border-bottom-right-radius:4px':(role==='customer'?'background:#fff;color:#231f1c;border:1px solid #e6dfd8;border-bottom-left-radius:4px':'background:#f2ede8;color:#5a5550;border:1px solid #e6dfd8;border-bottom-left-radius:4px'));
+    b.textContent=m.text;wrap.appendChild(b);
+    var t=document.createElement('div');t.textContent=tfmt(m.ts);t.style.cssText='font-size:10px;color:#b3aca6;margin:2px 3px 0';wrap.appendChild(t);
+    box.appendChild(wrap);box.scrollTop=box.scrollHeight;
+  }
+  window.dmReply=async function(ev){
+    if(ev&&ev.preventDefault)ev.preventDefault();if(!DM.cur)return;
+    var inp=el('dmReplyInput');var t=(inp.value||'').trim();if(!t)return;inp.value='';
+    dmMsg({role:'team',text:t,ts:Date.now()});
+    try{await fetch(base()+'/api/admin/inbox/'+encodeURIComponent(DM.cur.clientId)+'/'+encodeURIComponent(DM.cur.convId)+'/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t})});}catch(e){dmMsg({role:'assistant',text:'⚠ Senden fehlgeschlagen — bitte erneut.',ts:Date.now()});}
+  };
+  window.dmComposeToggle=function(){var c=el('dmCompose');var show=c.style.display==='none'||!c.style.display;if(show){var sel=el('dmClient');var cs=((typeof App!=='undefined'&&App.state&&App.state.clients)||[]).slice().sort(function(a,b){return String(a.name||'').localeCompare(String(b.name||''));});sel.innerHTML='<option value="">Kunde wählen …</option>'+cs.map(function(c2){return '<option value="'+esc(c2.id)+'">'+esc(c2.name||c2.id)+'</option>';}).join('');c.style.display='flex';}else{c.style.display='none';}};
+  window.dmComposeSend=async function(){
+    var id=el('dmClient').value;var t=(el('dmComposeText').value||'').trim();
+    if(!id){alert('Bitte Kunde wählen');return;}if(!t){alert('Bitte Nachricht eingeben');return;}
+    try{var r=await fetch(base()+'/api/admin/inbox/'+encodeURIComponent(id)+'/new',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t})});var d=await r.json();
+      if(d&&d.ok){el('dmComposeText').value='';el('dmCompose').style.display='none';if(d.convId)dmOpen(id,d.convId);else dmLoadInbox();}else{alert('Fehler: '+((d&&d.error)||''));}
+    }catch(e){alert('Senden fehlgeschlagen');}
+  };
+  function dmAiBubble(who,text){var box=el('dmAiMsgs');var d=document.createElement('div');var mine=who==='me';
+    d.style.cssText='max-width:85%;padding:9px 12px;border-radius:13px;font-size:13.6px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word;'+(mine?'align-self:flex-end;background:#231f1c;color:#fff;border-bottom-right-radius:4px':'align-self:flex-start;background:#fff;color:#231f1c;border:1px solid #e6dfd8;border-bottom-left-radius:4px');
+    d.textContent=text;box.appendChild(d);box.scrollTop=box.scrollHeight;return d;}
+  window.dmAiSend=async function(ev){
+    if(ev&&ev.preventDefault)ev.preventDefault();
+    var inp=el('dmAiInput');var q=(inp.value||'').trim();if(!q)return;inp.value='';
+    dmAiBubble('me',q);DM.aiHist.push({role:'user',text:q});
+    var typ=dmAiBubble('ki','…');typ.style.opacity='.55';
+    try{var r=await fetch(base()+'/api/admin/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,history:DM.aiHist.slice(-8)})});var d=await r.json();typ.remove();
+      var a=(d&&d.answer)||'Gerade nicht erreichbar.';dmAiBubble('ki',a);DM.aiHist.push({role:'assistant',text:a});
+    }catch(e){typ.remove();dmAiBubble('ki','Verbindung nicht möglich.');}
+  };
+  window.dmBadge=async function(){
+    try{var r=await fetch(base()+'/api/admin/inbox');var d=await r.json();var tot=(d&&d.totalUnread)||0;
+      var b=el('dmBadge');if(b){if(tot>0){b.textContent=tot;b.style.display='inline-block';}else{b.style.display='none';}}
+      if(DM.open&&DM.tab==='inbox'&&DM.cur===null)dmLoadInbox();
+    }catch(e){}
+  };
+  setInterval(function(){if(!DM.open)dmBadge();},30000);
+  setTimeout(dmBadge,2500);
+})();
+</script>
 </body>
 </html>
