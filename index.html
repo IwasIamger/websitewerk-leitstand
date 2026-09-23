@@ -1395,6 +1395,29 @@ addTag(pl,id,tag){tag=(tag||"").trim().replace(/["'<>]/g,"").slice(0,24);if(!tag
 removeTag(pl,id,tag){const it=this._find(pl,id);if(!it)return;it.tags=(it.tags||[]).filter(t=>t!==tag);this.persist();this.renderAll();if(this.detail)this.renderDrawer();},
 addNote(pl,id,text){text=(text||"").trim();if(!text)return;const it=this._find(pl,id);if(!it)return;it.notes=it.notes||[];it.notes.unshift({ts:Date.now(),text:text.slice(0,1000)});this.persist();this.renderDrawer();this.toast("Notiz gespeichert");},
 addTask(pl,id,text,due){text=(text||"").trim();if(!text)return;const it=this._find(pl,id);if(!it)return;it.tasks=it.tasks||[];it.tasks.push({id:uid(),text:text.slice(0,200),due:due||today(),done:false,ts:Date.now()});this.persist();this.renderAll();if(this.detail)this.renderDrawer();this.toast("Aufgabe hinzugefügt");},
+setField(pl,id,field,val){const it=this._find(pl,id);if(!it)return;val=(val==null?"":String(val)).trim();const allow=["name","branche","ort","phone","website","paket","demoUrl","liveUrl"];if(allow.indexOf(field)<0)return;it[field]=val;this.persist();this.renderAll();if(this.detail)this.renderDrawer();this.toast("Gespeichert ✓");},
+convertItem(pl,id){const it=this._find(pl,id);if(!it)return;
+ if(pl==="cli"){
+  if(!confirm('Kunde „'+it.name+'" zu LEADS (Akquise) verschieben?\n\nDie Akte bleibt vollständig erhalten (Notizen, Aufgaben, Build).'))return;
+  const lead={id:it.id,name:it.name,branche:it.branche||"",ort:it.ort||"",stage:"sales_ready",
+   next:it.next||{label:"Ansprechen – Demo-Link zeigen",due:today()},demoUrl:it.demoUrl||it.liveUrl||"",
+   website:it.website||"",score:it.score||75,source:it.source||"Aus Kunde verschoben",
+   tasks:it.tasks||[],notes:it.notes||[],tags:it.tags||[],createdAt:it.createdAt||Date.now(),
+   twin:it.twin,buildContract:it.buildContract,buildHtml:it.buildHtml,blueprint:it.blueprint,pitchAngle:it.pitchAngle};
+  this.state.clients=this.state.clients.filter(x=>x.id!==id);this.state.leads.unshift(lead);
+  this.state.events.unshift({id:uid(),ts:Date.now(),pipeline:"acq",from:"Kunde",to:"Lead",actor:"Du",entity:it.name,note:"Von Kunde zu Lead verschoben"});
+  this.detail={pl:"acq",id};
+ }else{
+  if(!confirm('Lead „'+it.name+'" zu KUNDEN verschieben?\n\nStartet als Onboarding. Die Akte bleibt erhalten.'))return;
+  const cl={id:it.id,name:it.name,branche:it.branche||"",ort:it.ort||"",phase:"onboarding",mrr:0,health:70,
+   next:it.next||{label:"Onboarding starten",due:today()},liveUrl:it.demoUrl||it.liveUrl||"",demoUrl:it.demoUrl||"",
+   website:it.website||"",tasks:it.tasks||[],notes:it.notes||[],tags:it.tags||[],wonAt:Date.now(),
+   twin:it.twin,buildContract:it.buildContract,buildHtml:it.buildHtml,blueprint:it.blueprint};
+  this.state.leads=this.state.leads.filter(x=>x.id!==id);this.state.clients.unshift(cl);
+  this.state.events.unshift({id:uid(),ts:Date.now(),pipeline:"cli",from:"Lead",to:"Kunde",actor:"Du",entity:it.name,note:"Von Lead zu Kunde verschoben"});
+  this.detail={pl:"cli",id};
+ }
+ this.persist();this.renderAll();this.renderDrawer();this.toast("Verschoben ✓");},
 upsellToTask(pl,id,sigEnc){let signal;try{signal=decodeURIComponent(sigEnc);}catch(e){signal=sigEnc;}const svc=String(signal).split("→").pop().trim().replace(/\banbieten\b\.?$/i,"").trim()||signal;this.addTask(pl,id,"📈 Upsell: "+svc+" anbieten");},
 resolveReq(id,type,reqId){const c=this.state.clients.find(x=>x.id===id);if(!c)return;const arr=type==="care"?c.careRequests:c.assistantHandoffs;const it=(arr||[]).find(x=>x.id===reqId);if(!it)return;it.status=type==="care"?"freigeschaltet":"erledigt";this.persist();this.renderAll();if(this.detail)this.renderDrawer();this.toast("Als erledigt markiert");},
 openInbox(){
@@ -1534,6 +1557,19 @@ renderDrawer(){
    ${item.website?`<div style="margin:0 0 10px"><div style="font-size:10px;color:var(--muted);margin-bottom:2px">Detail-Analysen der aktuellen Seite (druckbar/sendbar):</div><a href="${App.apiBase()}/api/seo-report/${id}" target="_blank" rel="noopener" style="font-size:12px;color:var(--a);font-weight:700">🔎 SEO ↗</a> · <a href="${App.apiBase()}/api/a11y-report/${id}" target="_blank" rel="noopener" style="font-size:12px;color:var(--a);font-weight:700">♿ Barrierefreiheit ↗</a> · <a href="${App.apiBase()}/api/security-report/${id}" target="_blank" rel="noopener" style="font-size:12px;color:var(--a);font-weight:700">🛡️ Sicherheit ↗</a> · <a href="${App.apiBase()}/api/linkcheck-report/${id}" target="_blank" rel="noopener" style="font-size:12px;color:var(--a);font-weight:700">🔗 Links ↗</a></div>`:""}
    ${(pl==="acq"&&item.phone)?`<div style="margin:0 0 10px"><a href="#" onclick="event.preventDefault();App.copyCallScript('${id}')" style="font-size:12px;color:var(--a);font-weight:700">📞 Call-Script kopieren</a>${(item.demoUrl||item.liveUrl)?` · <a href="#" onclick="event.preventDefault();App.waSend('${id}')" style="font-size:12px;color:#25a366;font-weight:700">📲 Vorschau per WhatsApp</a>`:""}<div style="font-size:10px;color:var(--muted)">Telefon-Leitfaden für den Anruf (Cold Calling)${(item.demoUrl||item.liveUrl)?" · WhatsApp-Nachricht mit Demo-Link, vorbereitet zum Selbst-Senden":""}.</div></div>`:""}
    ${(pl==="cli"&&item.businessInfo)?(()=>{const b=item.businessInfo;const row=(l,v)=>v?`<div style="margin:2px 0"><span style="color:var(--muted)">${l}:</span> ${esc(v)}</div>`:"";return `<div class="infobox" style="margin:2px 0 12px"><b style="font-size:11px">🗂️ Betriebsdaten (vom Kunden)</b><div style="font-size:12px;line-height:1.55;margin-top:4px">${row("☎",b.phone)}${row("✉",b.email)}${row("📍",b.address)}${b.hours?`<div style="margin:2px 0"><span style="color:var(--muted)">🕒 Zeiten:</span><br><span style="white-space:pre-wrap">${esc(b.hours)}</span></div>`:""}${b.services?`<div style="margin:2px 0"><span style="color:var(--muted)">Leistungen:</span><br><span style="white-space:pre-wrap">${esc(b.services)}</span></div>`:""}${b.description?`<div style="margin:2px 0"><span style="color:var(--muted)">Über:</span> ${esc(b.description)}</div>`:""}</div>${b.updatedAt?`<div style="font-size:10px;color:var(--muted);margin-top:4px">Stand ${new Date(b.updatedAt).toLocaleDateString("de-DE")}</div>`:""}</div>`;})():""}
+   <!-- ── Stammdaten bearbeiten ─────────────────────────── -->
+   <div>
+    <div class="stit">Stammdaten</div>
+    <div class="mf" style="margin-bottom:6px"><label>Name</label><input value="${esc(item.name||"")}" onchange="App.setField('${pl}','${id}','name',this.value)" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
+    <div style="display:flex;gap:6px;margin-bottom:6px">
+     <div class="mf" style="flex:1"><label>Branche</label><input value="${esc(item.branche||"")}" onchange="App.setField('${pl}','${id}','branche',this.value)" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
+     <div class="mf" style="flex:1"><label>Ort</label><input value="${esc(item.ort||"")}" onchange="App.setField('${pl}','${id}','ort',this.value)" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
+    </div>
+    <div style="display:flex;gap:6px">
+     <div class="mf" style="flex:1"><label>Telefon</label><input value="${esc(item.phone||"")}" onchange="App.setField('${pl}','${id}','phone',this.value)" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
+     <div class="mf" style="flex:1"><label>${pl==="acq"?"Demo-URL":"Live-URL"}</label><input value="${esc((pl==="acq"?item.demoUrl:item.liveUrl)||"")}" onchange="App.setField('${pl}','${id}','${pl==="acq"?"demoUrl":"liveUrl"}',this.value)" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px"></div>
+    </div>
+   </div>
    <!-- ── Nächste Aktion ────────────────────────────────── -->
    <div>
     <div class="stit">Nächste Aktion (Pflicht)</div>
@@ -1775,8 +1811,11 @@ renderDrawer(){
    </div>
    ${pl==="cli"?`<div><div class="stit" style="display:flex;justify-content:space-between;align-items:center">Projektanfragen / Sprint Desk<button class="btn bg bsm" onclick="App.show('projekte')">Alle öffnen</button></div>${this.projectMiniList(id)}</div>`:""}
    `:""}
-   <!-- ── Danger Zone ──────────────────────────────────────── -->
-   <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px">
+   <!-- ── Verschieben & Danger Zone ─────────────────────────── -->
+   <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;display:flex;flex-direction:column;gap:8px">
+    <button onclick="App.convertItem('${pl}','${id}')" style="width:100%;padding:8px;border:1px solid var(--a);border-radius:6px;background:none;color:var(--a);font-size:12px;font-weight:600;cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(232,112,74,.08)'" onmouseout="this.style.background='none'">
+     ${pl==='acq'?'👤 Zu Kunden verschieben':'🎯 Zu Leads (Akquise) verschieben'}
+    </button>
     <button onclick="App.${pl==='acq'?'deleteLead':'deleteClient'}('${id}')" style="width:100%;padding:8px;border:1px solid var(--red);border-radius:6px;background:none;color:var(--red);font-size:12px;cursor:pointer;transition:background .15s" onmouseover="this.style.background='rgba(224,49,49,.08)'" onmouseout="this.style.background='none'">
      🗑 ${pl==='acq'?'Lead':'Kunde'} löschen
     </button>
