@@ -418,8 +418,10 @@ initKeys(){
  });
 },
 persist(){clearTimeout(this.saveT);this.saveT=setTimeout(async()=>{try{localStorage.setItem("ww:state",JSON.stringify(this.state))}catch(e){}
- if(this.cfg.sbUrl&&this.cfg.sbKey)await this.sbSave();
- else if(this.cloudOk)await this.apiSave();
+ // Bevorzugt das Backend (Service-Key liegt serverseitig → immer schreibberechtigt, kein CORS-Problem).
+ // Direkte Supabase nur als Fallback, falls (noch) nicht aus der Cloud geladen.
+ if(this.cloudOk)await this.apiSave();
+ else if(this.cfg.sbUrl&&this.cfg.sbKey)await this.sbSave();
  },500);},
 async apiSave(){
   // Schreibt den State ueber das Backend zurueck (dort liegen die Supabase-Keys).
