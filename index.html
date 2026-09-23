@@ -682,10 +682,13 @@ rWachstum(){
   const rows=Object.entries(vars).map(([v,d])=>{const imp=d.impressions||0,conv=d.conversions||0,cr=imp?((conv/imp)*100).toFixed(1):"0.0";return `<tr><td><b>${esc(v)}</b></td><td>${imp}</td><td>${conv}</td><td style="color:var(--g)">${cr}%</td></tr>`;}).join("");
   return `<div class="wx-card" style="margin-bottom:14px"><div class="wx-title">${esc(test)}</div><table class="wx-table"><thead><tr><th>Variante</th><th>Impressions</th><th>Conversions</th><th>Rate</th></tr></thead><tbody>${rows}</tbody></table></div>`;
  }).join(""):`<div class="wx-empty">Noch keine A/B-Daten. Events kommen über POST /api/ab/event (z.B. vom Website-Check-Funnel der Firmen-Website).</div>`;
+ const upsellItems=[];cl.forEach(c=>{(c.upsellSignals||[]).forEach(sig=>upsellItems.push({c,sig}));});
+ const upsellCard=`<div class="wx-card" style="margin-top:16px"><div class="wx-title">💡 Upsell-Chancen · ${upsellItems.length}</div>`+(upsellItems.length?`<table class="wx-table"><thead><tr><th>Kunde</th><th>Chance</th><th>Aktion</th></tr></thead><tbody>`+upsellItems.map(({c,sig})=>{const e=encodeURIComponent(sig);return `<tr><td><b>${esc(c.name)}</b></td><td>${esc(sig)}</td><td style="white-space:nowrap"><button class="wx-btn" onclick="App.upsellToOffer('cli','${c.id}','${e}')">→ Angebot</button> <button class="wx-btn" onclick="App.upsellToTask('cli','${c.id}','${e}')">→ Aufgabe</button></td></tr>`;}).join("")+`</tbody></table>`:`<div class="wx-empty">Keine offenen Upsell-Chancen — oder es lief noch kein WP-Health-Scan (der erzeugt die Signale). Im Kunden-Drawer „🩺 WP-Health prüfen".</div>`)+`</div>`;
  el.innerHTML=`
   ${kpis}
   ${mrrCard}
   ${satCard}
+  ${upsellCard}
   <div class="wx-card" style="margin-top:16px"><div class="wx-title">📥 Eingehende Anfragen (Website) · ${inb.length}</div>
    <table class="wx-table"><thead><tr><th>Kontakt</th><th>Anliegen</th><th>Quelle</th><th>Status</th><th>Datum</th></tr></thead><tbody>${inbRows}</tbody></table></div>
   <div class="wx-card" style="margin-top:16px"><div class="wx-title" style="display:flex;justify-content:space-between;align-items:center">🎁 Empfehlungen (Referrals)<button class="wx-btn" onclick="App.genReferralCodes()">Codes erzeugen</button></div>
