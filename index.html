@@ -2537,6 +2537,7 @@ App.init();
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(ch){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[ch];});}
   function base(){try{return App.apiBase();}catch(e){return '';}}
   function tfmt(ts){try{var d=new Date(ts),n=new Date();var t=d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});return d.toDateString()===n.toDateString()?t:(d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})+' '+t);}catch(e){return '';}}
+  function dmSetBadge(n){var b=el('dmBadge');if(b){if(n>0){b.textContent=n;b.style.display='inline-block';}else{b.style.display='none';}}}
   window.dmToggle=function(){var p=el('dmPanel'),l=el('dmLauncher');if(p.style.display==='flex'){p.style.display='none';l.style.display='flex';DM.open=false;dmBadge();return;}p.style.display='flex';l.style.display='none';DM.open=true;dmTab('inbox');};
   window.dmTab=function(t){DM.tab=t;el('dmTabInbox').style.background=t==='inbox'?'#e8704a':'rgba(255,255,255,.14)';el('dmTabAi').style.background=t==='ai'?'#e8704a':'rgba(255,255,255,.14)';
     el('dmBack').style.display='none';
@@ -2548,7 +2549,7 @@ App.init();
   async function dmLoadInbox(){
     var box=el('dmInboxList');box.innerHTML='<div style="padding:20px;text-align:center;color:#a99">Lädt …</div>';
     try{var r=await fetch(base()+'/api/admin/inbox');var d=await r.json();var rows=(d&&d.inbox)||[];
-      if(!rows.length){box.innerHTML='<div style="padding:26px 18px;text-align:center;color:#8a8580"><div style="font-size:26px">📭</div>Noch keine Kunden-Nachrichten.</div>';dmBadge();return;}
+      if(!rows.length){box.innerHTML='<div style="padding:26px 18px;text-align:center;color:#8a8580"><div style="font-size:26px">📭</div>Noch keine Kunden-Nachrichten.</div>';dmSetBadge(0);return;}
       box.innerHTML=rows.map(function(x){
         var who=x.last?(x.last.role==='team'?'Du: ':(x.last.role==='assistant'?'KI: ':'')):'';
         var badge=x.unread?('<span style="background:#e8704a;color:#fff;font-size:10px;font-weight:800;min-width:17px;height:17px;line-height:17px;border-radius:999px;text-align:center;padding:0 5px">'+x.unread+'</span>'):'';
@@ -2556,7 +2557,7 @@ App.init();
         return '<div onclick="dmOpen(\''+x.clientId+'\',\''+x.convId+'\')" style="display:flex;align-items:center;gap:10px;padding:12px 13px;border-bottom:1px solid #efe9e3;cursor:pointer;background:'+(x.unread?'#fff6f1':'#fff')+'">'+
           '<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;color:#231f1c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(x.clientName)+' <span style="font-weight:400;color:#9a938b;font-size:11.5px">· '+esc(x.title)+'</span></div><div style="font-size:12px;color:#8a8580;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+flag+esc(who+((x.last&&x.last.text)||''))+'</div></div>'+(badge||'')+'</div>';
       }).join('');
-      dmBadge();
+      dmSetBadge(rows.reduce(function(a,x){return a+(x.unread||0);},0));
     }catch(e){box.innerHTML='<div style="padding:20px;text-align:center;color:#c0392b">Fehler beim Laden. Ist der Leitstand-Schlüssel gesetzt?</div>';}
   }
   window.dmOpen=async function(clientId,convId){
@@ -2606,12 +2607,9 @@ App.init();
     }catch(e){typ.remove();dmAiBubble('ki','Verbindung nicht möglich.');}
   };
   window.dmBadge=async function(){
-    try{var r=await fetch(base()+'/api/admin/inbox');var d=await r.json();var tot=(d&&d.totalUnread)||0;
-      var b=el('dmBadge');if(b){if(tot>0){b.textContent=tot;b.style.display='inline-block';}else{b.style.display='none';}}
-      if(DM.open&&DM.tab==='inbox'&&DM.cur===null)dmLoadInbox();
-    }catch(e){}
+    try{var r=await fetch(base()+'/api/admin/inbox');var d=await r.json();dmSetBadge((d&&d.totalUnread)||0);}catch(e){}
   };
-  setInterval(function(){if(!DM.open)dmBadge();},30000);
+  setInterval(function(){if(DM.open&&DM.tab==='inbox'&&DM.cur===null)dmLoadInbox();else if(!DM.open)dmBadge();},30000);
   setTimeout(dmBadge,2500);
 })();
 </script>
