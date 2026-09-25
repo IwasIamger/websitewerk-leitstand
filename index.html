@@ -299,7 +299,7 @@ nav a.active{box-shadow:0 4px 12px rgba(26,37,48,.28)}
 </head>
 <body>
 <a href="#main-content" style="position:absolute;left:-9999px;top:0;background:#fff;color:#111;padding:10px 16px;z-index:100001;border-radius:0 0 8px 0" onfocus="this.style.left='0'" onblur="this.style.left='-9999px'">Zum Inhalt springen</a>
-<div id="sync-warn" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#fff3cd;color:#856404;padding:8px 16px;font-size:13px;text-align:center;border-bottom:1px solid #ffc107">⚠ Nicht mit Cloud verbunden — Daten werden nur lokal gespeichert. <button onclick="App.reloadFromCloud()" style="background:#856404;color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;margin-left:8px">Cloud-Daten laden</button></div>
+<div id="sync-warn" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#fff3cd;color:#856404;padding:8px 16px;font-size:13px;text-align:center;border-bottom:1px solid #ffc107"><span id="sync-warn-msg">⚠ Cloud nicht erreichbar — es wird automatisch neu verbunden. Deine Arbeit bleibt lokal gesichert und wird nachgespeichert.</span> <button onclick="App.reloadFromCloud()" style="background:#856404;color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;margin-left:8px">Jetzt verbinden</button></div>
 <div id="app">
   <aside>
     <div class="brand"><div class="eye">WebsiteWerk</div><div class="tit">Leitstand</div></div>
@@ -395,7 +395,7 @@ events:[
 /* === App-Kern === */
 const App={
 state:null,view:"heute",drag:null,modal:null,detail:null,fact:null,
-cfg:{},saveT:null,sync:"local",cloudOk:false,syncErr:"",
+cfg:{},saveT:null,sync:"local",cloudOk:false,syncErr:"",_recT:null,_recDelay:0,
 
 async init(){
  try{this.cfg=JSON.parse(localStorage.getItem("ww:cfg")||"{}")}catch(e){this.cfg={}}
@@ -409,6 +409,7 @@ async init(){
  if(!d){try{const r=localStorage.getItem("ww:state");if(r)d=JSON.parse(r)}catch(e){}}
  this.state=d||seed();
  this.renderNav();this.show("heute");this.updSync();this.initKeys();
+ if(!this.cloudOk)this.scheduleReconnect();
 },
 initKeys(){
  document.addEventListener("keydown",e=>{
@@ -442,7 +443,7 @@ async apiSave(){
     }catch(e){this.syncErr="Netzwerk/Timeout"+(e&&e.message?(" · "+e.message):"");console.error("[Sync]",e&&e.message);}
     if(attempt===0)await new Promise(s=>setTimeout(s,1500)); // kurzer Retry (Render-Kaltstart/Blip)
   }
-  this.sync="error";this.updSync();
+  this.sync="error";this.updSync();this.scheduleReconnect();
   if(this.syncErr&&!this._syncToasted){this._syncToasted=true;this.toast("Speichern fehlgeschlagen — "+this.syncErr);setTimeout(()=>{this._syncToasted=false;},9000);}
 },
 sbH(){return{"apikey":this.cfg.sbKey,"Authorization":"Bearer "+this.cfg.sbKey,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates"}},
@@ -479,8 +480,36 @@ updSync(){
  // Banner zeigt den VERBINDUNGS-Status (einmal aus der Cloud geladen = verbunden), nicht das letzte Speicher-Ergebnis.
  // Sonst kippte er nach einem einzelnen fehlgeschlagenen Save faelschlich auf „nur lokal", obwohl die Daten aus der Cloud kamen.
  if(warn)warn.style.display=this.cloudOk?'none':'block';
- const d=document.getElementById("sd"),l=document.getElementById("sl");const m={local:["#C5CCD1","Lokal"],cloud:["var(--g)","Supabase ✓"],error:["var(--red)","Sync-Fehler"]}[this.sync];d.style.background=m[0];l.textContent=m[1];
- var _si=l&&l.parentNode;if(_si)_si.title=this.sync==="error"?(this.syncErr||"Speichern fehlgeschlagen — Details in der Konsole"):(this.sync==="cloud"?"Mit Supabase verbunden":"Nur lokal gespeichert");},
+ const d=document.getElementById("sd"),l=document.getElementById("sl");
+ // Waehrend ein Auto-Reconnect laeuft: ruhiges amber „Verbinde…" statt alarmierendem roten „Sync-Fehler".
+ const _rec=!!this._recT;const _em=_rec?["var(--amb)","Verbinde…"]:["var(--red)","Sync-Fehler"];
+ const m={local:["#C5CCD1","Lokal"],cloud:["var(--g)","Supabase ✓"],error:_em}[this.sync];d.style.background=m[0];l.textContent=m[1];
+ var _si=l&&l.parentNode;if(_si)_si.title=this.sync==="error"?(_rec?"Verbindung unterbrochen — es wird automatisch neu verbunden. Lokale Änderungen bleiben gesichert.":(this.syncErr||"Speichern fehlgeschlagen — Details in der Konsole")):(this.sync==="cloud"?"Mit Supabase verbunden":"Nur lokal gespeichert");},
+// Auto-Reconnect: bei Ausfall still im Hintergrund neu verbinden (Backoff 12→24→48→60s), ohne Klick.
+scheduleReconnect(){
+ if(this._recT)return;
+ this._recDelay=Math.min(this._recDelay?this._recDelay*2:12000,60000);
+ this._recT=setTimeout(()=>{this._recT=null;this.reconnectTick();},this._recDelay);
+ this.updSync();
+},
+async reconnectTick(){
+ if(this.cloudOk&&this.sync!=="error")return; // schon wieder gut
+ if(this.cloudOk){
+  // Verbunden, aber letzter Save schlug fehl → Push erneut versuchen (lokaler Stand ist maßgeblich).
+  await this.apiSave();
+  if(this.sync==="cloud"){this._recDelay=0;this.updSync();this.toast("✓ Wieder gespeichert");return;}
+ }else{
+  // Nie aus der Cloud geladen (läuft auf lokal/Saat) → laden versuchen.
+  const cloud=await this.sbLoad();
+  if(cloud&&(cloud.leads||cloud.clients)){
+   this.state=cloud;this.cloudOk=true;
+   try{localStorage.setItem("ww:state",JSON.stringify(this.state));}catch(e){}
+   this.renderAll();if(this.detail)this.renderDrawer();this._recDelay=0;this.updSync();
+   this.toast("✓ Wieder mit der Cloud verbunden");return;
+  }
+ }
+ this.updSync();this.scheduleReconnect(); // noch nicht erreichbar → erneut mit größerem Abstand
+},
 async resetAll(){if(!confirm("Demo-Daten wiederherstellen?"))return;this.state=seed();this.persist();this.renderAll();this.toast("Zurückgesetzt");},
 
 renderNav(){
