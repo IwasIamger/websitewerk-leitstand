@@ -327,6 +327,7 @@ nav a.active{box-shadow:0 4px 12px rgba(26,37,48,.28)}
     <div class="view" id="v-finder"></div>
     <div class="view" id="v-protokoll"></div>
     <div class="view pad" id="v-wachstum"></div>
+    <div class="view pad" id="v-finanzen"></div>
     <div class="view pad" id="v-einstellungen"></div>
   </main>
 </div>
@@ -513,7 +514,7 @@ async reconnectTick(){
 async resetAll(){if(!confirm("Demo-Daten wiederherstellen?"))return;this.state=seed();this.persist();this.renderAll();this.toast("Zurückgesetzt");},
 
 renderNav(){
- const items=[["heute","⌂","Heute"],["akquise","⚙","Akquise"],["kunden","◉","Kunden"],["projekte","▦","Anfragen"],["wachstum","↗","Wachstum"],["finder","◎","Lead-Finder"],["protokoll","≡","Protokoll"],["einstellungen","✦","Einstellungen"]];
+ const items=[["heute","⌂","Heute"],["akquise","⚙","Akquise"],["kunden","◉","Kunden"],["projekte","▦","Anfragen"],["wachstum","↗","Wachstum"],["finanzen","€","Finanzen"],["finder","◎","Lead-Finder"],["protokoll","≡","Protokoll"],["einstellungen","✦","Einstellungen"]];
  document.getElementById("nav").innerHTML=items.map(([id,ic,l])=>`<a id="n-${id}" onclick="App.show('${id}')"><span class="ic">${ic}</span>${l}${id==="projekte"?`<span id="nav-badge-anfragen" style="display:none;margin-left:auto;background:var(--a);color:#fff;font-size:10px;font-weight:700;border-radius:999px;padding:1px 7px;min-width:18px;text-align:center">0</span>`:""}</a>`).join("");
  this.updateInboxBadge();
 },
@@ -524,7 +525,7 @@ show(v){
  document.getElementById("v-"+v).classList.add("active");
  document.querySelectorAll("nav a").forEach(a=>a.classList.remove("active"));
  document.getElementById("n-"+v).classList.add("active");
- document.getElementById("vt").textContent={heute:"Heute",akquise:"Akquise",kunden:"Kunden",projekte:"Anfragen",wachstum:"Wachstum",finder:"Lead-Finder",protokoll:"Protokoll",einstellungen:"Einstellungen"}[v];
+ document.getElementById("vt").textContent={heute:"Heute",akquise:"Akquise",kunden:"Kunden",projekte:"Anfragen",wachstum:"Wachstum",finanzen:"Finanzen",finder:"Lead-Finder",protokoll:"Protokoll",einstellungen:"Einstellungen"}[v];
  this.renderAll();
 },
 kpis(){const s=this.state,mrr=s.clients.filter(c=>!["former","offboarding"].includes(c.phase)).reduce((a,c)=>a+(+c.mrr||0),0),off=s.leads.filter(l=>["offer_sent","negotiation"].includes(l.stage)).reduce((a,l)=>a+(+l.angebotswert||0),0);const anfrDone=["freigeschaltet","erledigt","abgelehnt","beantwortet"];const anfr=s.clients.reduce((a,c)=>a+(c.careRequests||[]).filter(q=>!anfrDone.includes(q.status)).length+(c.assistantHandoffs||[]).filter(h=>!anfrDone.includes(h.status)).length,0);let fbUp=0,fbDown=0;s.clients.forEach(c=>(c.changeRequests||[]).forEach(r=>{if(r.feedback){if(r.feedback.rating==="up")fbUp++;else fbDown++;}}));return{mrr,off,sr:s.leads.filter(l=>l.stage==="sales_ready").length,ar:s.clients.filter(c=>c.phase==="at_risk").length,anfr,fbUp,fbDown};},
@@ -540,6 +541,7 @@ renderAll(){
  else if(this.view==="projekte")this.rProjekte();
  else if(this.view==="finder")this.rFinder();
  else if(this.view==="wachstum")this.rWachstum();
+ else if(this.view==="finanzen")this.rFinanzen();
  else if(this.view==="protokoll")this.rLog();
  else if(this.view==="einstellungen")this.rSettings();
 },
@@ -2418,6 +2420,96 @@ async sysCheck(){
   if(box)box.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;margin-top:4px">'+rows.map(([n,ok])=>dot(!!ok)+" "+n).join("")+'</div>'+
    '<div style="margin-top:12px;font-size:12px;color:#7A858D;line-height:1.7;border-top:1px solid var(--bd,#eee);padding-top:10px">State: <b>'+(d.stateSizeKB||0)+' KB</b> · Kunden '+(c2.clients||0)+' · Leads '+(c2.leads||0)+' · Events '+(c2.events||0)+' · Chats '+(c2.conversations||0)+'<br>Ungelesene Kundennachrichten: <b>'+(d.unreadInbox||0)+'</b> · Letztes Backup: <b>'+(d.backup&&d.backup.ageHours!=null?d.backup.ageHours+" h her":"—")+'</b></div>';
  }catch(e){if(box)box.innerHTML='<span style="color:var(--red)">Verbindung fehlgeschlagen</span>';}
+},
+/* === Finanzen / Firma (eigene Rechnungs-Identität + Umsatz) === */
+rFinanzen(){
+ const invs=[];(this.state.clients||[]).forEach(c=>(c.invoices||[]).forEach(i=>invs.push(i)));
+ const isPaid=i=>["bezahlt","paid","beglichen"].includes(String(i.status||"").toLowerCase());
+ const sum=a=>a.reduce((s,i)=>s+(+i.amount||0),0);
+ const paidSum=sum(invs.filter(isPaid)), openSum=sum(invs.filter(i=>!isPaid(i)));
+ const yr=new Date().getFullYear();
+ const paidYr=sum(invs.filter(i=>isPaid(i)&&new Date(i.ts||0).getFullYear()===yr));
+ const mrr=this.kpis().mrr;
+ const kpi=(l,v,c)=>`<div class="hst" style="min-width:130px"><div class="hl">${l}</div><div class="hv"${c?` style="color:${c}"`:""}>${v}</div></div>`;
+ document.getElementById("v-finanzen").innerHTML=`<div style="max-width:760px;display:flex;flex-direction:column;gap:0">
+  <div class="panel"><div class="cfg-sec">
+   <div class="stit" style="color:var(--a);font-size:11px">💶 UMSATZ-ÜBERBLICK</div>
+   <p class="hint" style="margin-bottom:10px">Aus den im System erfassten Rechnungen (${invs.length}). Für die volle Buchhaltung (Ausgaben erfassen + EÜR) kommt als Nächstes ein eigener Block.</p>
+   <div style="display:flex;gap:10px;flex-wrap:wrap">${kpi("Bezahlt "+yr,fmt(paidYr)+" €","var(--g)")}${kpi("Bezahlt gesamt",fmt(paidSum)+" €")}${kpi("Offen",fmt(openSum)+" €",openSum>0?"var(--amb)":"")}${kpi("MRR (Care)",fmt(mrr)+" €")}</div>
+  </div></div>
+  <div class="panel"><div class="cfg-sec">
+   <div class="stit" style="color:var(--a);font-size:11px">🏛️ FIRMA — RECHNUNGSSTELLER &amp; AUFTRAGNEHMER</div>
+   <p class="hint" style="margin-bottom:10px">Diese Angaben erscheinen auf <b>jeder Rechnung &amp; jedem Vertrag deiner Agentur</b> (nicht die deiner Kunden — die pflegen ihre eigenen). Sobald hier ein <b>Firmenname</b> steht, gilt <b>nur noch dieses Profil</b> — die alten Render-Werte (GbR) werden ignoriert. Ideal für den Wechsel zum Einzelunternehmen.</p>
+   <div id="ag-load" style="font-size:13px;color:var(--muted)">Lade aktuelles Profil …</div>
+   <div id="ag-form" style="display:none">
+    <div class="cfg-g2">
+     <div class="mf"><label>Firmenname (Kopf der Rechnung)</label><input id="ag-name" placeholder="z. B. Lukas Ackermann · KONTUR"></div>
+     <div class="mf"><label>Inhaber (Einzelunternehmen)</label><input id="ag-owner" placeholder="Lukas Ackermann"></div>
+    </div>
+    <div class="mf"><label>Geschäftsbezeichnung / Marke (optional)</label><input id="ag-gb" placeholder="z. B. KONTUR"></div>
+    <div class="mf"><label>Adresse (Straße · PLZ Ort)</label><input id="ag-addr" placeholder="Musterstraße 1 · 73430 Aalen"></div>
+    <div class="cfg-g2">
+     <div class="mf"><label>E-Mail</label><input id="ag-email" placeholder="rechnung@deinedomain.de"></div>
+     <div class="mf"><label>Telefon (optional)</label><input id="ag-phone" placeholder="+49 …"></div>
+    </div>
+    <div class="cfg-sec" style="background:#f6f8f9;border-radius:8px;padding:12px;margin:6px 0">
+     <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:2px 0">
+      <input type="checkbox" id="ag-kl" style="width:18px;height:18px;cursor:pointer">
+      <span style="font-size:13px"><b>Kleinunternehmer nach § 19 UStG</b> — keine Umsatzsteuer ausweisen</span>
+     </label>
+     <div style="font-size:11px;color:#9AA4AC;margin-top:4px;line-height:1.5">Frisch gegründete Einzelunternehmen wählen das meist beim Finanzamt (Fragebogen zur steuerlichen Erfassung). Dann genügt die <b>Steuernummer</b> — eine USt-IdNr brauchst du erst bei Regelbesteuerung.</div>
+     <div class="cfg-g2" style="margin-top:10px">
+      <div class="mf"><label>Steuernummer</label><input id="ag-tax" placeholder="z. B. 93815/12345"></div>
+      <div class="mf"><label>USt-IdNr. (nur bei Regelbesteuerung)</label><input id="ag-vat" placeholder="DE…"></div>
+     </div>
+     <div style="font-size:11px;color:#9AA4AC;margin-top:2px">§ 14 UStG: Steuernummer <b>oder</b> USt-IdNr muss auf jeder Rechnung stehen.</div>
+    </div>
+    <div class="stit" style="font-size:11px;margin-top:6px">BANKVERBINDUNG (für „Zahlbar auf …")</div>
+    <div class="cfg-g2">
+     <div class="mf"><label>IBAN</label><input id="ag-iban" placeholder="DE.. .... .... .... .... .."></div>
+     <div class="mf"><label>BIC (optional)</label><input id="ag-bic" placeholder="…"></div>
+    </div>
+    <div class="mf"><label>Kontoinhaber (falls abweichend vom Firmennamen)</label><input id="ag-koi" placeholder="Lukas Ackermann"></div>
+    <div class="cfg-sec" style="display:flex;gap:9px;flex-wrap:wrap;padding-left:0;padding-right:0">
+     <button class="btn bi" onclick="App.saveAgencyProfile()">Firmen-Profil speichern</button>
+    </div>
+    <div id="ag-msg" style="font-size:12px;color:var(--muted);margin-top:4px"></div>
+   </div>
+  </div></div>
+ </div>`;
+ this.loadAgencyProfile();
+},
+async loadAgencyProfile(){
+ const key=localStorage.getItem("ww_api_key")||"";
+ const load=document.getElementById("ag-load"),form=document.getElementById("ag-form");
+ if(!key){if(load)load.innerHTML="⚠ Leitstand-Schlüssel fehlt — in <b>Einstellungen</b> setzen, dann hier laden.";return;}
+ try{
+  const r=await fetch(this.apiBase()+"/api/client/agency-profile",{headers:{"x-ww-key":key}});
+  if(r.status===401){if(load)load.textContent="Falscher Leitstand-Schlüssel (401).";return;}
+  const d=await r.json();if(!d.ok)throw new Error(d.error||"Fehler");
+  const a=d.agency||{};
+  const v=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||"";};
+  v("ag-name",a.name);v("ag-owner",a.owner);v("ag-gb",a.geschaeftsbez);v("ag-addr",a.addr);
+  v("ag-email",a.email);v("ag-phone",a.phone);v("ag-tax",a.taxNumber);v("ag-vat",a.vatId);
+  v("ag-iban",a.iban);v("ag-bic",a.bic);v("ag-koi",a.kontoinhaber);
+  const kl=document.getElementById("ag-kl");if(kl)kl.checked=!!a.kleinunternehmer;
+  if(load)load.style.display="none";if(form)form.style.display="";
+ }catch(e){if(load)load.textContent="Profil nicht ladbar: "+e.message;}
+},
+async saveAgencyProfile(){
+ const key=localStorage.getItem("ww_api_key")||"";
+ if(!key){this.toast("Leitstand-Schlüssel fehlt (Einstellungen)");return;}
+ const g=id=>document.getElementById(id)?.value.trim()||"";
+ const body={name:g("ag-name"),owner:g("ag-owner"),geschaeftsbez:g("ag-gb"),addr:g("ag-addr"),email:g("ag-email"),phone:g("ag-phone"),taxNumber:g("ag-tax"),vatId:g("ag-vat"),iban:g("ag-iban"),bic:g("ag-bic"),kontoinhaber:g("ag-koi"),kleinunternehmer:!!document.getElementById("ag-kl")?.checked};
+ const msg=document.getElementById("ag-msg");if(msg)msg.textContent="Speichere …";
+ try{
+  const r=await fetch(this.apiBase()+"/api/client/agency-profile",{method:"POST",headers:{"Content-Type":"application/json","x-ww-key":key},body:JSON.stringify(body)});
+  const d=await r.json();if(!d.ok)throw new Error(d.error||"Fehler");
+  const ef=d.effective||{};
+  const noTax=!ef.vat&&!ef.taxNumber;
+  if(msg)msg.innerHTML="✓ Gespeichert. Wirkt sofort auf neue Rechnungen &amp; Verträge."+(noTax?' <b style="color:var(--red)">⚠ Weder Steuernummer noch USt-IdNr — § 14 UStG!</b>':"");
+  this.toast("Firmen-Profil gespeichert ✓");
+ }catch(e){if(msg)msg.textContent="Fehler: "+e.message;this.toast("Speichern fehlgeschlagen");}
 },
 /* === Einstellungen (alle 5 Stufen) === */
 rSettings(){
