@@ -738,8 +738,16 @@ rWachstum(){
  }).join(""):`<div class="wx-empty">Noch keine A/B-Daten. Events kommen über POST /api/ab/event (z.B. vom Website-Check-Funnel der Firmen-Website).</div>`;
  const upsellItems=[];cl.forEach(c=>{(c.upsellSignals||[]).forEach(sig=>upsellItems.push({c,sig}));});
  const upsellCard=`<div class="wx-card" style="margin-top:16px"><div class="wx-title">💡 Upsell-Chancen · ${upsellItems.length}</div>`+(upsellItems.length?`<table class="wx-table"><thead><tr><th>Kunde</th><th>Chance</th><th>Aktion</th></tr></thead><tbody>`+upsellItems.map(({c,sig})=>{const e=encodeURIComponent(sig);return `<tr><td><b>${esc(c.name)}</b></td><td>${esc(sig)}</td><td style="white-space:nowrap"><button class="wx-btn" onclick="App.upsellToOffer('cli','${c.id}','${e}')">→ Angebot</button> <button class="wx-btn" onclick="App.upsellToTask('cli','${c.id}','${e}')">→ Aufgabe</button></td></tr>`;}).join("")+`</tbody></table>`:`<div class="wx-empty">Keine offenen Upsell-Chancen — oder es lief noch kein WP-Health-Scan (der erzeugt die Signale). Im Kunden-Drawer „🩺 WP-Health prüfen".</div>`)+`</div>`;
+ // 🩺 Pflege-Board: Website-Gesundheit aller aktiven Kunden auf einen Blick (Ausfälle zuerst)
+ const _ago=ts=>{if(!ts)return "—";const m=Math.floor((Date.now()-ts)/60000);if(m<1)return "gerade";if(m<60)return "vor "+m+" Min";const h=Math.floor(m/60);if(h<24)return "vor "+h+" Std";return "vor "+Math.floor(h/24)+" T.";};
+ const _rank={A:5,B:4,C:3,D:2,F:1};
+ const pflegeRows=active.map(c=>{const h=c.wpHealth||null;const off=!!(h&&h.reachable===false);const un=!h||!h.checkedAt;const dot=off?"🔴":un?"⚪":"🟢";const grade=(h&&h.grade)?h.grade:"—";const ms=(h&&h.ms!=null)?h.ms+" ms":"—";const ssl=(h&&typeof h.sslDaysLeft==="number")?(h.sslDaysLeft<0?'<span style="color:var(--red)">abgelaufen</span>':h.sslDaysLeft<=21?'<span style="color:var(--amb)">'+h.sslDaysLeft+" T.</span>":h.sslDaysLeft+" T."):"—";const chk=(h&&h.checkedAt)?_ago(h.checkedAt):"nie";const ord=off?0:un?1:(6-(_rank[grade]||3));return {ord,html:`<tr><td>${dot} <b>${esc(c.name)}</b></td><td>${grade}</td><td>${ms}</td><td>${ssl}</td><td class="wx-sub">${chk}</td></tr>`};}).sort((a,b)=>a.ord-b.ord).map(x=>x.html).join("");
+ const _offCount=active.filter(c=>c.wpHealth&&c.wpHealth.reachable===false).length;
+ const _unCount=active.filter(c=>!c.wpHealth||!c.wpHealth.checkedAt).length;
+ const pflegeCard=`<div class="wx-card" style="margin-top:16px"><div class="wx-title" style="display:flex;justify-content:space-between;align-items:center;gap:8px">🩺 Website-Gesundheit aller Kunden ${_offCount?`· <span style="color:var(--red)">${_offCount} offline</span>`:(active.length&&_unCount<active.length?'· <span style="color:var(--g)">alle online</span>':"")}<button class="wx-btn" onclick="App.healthScanAll()">🩺 Jetzt prüfen</button></div>${active.length?`<table class="wx-table"><thead><tr><th>Website</th><th>Note</th><th>Ladezeit</th><th>SSL</th><th>geprüft</th></tr></thead><tbody>${pflegeRows}</tbody></table>`:'<div class="wx-empty">Noch keine Kunden.</div>'}<div class="wx-sub" style="margin-top:8px">Automatischer Monitor alle 6 h · Alarm bei Ausfall, Wiederkehr &amp; SSL-Ablauf.</div></div>`;
  el.innerHTML=`
   ${kpis}
+  ${pflegeCard}
   ${mrrCard}
   ${satCard}
   ${upsellCard}
