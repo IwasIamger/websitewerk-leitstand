@@ -2438,6 +2438,27 @@ rFinanzen(){
    <div style="display:flex;gap:10px;flex-wrap:wrap">${kpi("Bezahlt "+yr,fmt(paidYr)+" €","var(--g)")}${kpi("Bezahlt gesamt",fmt(paidSum)+" €")}${kpi("Offen",fmt(openSum)+" €",openSum>0?"var(--amb)":"")}${kpi("MRR (Care)",fmt(mrr)+" €")}</div>
   </div></div>
   <div class="panel"><div class="cfg-sec">
+   <div class="stit" style="color:var(--a);font-size:11px">📊 EÜR — EINNAHMEN-ÜBERSCHUSS (vereinfacht, Ist-Prinzip)</div>
+   <p class="hint" style="margin-bottom:10px">Einnahmen = bezahlte Rechnungen · Ausgaben = unten erfasst · Gewinn = Differenz je Jahr. Überblick für dich &amp; den Steuerberater — die offizielle EÜR macht dein Steuerbüro.</p>
+   <div id="fin-euer" style="font-size:13px;color:var(--muted)">Lade …</div>
+  </div></div>
+  <div class="panel"><div class="cfg-sec">
+   <div class="stit" style="color:var(--a);font-size:11px">🧾 BETRIEBSAUSGABEN ERFASSEN</div>
+   <p class="hint" style="margin-bottom:10px">Jede geschäftliche Ausgabe (Tools, Hosting, KI-Guthaben, Werbung …). Beleg aufheben — fürs Finanzamt.</p>
+   <div class="cfg-g2">
+    <div class="mf"><label>Datum</label><input id="ex-date" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+    <div class="mf"><label>Betrag (€)</label><input id="ex-amount" inputmode="decimal" placeholder="z. B. 19,99"></div>
+   </div>
+   <div class="cfg-g2">
+    <div class="mf"><label>Kategorie</label><select id="ex-cat" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:7px 9px;font-size:13px">${["Software/Tools","Hosting/Domains","KI/API-Guthaben","Werbung/Akquise","Büro/Material","Gebühren/Bank","Fortbildung","Reise/Fahrt","Steuer/Beratung","Sonstiges"].map(x=>`<option>${x}</option>`).join("")}</select></div>
+    <div class="mf"><label>Anbieter (optional)</label><input id="ex-vendor" placeholder="z. B. Render, OpenAI, Cloudflare"></div>
+   </div>
+   <div class="mf"><label>Notiz (optional)</label><input id="ex-note" placeholder="Verwendungszweck"></div>
+   <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:2px"><button class="btn bi" onclick="App.addExpense()">+ Ausgabe erfassen</button></div>
+   <div id="ex-msg" style="font-size:12px;color:var(--muted);margin-top:4px"></div>
+   <div id="fin-explist" style="margin-top:14px;font-size:13px;color:var(--muted)"></div>
+  </div></div>
+  <div class="panel"><div class="cfg-sec">
    <div class="stit" style="color:var(--a);font-size:11px">🏛️ FIRMA — RECHNUNGSSTELLER &amp; AUFTRAGNEHMER</div>
    <p class="hint" style="margin-bottom:10px">Diese Angaben erscheinen auf <b>jeder Rechnung &amp; jedem Vertrag deiner Agentur</b> (nicht die deiner Kunden — die pflegen ihre eigenen). Sobald hier ein <b>Firmenname</b> steht, gilt <b>nur noch dieses Profil</b> — die alten Render-Werte (GbR) werden ignoriert. Ideal für den Wechsel zum Einzelunternehmen.</p>
    <div id="ag-load" style="font-size:13px;color:var(--muted)">Lade aktuelles Profil …</div>
@@ -2478,6 +2499,51 @@ rFinanzen(){
   </div></div>
  </div>`;
  this.loadAgencyProfile();
+ this.loadFinance();
+},
+_renderFinance(d){
+ const eur=document.getElementById("fin-euer"),list=document.getElementById("fin-explist");
+ if(eur){
+  const rows=(d.euer||[]);
+  eur.innerHTML=rows.length?('<table style="width:100%;border-collapse:collapse"><thead><tr style="text-align:left;color:#9AA4AC;font-size:11px;text-transform:uppercase"><th style="padding:6px 4px">Jahr</th><th style="text-align:right;padding:6px 4px">Einnahmen</th><th style="text-align:right;padding:6px 4px">Ausgaben</th><th style="text-align:right;padding:6px 4px">Gewinn</th></tr></thead><tbody>'+rows.map(r=>`<tr style="border-top:1px solid #EAEEF0"><td style="padding:8px 4px;font-weight:700">${r.year}</td><td style="text-align:right;padding:8px 4px;color:var(--g)">${fmt(r.income)} €</td><td style="text-align:right;padding:8px 4px;color:var(--amb)">${fmt(r.expense)} €</td><td style="text-align:right;padding:8px 4px;font-weight:800;color:${r.profit>=0?'var(--g)':'var(--red)'}">${fmt(r.profit)} €</td></tr>`).join("")+'</tbody></table>'):'<span>Noch keine Daten — erfasse Ausgaben und markiere Rechnungen als bezahlt.</span>';
+ }
+ if(list){
+  const exp=(d.expenses||[]);
+  list.innerHTML='<div style="font-size:11px;text-transform:uppercase;color:#9AA4AC;margin-bottom:6px">Erfasste Ausgaben ('+exp.length+') · gesamt '+fmt(d.totalExpense||0)+' €</div>'+(exp.length?exp.map(e=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #EAEEF0"><div style="flex:none;width:82px;color:#9AA4AC;font-size:12px">${esc(e.date||"")}</div><div style="flex:1;min-width:0"><b>${fmt(e.amount)} €</b> · ${esc(e.category||"")}${e.vendor?' · '+esc(e.vendor):''}${e.note?`<div style="font-size:12px;color:#9AA4AC">${esc(e.note)}</div>`:''}</div><button class="btn bg bsm" title="Löschen" onclick="App.delExpense('${e.id}')" style="flex:none">✕</button></div>`).join(""):'<div style="color:#9AA4AC">Noch keine Ausgaben erfasst.</div>');
+ }
+},
+async loadFinance(){
+ const key=localStorage.getItem("ww_api_key")||"";
+ const eur=document.getElementById("fin-euer");
+ if(!key){if(eur)eur.innerHTML="⚠ Leitstand-Schlüssel fehlt — in <b>Einstellungen</b> setzen.";return;}
+ try{
+  const r=await fetch(this.apiBase()+"/api/client/finance",{headers:{"x-ww-key":key}});
+  const d=await r.json();if(!d.ok)throw new Error(d.error||"Fehler");
+  this._renderFinance(d);
+ }catch(e){if(eur)eur.textContent="Finanzdaten nicht ladbar: "+e.message;}
+},
+async addExpense(){
+ const key=localStorage.getItem("ww_api_key")||"";
+ if(!key){this.toast("Leitstand-Schlüssel fehlt (Einstellungen)");return;}
+ const g=id=>document.getElementById(id)?.value.trim()||"";
+ const amount=g("ex-amount");if(!amount){this.toast("Betrag eingeben");return;}
+ const body={date:g("ex-date"),amount,category:g("ex-cat"),vendor:g("ex-vendor"),note:g("ex-note")};
+ const msg=document.getElementById("ex-msg");if(msg)msg.textContent="Speichere …";
+ try{
+  const r=await fetch(this.apiBase()+"/api/client/expense",{method:"POST",headers:{"Content-Type":"application/json","x-ww-key":key},body:JSON.stringify(body)});
+  const d=await r.json();if(!d.ok)throw new Error(d.error||"Fehler");
+  ["ex-amount","ex-vendor","ex-note"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+  this._renderFinance(d);if(msg)msg.textContent="✓ Erfasst.";this.toast("Ausgabe erfasst ✓");
+ }catch(e){if(msg)msg.textContent="Fehler: "+e.message;this.toast("Speichern fehlgeschlagen");}
+},
+async delExpense(id){
+ const key=localStorage.getItem("ww_api_key")||"";if(!key)return;
+ if(!confirm("Diese Ausgabe löschen?"))return;
+ try{
+  const r=await fetch(this.apiBase()+"/api/client/expense-delete",{method:"POST",headers:{"Content-Type":"application/json","x-ww-key":key},body:JSON.stringify({id})});
+  const d=await r.json();if(!d.ok)throw new Error(d.error||"Fehler");
+  this._renderFinance(d);this.toast("Ausgabe gelöscht");
+ }catch(e){this.toast("Löschen fehlgeschlagen: "+e.message);}
 },
 async loadAgencyProfile(){
  const key=localStorage.getItem("ww_api_key")||"";
