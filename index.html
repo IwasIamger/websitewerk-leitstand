@@ -2454,7 +2454,7 @@ rFinanzen(){
     <div class="mf"><label>Anbieter (optional)</label><input id="ex-vendor" placeholder="z. B. Render, OpenAI, Cloudflare"></div>
    </div>
    <div class="mf"><label>Notiz (optional)</label><input id="ex-note" placeholder="Verwendungszweck"></div>
-   <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:2px"><button class="btn bi" onclick="App.addExpense()">+ Ausgabe erfassen</button></div>
+   <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:2px"><button class="btn bi" onclick="App.addExpense()">+ Ausgabe erfassen</button><button class="btn bg" onclick="App.exportFinanceCSV()" title="Ausgaben + EÜR als CSV (Excel/Steuerberater)">⬇ CSV-Export</button></div>
    <div id="ex-msg" style="font-size:12px;color:var(--muted);margin-top:4px"></div>
    <div id="fin-explist" style="margin-top:14px;font-size:13px;color:var(--muted)"></div>
   </div></div>
@@ -2502,6 +2502,7 @@ rFinanzen(){
  this.loadFinance();
 },
 _renderFinance(d){
+ this._finance=d;
  const eur=document.getElementById("fin-euer"),list=document.getElementById("fin-explist");
  if(eur){
   const rows=(d.euer||[]);
@@ -2544,6 +2545,23 @@ async delExpense(id){
   const d=await r.json();if(!d.ok)throw new Error(d.error||"Fehler");
   this._renderFinance(d);this.toast("Ausgabe gelöscht");
  }catch(e){this.toast("Löschen fehlgeschlagen: "+e.message);}
+},
+exportFinanceCSV(){
+ const d=this._finance;
+ if(!d||!((d.expenses||[]).length||(d.euer||[]).length)){this.toast("Keine Finanzdaten zum Export");return;}
+ const q=v=>{v=String(v==null?"":v);return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+ const dec=n=>(+n||0).toFixed(2).replace(".",",");
+ const rows=[["Datum","Betrag (EUR)","Kategorie","Anbieter","Notiz"]];
+ (d.expenses||[]).slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(e=>rows.push([e.date||"",dec(e.amount),e.category||"",e.vendor||"",e.note||""]));
+ rows.push([]);rows.push(["EUER-Uebersicht (vereinfacht, Ist-Prinzip)"]);
+ rows.push(["Jahr","Einnahmen (EUR)","Ausgaben (EUR)","Gewinn (EUR)"]);
+ (d.euer||[]).forEach(r=>rows.push([r.year,dec(r.income),dec(r.expense),dec(r.profit)]));
+ const csv="﻿"+rows.map(r=>r.map(q).join(";")).join("\r\n");
+ const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+ const url=URL.createObjectURL(blob);const a=document.createElement("a");
+ a.href=url;a.download="buchhaltung-"+new Date().toISOString().slice(0,10)+".csv";
+ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+ this.toast("CSV exportiert ✓");
 },
 async loadAgencyProfile(){
  const key=localStorage.getItem("ww_api_key")||"";
