@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WebsiteWerk Leitstand</title>
+<title>Orenda Studios · Leitstand</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='22' fill='%23171410'/%3E%3Ccircle cx='48' cy='50' r='26' fill='none' stroke='%23f4efe6' stroke-width='4.5'/%3E%3Ccircle cx='48' cy='24' r='7' fill='%23d3a24a'/%3E%3Ccircle cx='48' cy='50' r='4' fill='%23f4efe6'/%3E%3C/svg%3E">
 <style>
 :root{--a:#E8590C;--ink:#1A2530;--bg:#EDEFF0;--border:#D8DDE0;--bs:#E4E8EA;--muted:#6B767F;--g:#2F9E44;--amb:#F08C00;--red:#E03131;--rail:212px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -302,7 +303,7 @@ nav a.active{box-shadow:0 4px 12px rgba(26,37,48,.28)}
 <div id="sync-warn" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9999;background:#fff3cd;color:#856404;padding:8px 16px;font-size:13px;text-align:center;border-bottom:1px solid #ffc107"><span id="sync-warn-msg">⚠ Cloud nicht erreichbar — es wird automatisch neu verbunden. Deine Arbeit bleibt lokal gesichert und wird nachgespeichert.</span> <button onclick="App.reloadFromCloud()" style="background:#856404;color:#fff;border:none;padding:3px 10px;border-radius:4px;cursor:pointer;margin-left:8px">Jetzt verbinden</button></div>
 <div id="app">
   <aside>
-    <div class="brand"><div class="eye">WebsiteWerk</div><div class="tit">Leitstand</div></div>
+    <div class="brand"><div class="eye">Orenda Studios</div><div class="tit">Leitstand</div></div>
     <nav id="nav"></nav>
     <div class="sf">
       <div class="law">Eiserne Gesetze</div>
@@ -334,7 +335,7 @@ nav a.active{box-shadow:0 4px 12px rgba(26,37,48,.28)}
 <div id="MR"></div><div id="DR"></div><div id="FR"></div>
 <script>
 /* === Leitstand-API-Auth (opt-in) ===
-   Hängt den Header x-ww-key NUR an Requests ans WebsiteWerk-Backend an,
+   Hängt den Header x-ww-key NUR an Requests ans Orenda Studios-Backend an,
    und nur wenn localStorage['ww_api_key'] gesetzt ist. Aktivieren:
    1) In Render LEITSTAND_SECRET=<dein-secret> setzen
    2) Hier einmalig: localStorage.setItem('ww_api_key','<dasselbe-secret>')
@@ -554,7 +555,7 @@ genReferralCodes(){
 projectStatuses(){
  return [
   ["inbox","Eingang"],["triage","Triagieren"],["planned","In Planung"],["doing","In Umsetzung"],
-  ["waiting_client","Wartet auf Kunde"],["waiting_ww","Wartet auf WebsiteWerk"],["review","Review"],["done","Erledigt"],["billed","Abgerechnet"],["archive","Archiv"]
+  ["waiting_client","Wartet auf Kunde"],["waiting_ww","Wartet auf Orenda Studios"],["review","Review"],["done","Erledigt"],["billed","Abgerechnet"],["archive","Archiv"]
  ];
 },
 projectStatusLabel(st){const f=this.projectStatuses().find(x=>x[0]===st);return f?f[1]:(st||"Eingang");},
@@ -612,7 +613,7 @@ rProjekte(){
    <div style="padding:16px">
     <div class="pj-grid">
       ${k(open.length,"Offen",open.length?"var(--a)":"")}
-      ${k(waitingWW,"WebsiteWerk dran",waitingWW?"var(--red)":"")}
+      ${k(waitingWW,"Orenda Studios dran",waitingWW?"var(--red)":"")}
       ${k(waitingClient,"Wartet auf Kunde",waitingClient?"#1971C2":"")}
       ${k(newest?new Date(newest).toLocaleDateString("de-DE"):"—","Letztes Update")}
     </div>
@@ -652,7 +653,7 @@ renderProjectDrawer(){
    <div class="row"><div class="key">Erstellt</div><div class="val">${new Date(p.createdAt||Date.now()).toLocaleString("de-DE")}</div></div>
   </div>
   <div><div class="stit">Status ändern</div><select id="pj-status-${p.id}" style="width:100%;border:1px solid #CBD2D6;border-radius:6px;padding:8px;margin-bottom:7px">${this.projectStatuses().map(([sid,label])=>`<option value="${sid}" ${sid===p.status?"selected":""}>${label}</option>`).join("")}</select><textarea id="pj-status-note-${p.id}" rows="2" placeholder="Optionale Notiz an Kunde…"></textarea><button class="btn bi" style="width:100%;margin-top:7px" onclick="App.setProjectStatus('${p.id}',document.getElementById('pj-status-${p.id}').value,document.getElementById('pj-status-note-${p.id}').value)">Status speichern + Kunde informieren</button></div>
-  <div><div class="stit">Kommunikation</div><div class="chat">${msg.length?msg.map(m=>`<div class="msgbubble ${m.actor==="client"?"client":"ww"}"><div class="msghead"><span>${m.actor==="client"?"Kunde":"WebsiteWerk"}</span><span>${new Date(m.ts||Date.now()).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</span></div><div class="msgtext">${esc(m.text||"")}</div>${(m.attachments||[]).length?`<div>${m.attachments.map(a=>`<a class="filechip" href="${esc(a.url)}" target="_blank">📎 ${esc(a.filename)}</a>`).join("")}</div>`:""}</div>`).join(""):`<div class="hint">Noch keine Nachrichten.</div>`}</div></div>
+  <div><div class="stit">Kommunikation</div><div class="chat">${msg.length?msg.map(m=>`<div class="msgbubble ${m.actor==="client"?"client":"ww"}"><div class="msghead"><span>${m.actor==="client"?"Kunde":"Orenda Studios"}</span><span>${new Date(m.ts||Date.now()).toLocaleString("de-DE",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</span></div><div class="msgtext">${esc(m.text||"")}</div>${(m.attachments||[]).length?`<div>${m.attachments.map(a=>`<a class="filechip" href="${esc(a.url)}" target="_blank">📎 ${esc(a.filename)}</a>`).join("")}</div>`:""}</div>`).join(""):`<div class="hint">Noch keine Nachrichten.</div>`}</div></div>
   <div><div class="stit">Antwort an Kunden</div><textarea id="pj-reply-${p.id}" rows="4" placeholder="Rückfrage, Zwischenstand oder Ergebnis…"></textarea><button class="btn ba" style="width:100%;margin-top:7px" onclick="App.sendProjectMessage('${p.id}')">Antwort senden</button></div>
   <div><div class="stit">Dateien</div>${files.length?files.map(a=>`<a class="filechip" href="${esc(a.url)}" target="_blank">📎 ${esc(a.filename)}</a>`).join(""):`<div class="hint">Keine Dateien am Projekt.</div>`}</div>
   <div><button class="btn bg" onclick="App.openDetail('cli','${p.clientId}')">Kundenakte öffnen</button></div>
@@ -945,7 +946,7 @@ applyMove(){
 },
 openWonMail(lead,ev){
  const v=this.cfg,at=lead.auftragswert||0;
- const txt=`Betreff: Willkommen bei ${v.absFirma||"WebsiteWerk"} – nächste Schritte für Ihr Projekt
+ const txt=`Betreff: Willkommen bei ${v.absFirma||"Orenda Studios"} – nächste Schritte für Ihr Projekt
 
 Guten Tag,
 
@@ -965,7 +966,7 @@ Wir haben Ihren Betrieb bereits analysiert und einen fertigen Vorschlag – Sie 
 
 Herzliche Grüße
 ${v.absName||""}
-${v.absFirma||"WebsiteWerk"} · ${v.absOrt||"Aalen"}${v.absTel?"\nTel: "+v.absTel:""}${v.absMail?"\n"+v.absMail:""}`;
+${v.absFirma||"Orenda Studios"} · ${v.absOrt||"Aalen"}${v.absTel?"\nTel: "+v.absTel:""}${v.absMail?"\n"+v.absMail:""}`;
  document.getElementById("MR").innerHTML=`<div class="ov" onclick="if(event.target===this)App.closeModal()">
   <div class="mo wide">
    <div style="display:flex;align-items:center"><h3>🎉 Won – Onboarding-Mail</h3><button class="xb" onclick="App.closeModal()">×</button></div>
@@ -1261,13 +1262,13 @@ buildClientDash(lead,demoUrl){
 
 </style></head>
 <body>
-<div class="hd"><div><h1>${esc(lead.name)}</h1><div class="sub">Ihr persönliches Webportal · WebsiteWerk</div></div></div>
+<div class="hd"><div><h1>${esc(lead.name)}</h1><div class="sub">Ihr persönliches Webportal · Orenda Studios</div></div></div>
 <div class="note">👋 Willkommen! Ihr Webportal zeigt Ihnen den aktuellen Status Ihres Projekts. Bei Fragen jederzeit melden.</div>
 <div class="grid">
  <div class="card"><h3>Projektstatus</h3><div class="val"><span class="status ok">In Bearbeitung</span></div><div class="info">Ihre Website wird individuell nach Ihrem Betrieb aufgebaut und steht bald zur Freigabe bereit.</div></div>
  <div class="card"><h3>Website-Vorschau</h3><div class="val" style="font-size:16px">${demoUrl?"✓ Fertig":""}</div><div class="info">${demoUrl?`<a href="${esc(demoUrl)}" target="_blank" style="color:${col};font-weight:600">Vorschau ansehen ↗</a> – unverbindlich, noch nicht final.`:"Wird vorbereitet."}</div></div>
  <div class="card"><h3>Nächste Schritte</h3><div class="val" style="font-size:14px;font-weight:400;color:#3A4750;line-height:1.6">1. Vorschau ansehen<br>2. Feedback geben<br>3. Freigabe erteilen<br>4. Livegang planen</div></div>
- <div class="card"><h3>Ihr Ansprechpartner</h3><div class="val" style="font-size:15px">${esc(this.cfg.absName||"WebsiteWerk")}</div><div class="info">${this.cfg.absTel?`<a href="tel:${esc(this.cfg.absTel)}" style="color:${col}">${esc(this.cfg.absTel)}</a><br>`:""}${this.cfg.absMail?`<a href="mailto:${esc(this.cfg.absMail)}" style="color:${col}">${esc(this.cfg.absMail)}</a>`:""}${!this.cfg.absMail&&!this.cfg.absTel?"Kontaktdaten in den Einstellungen hinterlegen":""}</div></div>
+ <div class="card"><h3>Ihr Ansprechpartner</h3><div class="val" style="font-size:15px">${esc(this.cfg.absName||"Orenda Studios")}</div><div class="info">${this.cfg.absTel?`<a href="tel:${esc(this.cfg.absTel)}" style="color:${col}">${esc(this.cfg.absTel)}</a><br>`:""}${this.cfg.absMail?`<a href="mailto:${esc(this.cfg.absMail)}" style="color:${col}">${esc(this.cfg.absMail)}</a>`:""}${!this.cfg.absMail&&!this.cfg.absTel?"Kontaktdaten in den Einstellungen hinterlegen":""}</div></div>
 </div>
 </body></html>`;
 },
@@ -1281,7 +1282,7 @@ async writeBrief(lead,url){
 Wir haben den Online-Auftritt analysiert und eine individuelle Website-Vorschau mit ${lead.buildPages||1} Seiten erstellt.
 ${url?"Demo-Link (prominent nennen, aber nicht aggressive Werbung): "+url:"Vorschau wird persönlich gezeigt."}
 Einladung zu Termin oder Rückruf.
-Unterzeichner: ${v.absName||"Inhaber"}, ${v.absFirma||"WebsiteWerk"}, ${v.absOrt||"Aalen"}${v.absTel?", Tel "+v.absTel:""}.
+Unterzeichner: ${v.absName||"Inhaber"}, ${v.absFirma||"Orenda Studios"}, ${v.absOrt||"Aalen"}${v.absTel?", Tel "+v.absTel:""}.
 Tonalität: ${lead.twin?.tonalitaet||"professionell, regional vertraut"}. Ehrlich, nicht übertrieben.`,900);
 },
 
@@ -1315,7 +1316,7 @@ printBrief(lid){
 .filechip{display:inline-flex;gap:5px;align-items:center;border:1px solid #DDE2E5;border-radius:99px;padding:4px 8px;font-size:11px;margin:4px 4px 0 0;background:#fff}
 
 </style></head><body>
-<div class="abs">${esc(v.absFirma||"WebsiteWerk")} · ${esc(v.absStrasse||"")} · ${esc(v.absOrt||"")}</div>
+<div class="abs">${esc(v.absFirma||"Orenda Studios")} · ${esc(v.absStrasse||"")} · ${esc(v.absOrt||"")}</div>
 <div class="adr">${esc(lead.name)}\n${esc(lead.ort||"")}</div>
 <div class="dt">${esc(v.absOrt||"Aalen")}, ${new Date().toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"})}</div>
 <div class="bet">Ihre individuelle Website-Vorschau – ${lead.buildPages||1} fertige Seiten</div>
@@ -1514,14 +1515,14 @@ Kein Verkaufsdruck — schauen Sie es sich in Ruhe an. Wenn es Sie interessiert,
 
 Herzliche Grüße
 Lukas Ackermann
-WebsiteWerk · lokale Betriebe aus der Region`;
+Orenda Studios · lokale Betriebe aus der Region`;
 const done=()=>{this.toast("📋 Pitch-Text kopiert — in Gmail einfügen & selbst senden");};
 if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,()=>{this._pitchFallback(txt);});}else{this._pitchFallback(txt);}},
 _pitchFallback(txt){try{const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();document.execCommand("copy");document.body.removeChild(ta);this.toast("📋 Pitch-Text kopiert");}catch(e){this.toast("Kopieren nicht möglich — bitte manuell markieren");window.prompt("Pitch-Text (Strg+C):",txt);}},
 copyCallScript(id){const lead=(this.state.leads||[]).find(x=>x.id===id)||(this.state.clients||[]).find(x=>x.id===id);if(!lead){this.toast("Lead nicht gefunden");return;}const name=lead.name||"den Betrieb";const demo=lead.demoUrl||lead.liveUrl||"";const hasWeb=!!lead.website;const isPraxis=/praxis|dr\.?|arzt|zahn|physio|heilprakt/i.test((lead.branche||"")+" "+name);const kw=isPraxis?"Patienten":"Kunden";const aufh=hasWeb?"Mir ist aufgefallen, dass Ihre Website etwas in die Jahre gekommen ist. Ich habe für Sie schon mal eine moderne Vorschau vorbereitet — ganz unverbindlich.":"Mir ist aufgefallen, dass Ihr Betrieb online noch kaum zu finden ist — keine eigene Website. Ich habe für Sie schon mal eine moderne Vorschau vorbereitet, ganz unverbindlich.";const txt=`📞 ANRUF-LEITFADEN — ${name}${lead.phone?" · ☎ "+lead.phone:""}
 
 ① Begrüßung
-„Guten Tag, spreche ich mit ${name}? Mein Name ist Lukas Ackermann von WebsiteWerk hier aus der Region — ich halte Sie nur ganz kurz auf.“
+„Guten Tag, spreche ich mit ${name}? Mein Name ist Lukas Ackermann von Orenda Studios hier aus der Region — ich halte Sie nur ganz kurz auf.“
 
 ② Aufhänger
 „${aufh}“
@@ -1539,7 +1540,7 @@ Einwand „keine Zeit / kein Interesse“:
 const done=()=>{this.toast("📋 Call-Script kopiert — beim Anruf ablesen");};
 if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,()=>{this._pitchFallback(txt);});}else{this._pitchFallback(txt);}},
 _waNum(phone){let d=String(phone||"").replace(/[^\d]/g,"").replace(/^00/,"");if(!d)return"";if(d.startsWith("49"))return d;if(d.startsWith("0"))return"49"+d.slice(1);return"49"+d;},
-waSend(id){const lead=(this.state.leads||[]).find(x=>x.id===id)||(this.state.clients||[]).find(x=>x.id===id);if(!lead){this.toast("Nicht gefunden");return;}const num=this._waNum(lead.phone);if(!num){this.toast("Keine Telefonnummer hinterlegt");return;}const demo=lead.demoUrl||lead.liveUrl||"";const msg=`Guten Tag, wie besprochen die Vorschau Ihrer neuen Website${demo?": "+demo:""} — schauen Sie gern in Ruhe rein. Bei Fragen bin ich jederzeit da.\n\nHerzliche Grüße\nLukas Ackermann · WebsiteWerk`;window.open("https://wa.me/"+num+"?text="+encodeURIComponent(msg),"_blank");this.toast("📲 WhatsApp geöffnet — Nachricht prüfen & selbst senden");},
+waSend(id){const lead=(this.state.leads||[]).find(x=>x.id===id)||(this.state.clients||[]).find(x=>x.id===id);if(!lead){this.toast("Nicht gefunden");return;}const num=this._waNum(lead.phone);if(!num){this.toast("Keine Telefonnummer hinterlegt");return;}const demo=lead.demoUrl||lead.liveUrl||"";const msg=`Guten Tag, wie besprochen die Vorschau Ihrer neuen Website${demo?": "+demo:""} — schauen Sie gern in Ruhe rein. Bei Fragen bin ich jederzeit da.\n\nHerzliche Grüße\nLukas Ackermann · Orenda Studios`;window.open("https://wa.me/"+num+"?text="+encodeURIComponent(msg),"_blank");this.toast("📲 WhatsApp geöffnet — Nachricht prüfen & selbst senden");},
 async careReqOffer(clientId,offerNameEnc){let name;try{name=decodeURIComponent(offerNameEnc);}catch(e){name=offerNameEnc;}const p=prompt("Monatspreis für „"+name+"“ (€ netto) — leer = auf Anfrage:","");const total=(p&&!isNaN(+p))?+p:0;const item={name:name+(total?" (monatlich)":""),preis:total?(total+" €/Monat"):"auf Anfrage"};this.toast("Erstelle Angebot …");try{const r=await fetch(this.apiBase()+"/api/client/offer",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId,title:name,items:[item],total,intro:"Angebot für die gewünschte Zusatzleistung."})});const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");await this.reloadCloudState();if(this.detail)this.renderDrawer();this.toast("✓ Angebots-Entwurf erstellt — Vorschau öffnet");window.open(this.apiBase()+"/api/offer/"+d.token,"_blank");}catch(e){this.toast("Fehler: "+e.message);}},
 async careActivate(clientId,reqId){if(!confirm("Care-Anfrage annehmen und für den Kunden aktivieren? Setzt Paket/MRR und schickt eine Bestätigungsmail an den Kunden."))return;this.toast("Aktiviere …");try{const r=await fetch(this.apiBase()+"/api/client/care-activate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId,reqId})});const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");await this.reloadCloudState();this.renderAll();if(this.detail)this.renderDrawer();this.toast("✓ Aktiviert"+(d.mailed?" · Kunde per Mail benachrichtigt":""));}catch(e){this.toast("Fehler: "+e.message);}},
 async upsellToOffer(pl,id,sigEnc){let signal;try{signal=decodeURIComponent(sigEnc);}catch(e){signal=sigEnc;}const s=String(signal).toLowerCase();let item,total;if(/care|hosting|pflege/.test(s)){item={name:"Care & Hosting (monatlich)",preis:"149 €/Monat"};total=149;}else if(/performance|ladezeit|speed/.test(s)){item={name:"Performance-Optimierung (einmalig)",preis:"490 €"};total=490;}else if(/seo/.test(s)){item={name:"SEO-Optimierung (monatlich)",preis:"249 €/Monat"};total=249;}else if(/sicherheit|security/.test(s)){item={name:"Sicherheits-Paket (einmalig)",preis:"390 €"};total=390;}else if(/content|blog/.test(s)){item={name:"Content-/SEO-Retainer (monatlich)",preis:"299 €/Monat"};total=299;}else{const svc=String(signal).split("→").pop().trim().replace(/\banbieten\b\.?$/i,"").trim()||signal;item={name:svc,preis:"auf Anfrage"};total=0;}const c=this.state.clients.find(x=>x.id===id)||{};this.toast("Erstelle Angebots-Entwurf …");try{const r=await fetch(this.apiBase()+"/api/client/offer",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId:id,title:item.name,items:[item],total,intro:"Individuelles Angebot auf Basis Ihrer aktuellen Website."})});const d=await r.json();if(!r.ok||!d.ok)throw new Error(d.error||"Fehler");await this.reloadCloudState();if(this.detail)this.renderDrawer();this.toast("✓ Angebots-Entwurf erstellt — Vorschau öffnet");window.open(this.apiBase()+"/api/offer/"+d.token,"_blank");}catch(e){this.toast("Fehler: "+e.message);}},
@@ -2367,7 +2368,7 @@ async searchLeads(){
  if(!f.cats.length){this.toast("Mindestens eine Branche wählen");return;}
  f.loading=true;f.res=[];this.rFinder();
  try{
-  const geo=await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q=${encodeURIComponent(f.ort)}`,{headers:{"Accept":"application/json","User-Agent":"WebsiteWerk-Leitstand/1.0"}}).then(r=>r.json());
+  const geo=await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q=${encodeURIComponent(f.ort)}`,{headers:{"Accept":"application/json","User-Agent":"Orenda Studios-Leitstand/1.0"}}).then(r=>r.json());
   if(geo.length){f.lat=+geo[0].lat;f.lon=+geo[0].lon;}
   const R=f.radius*1000;
   const body="[out:json][timeout:45];("+f.cats.map(k=>this.CATS[k].q.replaceAll("{R}",R).replaceAll("{LAT}",f.lat).replaceAll("{LON}",f.lon)).join("")+");out tags center 500;";
@@ -2695,7 +2696,7 @@ rSettings(){
   <div class="cfg-sec">
    <div class="stit" style="font-size:11px">Absender (Briefe & Onboarding-Mails)</div>
    <div class="cfg-g2">
-    <div class="mf"><label>Firma</label><input id="c-fn" value="${esc(c.absFirma||"WebsiteWerk")}"></div>
+    <div class="mf"><label>Firma</label><input id="c-fn" value="${esc(c.absFirma||"Orenda Studios")}"></div>
     <div class="mf"><label>Dein Name</label><input id="c-nn" value="${esc(c.absName||"")}"></div>
     <div class="mf"><label>Straße + Nr.</label><input id="c-str" value="${esc(c.absStrasse||"")}"></div>
     <div class="mf"><label>PLZ + Ort</label><input id="c-ort" value="${esc(c.absOrt||"Aalen")}"></div>
@@ -2758,7 +2759,7 @@ App.init();
 <div id="wwHelpOv" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(20,20,24,.5);backdrop-filter:blur(2px)" onclick="if(event.target===this)wwHelpClose()">
   <div style="position:absolute;top:0;right:0;bottom:0;width:min(560px,94vw);background:#faf9f7;color:#1e1c1a;overflow-y:auto;box-shadow:-20px 0 60px rgba(0,0,0,.25);font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.6">
     <div style="position:sticky;top:0;background:#faf9f7;border-bottom:1px solid #e7e3dc;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;z-index:2">
-      <div><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#c0872b;font-weight:700">WebsiteWerk Leitstand</div><div style="font-size:21px;font-weight:800;letter-spacing:-.01em">Hilfe &amp; Erklärungen</div></div>
+      <div><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#c0872b;font-weight:700">Orenda Studios Leitstand</div><div style="font-size:21px;font-weight:800;letter-spacing:-.01em">Hilfe &amp; Erklärungen</div></div>
       <button onclick="wwHelpClose()" style="background:#1e1c1a;color:#fff;border:0;width:34px;height:34px;border-radius:9px;font-size:17px;cursor:pointer">✕</button>
     </div>
     <div id="wwHelpBody" style="padding:8px 24px 40px"></div>
