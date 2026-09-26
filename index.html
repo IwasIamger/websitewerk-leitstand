@@ -2430,6 +2430,8 @@ rFinanzen(){
  const yr=new Date().getFullYear();
  const paidYr=sum(invs.filter(i=>isPaid(i)&&new Date(i.ts||0).getFullYear()===yr));
  const mrr=this.kpis().mrr;
+ const openInv=[];(this.state.clients||[]).forEach(c=>(c.invoices||[]).forEach(i=>{if(!isPaid(i))openInv.push({i,c});}));
+ openInv.sort((a,b)=>(a.i.ts||0)-(b.i.ts||0));
  const kpi=(l,v,c)=>`<div class="hst" style="min-width:130px"><div class="hl">${l}</div><div class="hv"${c?` style="color:${c}"`:""}>${v}</div></div>`;
  document.getElementById("v-finanzen").innerHTML=`<div style="max-width:760px;display:flex;flex-direction:column;gap:0">
   <div class="panel"><div class="cfg-sec">
@@ -2437,6 +2439,11 @@ rFinanzen(){
    <p class="hint" style="margin-bottom:10px">Aus den im System erfassten Rechnungen (${invs.length}). Für die volle Buchhaltung (Ausgaben erfassen + EÜR) kommt als Nächstes ein eigener Block.</p>
    <div style="display:flex;gap:10px;flex-wrap:wrap">${kpi("Bezahlt "+yr,fmt(paidYr)+" €","var(--g)")}${kpi("Bezahlt gesamt",fmt(paidSum)+" €")}${kpi("Offen",fmt(openSum)+" €",openSum>0?"var(--amb)":"")}${kpi("MRR (Care)",fmt(mrr)+" €")}</div>
   </div></div>
+  ${openInv.length?`<div class="panel"><div class="cfg-sec">
+   <div class="stit" style="color:var(--a);font-size:11px">🧾 OFFENE RECHNUNGEN · ${openInv.length} · ${fmt(openSum)} €</div>
+   <p class="hint" style="margin-bottom:8px">Noch nicht bezahlt — Klick öffnet den Kunden. Überfällig (&gt;14 Tage) rot.</p>
+   ${openInv.map(({i,c})=>{const age=i.ts?Math.floor((Date.now()-i.ts)/864e5):null;const od=age!=null&&age>14;return `<button class="fi" onclick="App.openDetail('cli','${c.id}')"><span style="color:${od?'var(--red)':'var(--a)'}">●</span><span class="ft">${esc(c.name)} · ${fmt(i.amount)} €</span><span class="fc" style="${od?'color:var(--red)':''}">${i.number?esc(i.number)+' · ':''}${age!=null?(od?age+' T. überfällig':'vor '+age+' T.'):'offen'}</span><span style="color:#C5CCD1">›</span></button>`;}).join("")}
+  </div></div>`:''}
   <div class="panel"><div class="cfg-sec">
    <div class="stit" style="color:var(--a);font-size:11px">📊 EÜR — EINNAHMEN-ÜBERSCHUSS (vereinfacht, Ist-Prinzip)</div>
    <p class="hint" style="margin-bottom:10px">Einnahmen = bezahlte Rechnungen · Ausgaben = unten erfasst · Gewinn = Differenz je Jahr. Überblick für dich &amp; den Steuerberater — die offizielle EÜR macht dein Steuerbüro.</p>
